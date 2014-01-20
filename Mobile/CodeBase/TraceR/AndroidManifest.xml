@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tracer"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="8"
+        android:targetSdkVersion="17" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+
+    <uses-feature
+        android:name="android.hardware.camera"
+        android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_applogo"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Styled.App" >
+        <activity
+            android:name="com.tracer.activity.login.LoginActivity"
+            android:clearTaskOnLaunch="true"
+            android:finishOnCloseSystemDialogs="true"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.tracer.activity.runner.RunnerHomeActivity"
+            android:label="@string/consignment_details" >
+        </activity>
+        <activity
+            android:name="com.tracer.activity.beatplan.BeatPlanActivity"
+            android:label="@string/consignment_details"
+            android:parentActivityName="com.tracer.activity.runner.RunnerHomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity.runner.RunnerHomeActivity" />
+        </activity>
+        <activity
+            android:name="com.tracer.activity.caf.NewCAFActivity"
+            android:label="@string/consignment_details"
+            android:parentActivityName="com.tracer.activity.beatplan.BeatPlanActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity.beatplan.BeatPlanActivity" />
+        </activity>
+        <activity
+            android:name="com.tracer.activity.caf.DigitalSignatureActivity"
+            android:label="@string/consignment_details"
+            android:parentActivityName="com.tracer.activity.caf.NewCAFActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity.caf.NewCAFActivity" />
+        </activity>
+    </application>
+
+</manifest>

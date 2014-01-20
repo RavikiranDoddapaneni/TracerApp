@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="40dp"
+    android:background="@drawable/list_item_background"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/item_distributor_visits"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_marginRight="55dp"
+        android:layout_toLeftOf="@+id/collect_CAFS"
+        android:gravity="center_vertical|center"
+        android:textColor="@color/white" />
+
+    <TextView
+        android:id="@+id/item_distributor_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="14dp"
+        android:text="sample"
+        android:textColor="@color/white"
+        android:textSize="16sp" />
+
+    <Button
+        android:id="@+id/collect_CAFS"
+        android:layout_width="60dp"
+        android:layout_height="15dp"
+        android:layout_alignBottom="@+id/item_distributor_name"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="17dp"
+        android:background="@drawable/black_button_click_action"
+        android:text="@string/collect_cafs"
+        android:textColor="@color/white"
+        android:textSize="8sp"
+        android:textStyle="bold"
+        android:typeface="serif" />
+
+</RelativeLayout>

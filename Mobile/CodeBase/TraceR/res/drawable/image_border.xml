@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item>
+        <shape android:shape="rectangle" >
+            <gradient
+                android:angle="90"
+                android:centerColor="@color/caf_button_unselect"
+                android:endColor="@color/caf_button_unselect"
+                android:startColor="@color/caf_button_unselect" />
+        </shape>
+
+        <stroke
+            android:width="0.5px"
+            android:color="@color/white" />
+    </item>
+
+</layer-list>

@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">TraceR</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+    <string name="login">Login</string>
+    <string name="signup">Sign Up</string>
+    <string name="camera">Take Picture</string>
+    <string name="signature">Digital Signature</string>
+    <string name="retailer_name">Retailer Name</string>
+    <string name="retailer_shop_name">Retailer Shop Name</string>
+    <string name="dob">Date of Birth</string>
+    <string name="retailer_mob_1">Retailer Mb.No 1</string>
+    <string name="retailer_mob_2">Retailer Mb.No 2</string>
+    <string name="address">Address</string>
+    <string name="city">City</string>
+    <string name="register">Register</string>
+    <string name="cancel">Cancel</string>
+    <string name="consignment_details">Runners</string>
+    <string name="digital_signature">Digital Signature</string>
+    <string name="consignment_tracker">Consignment Tracker</string>
+    <string name="distributor_name">Distributor Name :</string>
+    <string name="runner_name">Runner Name </string>
+    <string name="total_cafs">Total CAFs :</string>
+    <string name="accepted_cafs">Accepted CAFs :</string>
+    <string name="rejected_cafs">Rejected CAFs :</string>
+    <string name="returned_cafs">Returned CAFs :</string>
+    <string name="done">Done</string>
+    <string name="reset">Reset</string>
+    <string name="view_beat_plan">View Beat Plan</string>
+    <string name="new_caf_collection">New CAF Collection</string>
+    <string name="submit">Submit</string>
+    <string name="save">Save</string>
+    <string name="distributor">Distributor Name</string>
+    <string name="total_visits">Total Visits</string>
+    <string name="visits_frequency">Visit Freq</string>
+    <string name="pending_visits">Pending Visits</string>
+    <string name="visits">Visits :</string>
+    <string name="status">Status</string>
+    <string name="distributors">Distributors</string>
+    <string name="runners">Runners</string>
+    <string name="team_leaders">Team Leaders</string>
+    <string name="team_leader">Team Leader</string>
+    <string name="my_runner_stats">My Runner Stats</string>
+    <string name="my_team_leader_stats">My Team Leader Stats</string>
+    <string name="managers">Managers</string>
+    <string name="beat_plan">Beat Plan</string>
+    <string name="distributor_code">Distributor Code :</string>
+    <string name="scan">Scan</string>
+    <string name="caf_details">CAF Details</string>
+    <string name="scan_barcode">Scan Barcode</string>
+
+    <string-array name="team_leaders_names">
+        <item>Bhargav</item>
+        <item>Vamshi</item>
+        <item>Bharath</item>
+        <item>Rakesh</item>
+        <item>Swaraj</item>
+    </string-array>
+    <string-array name="runners_names_array">
+        <item>Krishna</item>
+        <item>Siddhartha</item>
+        <item>Mohammed</item>
+        <item>Nagarjuna</item>
+        <item>Manoj</item>
+        <item>Naveen</item>
+    </string-array>
+    <string-array name="runners_status_array">
+        <item>absent</item>
+        <item>ontime</item>
+        <item>ontime</item>
+        <item>Late by 2Hrs</item>
+        <item>ontime</item>
+        <item>ontime</item>
+    </string-array>
+    <string-array name="Krishna_names_array">
+        <item>Rajesh</item>
+        <item>Hareesh</item>
+        <item>Abhiram</item>
+        <item>Akhil</item>
+        <item>Sainath</item>
+    </string-array>
+    <string-array name="Krishna_visits_array">
+        <item>1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="Siddhartha_names_array">
+        <item>Rajesh</item>
+        <item>Hareesh</item>
+        <item>Abhiram</item>
+        <item>Akhil</item>
+        <item>Sainath</item>
+    </string-array>
+    <string-array name="Siddhartha_visits_array">
+        <item>1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="Mohammed_names_array">
+        <item>Rajesh</item>
+        <item>Hareesh</item>
+        <item>Abhiram</item>
+        <item>Akhil</item>
+        <item>Sainath</item>
+    </string-array>
+    <string-array name="Mohammed_visits_array">
+        <item>1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="Nagarjuna_names_array">
+        <item>Rajesh</item>
+        <item>Hareesh</item>
+        <item>Abhiram</item>
+        <item>Akhil</item>
+        <item>Sainath</item>
+    </string-array>
+    <string-array name="Nagarjuna_visits_array">
+        <item>1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="Manoj_names_array">
+        <item>Rajeshasdasdasdasdsadasd</item>
+        <item>Hareesh</item>
+        <item>Abhiram</item>
+        <item>Akhil</item>
+        <item>Sainath</item>
+    </string-array>
+    <string-array name="Manoj_visits_array">
+        <item>1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+    <string-array name="Manoj_codes_array">
+        <item>11.45 AM</item>
+        <item>12.30 AM</item>
+        <item>1.00 PM</item>
+        <item>1.30 PM</item>
+        <item>2.15 PM</item>
+    </string-array>
+    <string-array name="Naveen_names_array">
+        <item>Rajesh</item>
+        <item>Hareesh</item>
+        <item>Abhiram</item>
+        <item>Akhil</item>
+        <item>Sainath</item>
+    </string-array>
+    <string-array name="Naveen_visits_array">
+        <item>1</item>
+        <item>1</item>
+        <item>2</item>
+        <item>3</item>
+        <item>2</item>
+    </string-array>
+
+    <string name="collect_cafs">Collect CAF</string>
+    <string name="visits_status">2 of 3</string>
+    <string name="dist_code">Distributor Code</string>
+    <string name="GPSAlertDialogTitle">GPS is setting</string>
+    <string name="GPSAlertDialogMessage">GPS is not enabled. Do you want to go to setting menu</string>
+    <string name="settings">Settings</string>
+    <string name="latitude">Latitude : </string>
+    <string name="longitude">Longitude : </string>
+    <string name="schedule">Schedule</string>
+    <string name="get_beat_plan">Get BeatPlan</string>
+
+</resources>

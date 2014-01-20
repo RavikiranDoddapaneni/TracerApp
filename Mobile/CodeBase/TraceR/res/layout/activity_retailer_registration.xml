@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/tableLayout1"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="15dp"
+    android:background="@drawable/background_image" >
+
+    <EditText
+        android:id="@+id/et_retailer_shopname"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="58dp"
+        android:hint="@string/retailer_shop_name"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_lite" >
+    </EditText>
+
+    <EditText
+        android:id="@+id/et_retailer_name"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="16dp"
+        android:ems="10"
+        android:hint="@string/retailer_name"
+        android:inputType="text"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_lite" />
+
+    <EditText
+        android:id="@+id/date_of_birth"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/et_retailer_shopname"
+        android:ems="10"
+        android:hint="@string/dob"
+        android:inputType="date"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_lite" >
+    </EditText>
+
+    <EditText
+        android:id="@+id/mobile_number_1"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/date_of_birth"
+        android:layout_marginTop="15dp"
+        android:ems="10"
+        android:hint="@string/retailer_mob_1"
+        android:inputType="number"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_lite" />
+
+    <EditText
+        android:id="@+id/mobile_number_2"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/mobile_number_1"
+        android:ems="10"
+        android:hint="@string/retailer_mob_2"
+        android:inputType="number"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_lite" />
+
+    <EditText
+        android:id="@+id/address"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/mobile_number_2"
+        android:ems="10"
+        android:hint="@string/address"
+        android:inputType="textMultiLine"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_lite" >
+    </EditText>
+
+    <EditText
+        android:id="@+id/city"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/mobile_number_2"
+        android:ems="10"
+        android:hint="@string/city"
+        android:inputType="textMultiLine"
+        android:textColor="@color/white"
+        android:textColorHint="@color/white_lite" >
+    </EditText>
+
+</RelativeLayout>
