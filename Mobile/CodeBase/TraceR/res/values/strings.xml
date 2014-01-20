@@ -25,6 +25,7 @@
     <string name="distributor_name">Distributor Name :</string>
     <string name="runner_name">Runner Name </string>
     <string name="total_cafs">Total CAFs :</string>
+    <string name="total_caf">Total CAFs</string>
     <string name="accepted_cafs">Accepted CAFs :</string>
     <string name="rejected_cafs">Rejected CAFs :</string>
     <string name="returned_cafs">Returned CAFs :</string>
@@ -42,6 +43,7 @@
     <string name="status">Status</string>
     <string name="distributors">Distributors</string>
     <string name="runners">Runners</string>
+    <string name="runner">Runner</string>
     <string name="team_leaders">Team Leaders</string>
     <string name="team_leader">Team Leader</string>
     <string name="my_runner_stats">My Runner Stats</string>
@@ -75,6 +77,22 @@
         <item>Late by 2Hrs</item>
         <item>ontime</item>
         <item>ontime</item>
+    </string-array>
+    <string-array name="runners_contacts_array">
+        <item>9032323232</item>
+        <item>9848121212</item>
+        <item>9848131313</item>
+        <item>9848141414</item>
+        <item>9848151515</item>
+        <item>9848161616</item>
+    </string-array>
+    <string-array name="runners_cafs_array">
+        <item>24</item>
+        <item>32</item>
+        <item>21</item>
+        <item>15</item>
+        <item>12</item>
+        <item>32</item>
     </string-array>
     <string-array name="Krishna_names_array">
         <item>Rajesh</item>
@@ -147,6 +165,13 @@
         <item>2</item>
     </string-array>
     <string-array name="Manoj_codes_array">
+        <item>12385875654687</item>
+        <item>68765453457454</item>
+        <item>54687521323212</item>
+        <item>68545475435853</item>
+        <item>35454321324545</item>
+    </string-array>
+    <string-array name="Manoj_schedules_array">
         <item>11.45 AM</item>
         <item>12.30 AM</item>
         <item>1.00 PM</item>
@@ -178,5 +203,7 @@
     <string name="longitude">Longitude : </string>
     <string name="schedule">Schedule</string>
     <string name="get_beat_plan">Get BeatPlan</string>
+    <string name="you_are_logged_in_as">You are logged in as Runner.</string>
+    <string name="welcome_user">Welcome Runner</string>
 
 </resources>

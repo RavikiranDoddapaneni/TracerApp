@@ -45,8 +45,6 @@ public class LoginActivity extends ActionBarActivity {
 		loginRelLayout = (RelativeLayout) findViewById(R.id.login_layout);
 		imageView = (ImageView) findViewById(R.id.appLogoImage);
 
-		actionBar = getSupportActionBar();
-		actionBar.setTitle("Consignment Tracker");
 		preferences = Prefs.get(this);
 
 		TranslateAnimation tAnimation = new TranslateAnimation(0, 0, 0, -250);

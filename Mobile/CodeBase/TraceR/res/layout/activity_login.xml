@@ -29,8 +29,6 @@
             android:singleLine="true"
             android:textColorHint="@color/black"
             android:textSize="14sp" >
-
-            <requestFocus />
         </EditText>
 
         <Button
@@ -64,6 +62,7 @@
             android:inputType="textEmailAddress"
             android:textColorHint="@color/black"
             android:textSize="14sp" />
+        <requestFocus />
     </RelativeLayout>
 
     <ImageView

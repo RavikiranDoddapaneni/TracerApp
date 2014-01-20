@@ -19,6 +19,7 @@ public class BeatPlanActivity extends ActionBarActivity {
 	String[] distributorsNames;
 	String[] distributorsVisits;
 	String[] distributorsCodes;
+	String[] distributorsSchedules;
 	BeatPlanAdapter beatPlanAdapter;
 	ListView beatPlanList;
 	SharedPreferences prefs;
@@ -36,8 +37,9 @@ public class BeatPlanActivity extends ActionBarActivity {
 		distributorsNames = getResources().getStringArray(R.array.Manoj_names_array);
 		distributorsVisits = getResources().getStringArray(R.array.Manoj_visits_array);
 		distributorsCodes = getResources().getStringArray(R.array.Manoj_codes_array);
+		distributorsSchedules = getResources().getStringArray(R.array.Manoj_schedules_array);
 
-		beatPlanAdapter = new BeatPlanAdapter(this, distributorsNames, distributorsVisits, distributorsCodes);
+		beatPlanAdapter = new BeatPlanAdapter(this, distributorsNames, distributorsVisits, distributorsCodes, distributorsSchedules);
 		beatPlanList.setAdapter(beatPlanAdapter);
 
 	}

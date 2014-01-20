@@ -23,9 +23,10 @@
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_centerVertical="true"
-            android:layout_marginLeft="14dp"
-            android:text="@string/runner_name"
+            android:layout_marginLeft="10dp"
+            android:text="@string/runner"
             android:textColor="@color/white"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:typeface="serif" />
 
@@ -33,13 +34,30 @@
             android:id="@+id/item_runner_status_header"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
-            android:layout_centerVertical="true"
-            android:layout_marginRight="55dp"
+            android:layout_alignBaseline="@+id/item_runner_name_header"
+            android:layout_alignBottom="@+id/item_runner_name_header"
+            android:layout_marginLeft="53dp"
+            android:layout_toRightOf="@+id/item_runner_name_header"
             android:text="@string/status"
             android:textColor="@color/white"
+            android:textSize="12sp"
             android:textStyle="bold"
             android:typeface="serif" />
+
+        <TextView
+            android:id="@+id/item_total_caf_header"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@+id/item_runner_status_header"
+            android:layout_alignBottom="@+id/item_runner_status_header"
+            android:layout_marginLeft="20dp"
+            android:layout_toRightOf="@+id/item_runner_status_header"
+            android:text="@string/total_caf"
+            android:textColor="@color/white"
+            android:textSize="12sp"
+            android:textStyle="bold"
+            android:typeface="serif" />
+
     </RelativeLayout>
 
     <ListView

@@ -17,5 +17,6 @@ public class RunnerHomeActivity extends ActionBarActivity {
 
 	public void getBeatPlan(View view) {
 		startActivity(new Intent(getApplicationContext(), BeatPlanActivity.class));
+		overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
 	}
 }

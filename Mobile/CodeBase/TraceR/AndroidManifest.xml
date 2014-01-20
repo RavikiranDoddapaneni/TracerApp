@@ -12,6 +12,8 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
 
     <uses-feature
         android:name="android.hardware.camera"
@@ -37,11 +39,15 @@
         </activity>
         <activity
             android:name="com.tracer.activity.runner.RunnerHomeActivity"
-            android:label="@string/consignment_details" >
+            android:label="@string/runners" >
+        </activity>
+        <activity
+            android:name="com.tracer.activity.runner.RunnersActivity"
+            android:label="@string/runners" >
         </activity>
         <activity
             android:name="com.tracer.activity.beatplan.BeatPlanActivity"
-            android:label="@string/consignment_details"
+            android:label="@string/beat_plan"
             android:parentActivityName="com.tracer.activity.runner.RunnerHomeActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -49,7 +55,7 @@
         </activity>
         <activity
             android:name="com.tracer.activity.caf.NewCAFActivity"
-            android:label="@string/consignment_details"
+            android:label="@string/new_caf_collection"
             android:parentActivityName="com.tracer.activity.beatplan.BeatPlanActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -57,11 +63,19 @@
         </activity>
         <activity
             android:name="com.tracer.activity.caf.DigitalSignatureActivity"
-            android:label="@string/consignment_details"
+            android:label="@string/digital_signature"
             android:parentActivityName="com.tracer.activity.caf.NewCAFActivity" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tracer.activity.caf.NewCAFActivity" />
+        </activity>
+        <activity
+            android:name="com.tracer.activity.teamleader.TeamLeaderHomeActivity"
+            android:label="@string/team_leader"
+            android:parentActivityName="com.tracer.activity.teamleader.TeamLeaderHomeActivity" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity..teamleader.TeamLeaderHomeActivity" />
         </activity>
     </application>
 
