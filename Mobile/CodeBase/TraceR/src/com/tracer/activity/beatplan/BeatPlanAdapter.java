@@ -23,6 +23,14 @@ public class BeatPlanAdapter extends BaseAdapter {
 	String[] distributorsSchedules;
 	Context mContext;
 
+	/**
+	 * 
+	 * @param beatPlanActivity
+	 * @param distributorsNames
+	 * @param distributorsVisits
+	 * @param distributorsCodes
+	 * @param distributorsSchedules
+	 */
 	public BeatPlanAdapter(BeatPlanActivity beatPlanActivity, String[] distributorsNames, String[] distributorsVisits,
 			String[] distributorsCodes, String[] distributorsSchedules) {
 		this.mContext = beatPlanActivity;
@@ -48,6 +56,9 @@ public class BeatPlanAdapter extends BaseAdapter {
 		return position;
 	}
 
+	/**
+	 * 
+	 */
 	@Override
 	public View getView(final int position, View convertView, ViewGroup parent) {
 

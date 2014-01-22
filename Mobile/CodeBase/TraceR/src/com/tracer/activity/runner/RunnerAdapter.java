@@ -4,7 +4,6 @@ import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,6 +59,10 @@ public class RunnerAdapter extends BaseAdapter {
 		ImageView callRunner = (ImageView) view.findViewById(R.id.callRunner);
 		ImageView messageRunner = (ImageView) view.findViewById(R.id.messageRunner);
 
+		/**
+		 * Called when the user clicks on Call button.
+		 */
+
 		callRunner.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -75,6 +78,9 @@ public class RunnerAdapter extends BaseAdapter {
 			}
 		});
 
+		/**
+		 * Called when the user clicks on Message button.
+		 */
 		messageRunner.setOnClickListener(new OnClickListener() {
 
 			@Override

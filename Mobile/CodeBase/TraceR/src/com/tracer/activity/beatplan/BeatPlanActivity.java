@@ -25,6 +25,7 @@ public class BeatPlanActivity extends ActionBarActivity {
 	SharedPreferences prefs;
 	String userName;
 
+	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -44,12 +45,18 @@ public class BeatPlanActivity extends ActionBarActivity {
 
 	}
 
+	/**
+	 * Method for creating Menus in the current View
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
+	/**
+	 * Action to be performed when the clicked on Menu icons.
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {

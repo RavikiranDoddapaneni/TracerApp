@@ -9,12 +9,19 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.View;
 
 public class RunnerHomeActivity extends ActionBarActivity {
+
+	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_runner_home);
 	}
 
+	/**
+	 * Called when the user clicks on Get Beatplan button.
+	 * 
+	 * @param view
+	 */
 	public void getBeatPlan(View view) {
 		startActivity(new Intent(getApplicationContext(), BeatPlanActivity.class));
 		overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);

@@ -25,7 +25,6 @@ import android.view.View;
 import com.tracer.R;
 import com.tracer.activity.runner.RunnerHomeActivity;
 import com.tracer.activity.runner.RunnersActivity;
-import com.tracer.activity.teamleader.TeamLeaderHomeActivity;
 import com.tracer.util.Prefs;
 
 public class DigitalSignatureActivity extends ActionBarActivity implements OnGesturePerformedListener {
@@ -35,6 +34,7 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	SharedPreferences prefs;
 	String userName;
 
+	/** Called when the activity is first created. */
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -50,6 +50,12 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 
 	}
 
+	/**
+	 * Called when the user clicked on Save button. Saves the digital signature
+	 * in the application cache after saving.
+	 * 
+	 * @param view
+	 */
 	public void digitalSignatureDone(View view) {
 		gestureOverlayView.setDrawingCacheEnabled(true);
 		Bitmap bitmap = gestureOverlayView.getDrawingCache();
@@ -67,16 +73,29 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 
 	}
 
+	/**
+	 * Called when the user clicked on Reset button in order to clear the
+	 * digital signature screen for giving new digital signature input.
+	 * 
+	 * @param view
+	 */
+
 	public void onResetButton(View view) {
 		gestureOverlayView.clear(false);
 	}
 
+	/**
+	 * Method for creating Menus in the current View
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
+	/**
+	 * Action to be performed when the clicked on Menu icons.
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
@@ -96,11 +115,13 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 		return true;
 	}
 
-	@Override
-	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
-
-	}
-
+	/**
+	 * Method is used to the save the digital signature to the application
+	 * cache.
+	 * 
+	 * @param bitmap
+	 * @return Image path where digital signature is saved.
+	 */
 	public File saveBitmap(Bitmap bitmap) {
 
 		File cachePath = new File(context.getExternalCacheDir() + "/" + "Fins");
@@ -122,5 +143,10 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 			Log.e("GREC", e.getMessage(), e);
 		}
 		return imagePath;
+	}
+
+	@Override
+	public void onGesturePerformed(GestureOverlayView arg0, Gesture arg1) {
+
 	}
 }

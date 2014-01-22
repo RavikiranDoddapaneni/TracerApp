@@ -26,6 +26,7 @@ public class RunnersActivity extends ActionBarActivity {
 	String[] runnersContacts;
 	String[] runnersCafs;
 
+	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -43,6 +44,9 @@ public class RunnersActivity extends ActionBarActivity {
 		runnerAdapter = new RunnerAdapter(context, runners, status, runnersContacts, runnersCafs);
 		runnersList.setAdapter(runnerAdapter);
 
+		/**
+		 * Called when the user selects any of the item from the list view.
+		 */
 		runnersList.setOnItemClickListener(new OnItemClickListener() {
 
 			@Override

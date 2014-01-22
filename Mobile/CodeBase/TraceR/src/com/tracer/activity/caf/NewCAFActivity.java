@@ -42,6 +42,7 @@ public class NewCAFActivity extends ActionBarActivity {
 	String userName;
 	Bundle bundle;
 
+	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -66,6 +67,10 @@ public class NewCAFActivity extends ActionBarActivity {
 		dist_name.setText(bundle.getString("dist_name"));
 		dist_code.setText(bundle.getString("dist_code"));
 
+		/**
+		 * Called when user clicks on barcode scan image, in order to scan the
+		 * barcode.
+		 */
 		scanImage.setOnClickListener(new OnClickListener() {
 
 			@Override
@@ -78,26 +83,53 @@ public class NewCAFActivity extends ActionBarActivity {
 
 	}
 
+	/**
+	 * Method is called when the user click on Take Picture button in order to
+	 * capture the image through the camera.
+	 * 
+	 * @param view
+	 */
 	public void onCameraButtonClick(View view) {
 
 		Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 		this.startActivityForResult(camera, PICTURE_RESULT);
 	}
 
+	/**
+	 * Method is called when the user click on Digital Signature button in order
+	 * to take the digital signature.
+	 * 
+	 * @param view
+	 */
 	public void onDigitalSignatureButtonClick(View view) {
 		startActivityForResult(new Intent(getApplicationContext(), DigitalSignatureActivity.class), DIGITAL_SIGNATURE_RESULT);
 		overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
 	}
 
+	/**
+	 * Method is called when the user clicks on Submit button for sending the
+	 * CAF details to the server.
+	 * 
+	 * @param view
+	 */
 	public void saveCAF(View view) {
 		Toast.makeText(getApplicationContext(), "CAF has been successfully submitted.", Toast.LENGTH_LONG).show();
 		startActivity(new Intent(getApplicationContext(), BeatPlanActivity.class));
 		overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
 	}
 
+	/**
+	 * Method is called in order to capture the data after the user takes
+	 * digital signature or after scanning the barcode or after taking the
+	 * picture.
+	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
+		/**
+		 * Get the captured image and set the image to the image view for the
+		 * preview
+		 */
 		if (requestCode == PICTURE_RESULT) {
 			if (resultCode == Activity.RESULT_OK) {
 				Bundle b = data.getExtras();
@@ -111,7 +143,12 @@ public class NewCAFActivity extends ActionBarActivity {
 				}
 
 			}
-		} else if (requestCode == BARCODE_SCAN_RESULT) {
+		}
+		/**
+		 * Get the barcode scan result and displaying result in the distributor
+		 * code field.
+		 */
+		else if (requestCode == BARCODE_SCAN_RESULT) {
 			if (resultCode == RESULT_OK) {
 				String contents = data.getStringExtra("SCAN_RESULT");
 				String format = data.getStringExtra("SCAN_RESULT_FORMAT");
@@ -121,7 +158,12 @@ public class NewCAFActivity extends ActionBarActivity {
 			} else if (resultCode == RESULT_CANCELED) {
 				Log.i("xZing", "Cancelled");
 			}
-		} else if (requestCode == DIGITAL_SIGNATURE_RESULT) {
+		}
+		/**
+		 * Get the digital signature image and set the image to the image view
+		 * for the preview
+		 */
+		else if (requestCode == DIGITAL_SIGNATURE_RESULT) {
 			if (resultCode == Activity.RESULT_OK) {
 				String digital_signature_path = data.getStringExtra("digital_signature_path");
 				digitalSignature.setVisibility(View.GONE);
@@ -133,12 +175,18 @@ public class NewCAFActivity extends ActionBarActivity {
 		}
 	}
 
+	/**
+	 * Method for creating Menus in the current View
+	 */
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
 
+	/**
+	 * Action to be performed when the clicked on Menu icons.
+	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {

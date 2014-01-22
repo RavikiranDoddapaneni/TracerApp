@@ -36,6 +36,7 @@ public class LoginActivity extends ActionBarActivity {
 	Editor editor;
 	RelativeLayout loginRelLayout;
 
+	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -47,6 +48,11 @@ public class LoginActivity extends ActionBarActivity {
 
 		preferences = Prefs.get(this);
 
+		/**
+		 * Below code is used to display animation for the App logo on the App
+		 * launch Screen
+		 */
+
 		TranslateAnimation tAnimation = new TranslateAnimation(0, 0, 0, -250);
 		tAnimation.setDuration(2500);
 		tAnimation.setRepeatCount(0);
@@ -54,6 +60,7 @@ public class LoginActivity extends ActionBarActivity {
 		tAnimation.setFillAfter(true);
 		tAnimation.setAnimationListener(new AnimationListener() {
 
+			/** Called when the animation is started. */
 			@Override
 			public void onAnimationStart(Animation animation) {
 
@@ -64,6 +71,7 @@ public class LoginActivity extends ActionBarActivity {
 
 			}
 
+			/** Called when the animation is completed. */
 			@Override
 			public void onAnimationEnd(Animation animation) {
 				Animation fadeIn = new AlphaAnimation(0, 1);
@@ -71,21 +79,21 @@ public class LoginActivity extends ActionBarActivity {
 				fadeIn.setDuration(500);
 				loginLayout.setAnimation(fadeIn);
 				loginLayout.setVisibility(View.VISIBLE);
-				// loginRelLayout.setBackgroundResource(R.drawable.background_image);
 			}
 		});
 
 		imageView.startAnimation(tAnimation);
-
-		try {
-			username = (EditText) findViewById(R.id.login_username);
-			password = (EditText) findViewById(R.id.login_password);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
+		username = (EditText) findViewById(R.id.login_username);
+		password = (EditText) findViewById(R.id.login_password);
 
 	}
 
+	/**
+	 * Method will be called when user clicks on login button.
+	 * 
+	 * @param view
+	 * 
+	 */
 	public void login(View view) {
 		entered_username = username.getText().toString();
 		entered_password = password.getText().toString();
