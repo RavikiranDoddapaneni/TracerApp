@@ -60,12 +60,6 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 		gestureOverlayView.setDrawingCacheEnabled(true);
 		Bitmap bitmap = gestureOverlayView.getDrawingCache();
 		File imagePath = saveBitmap(bitmap);
-
-		// Intent intent = new Intent(getApplicationContext(),
-		// NewCAFCollectionActivity.class);
-		// intent.putExtra("digital_signature_path", imagePath.toString());
-		// startActivity(intent);
-
 		Intent intent = new Intent();
 		intent.putExtra("digital_signature_path", imagePath.toString());
 		setResult(RESULT_OK, intent);
@@ -125,7 +119,9 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	public File saveBitmap(Bitmap bitmap) {
 
 		File cachePath = new File(context.getExternalCacheDir() + "/" + "Fins");
-		cachePath.mkdir();
+		if (!cachePath.exists()) {
+			cachePath.mkdir();
+		}
 		Calendar cal = Calendar.getInstance();
 		File imagePath = new File(cachePath, (cal.getTimeInMillis() + ".jpg"));
 

@@ -1,8 +1,15 @@
 package com.tracer.activity.login;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.location.LocationManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -35,6 +42,9 @@ public class LoginActivity extends ActionBarActivity {
 	SharedPreferences preferences;
 	Editor editor;
 	RelativeLayout loginRelLayout;
+	LocationManager manager;
+	boolean gpsStatus;
+	boolean gprsStatus;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -48,6 +58,34 @@ public class LoginActivity extends ActionBarActivity {
 
 		preferences = Prefs.get(this);
 
+		/**
+		 * Checking whether Gps and Gprs are enabled or not. If in Disable state
+		 * enabling them.
+		 */
+		/*
+		 * manager = (LocationManager)
+		 * getSystemService(Context.LOCATION_SERVICE); gpsStatus =
+		 * manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		 * 
+		 * ConnectivityManager connectivityManager = (ConnectivityManager)
+		 * getApplicationContext
+		 * ().getSystemService(Context.CONNECTIVITY_SERVICE); NetworkInfo
+		 * activeNetInfo = connectivityManager.getActiveNetworkInfo();
+		 * 
+		 * gprsStatus = activeNetInfo.isAvailable();
+		 * 
+		 * // gprsStatus = manager.isProviderEnabled(LocationManager.);
+		 * 
+		 * System.out.println("GPRS :" + gprsStatus + "GPS :" + gpsStatus);
+		 */
+		/*
+		 * if (!gpsStatus) { setGpsEnableOrDisable(getApplicationContext(),
+		 * false); }
+		 */
+		/*
+		 * if (!gprsStatus) {
+		 * setMobileDataEnableOrDisable(getApplicationContext(), false); }
+		 */
 		/**
 		 * Below code is used to display animation for the App logo on the App
 		 * launch Screen
@@ -98,7 +136,15 @@ public class LoginActivity extends ActionBarActivity {
 		entered_username = username.getText().toString();
 		entered_password = password.getText().toString();
 		if (entered_username.equalsIgnoreCase(entered_password)) {
-
+			/*
+			 * Calendar cal = Calendar.getInstance(); cal.add(Calendar.SECOND,
+			 * 10); Intent intent = new Intent(this, GpsService.class);
+			 * PendingIntent pintent = PendingIntent.getService(this, 0, intent,
+			 * 0); AlarmManager alarm = (AlarmManager)
+			 * getSystemService(Context.ALARM_SERVICE);
+			 * alarm.setRepeating(AlarmManager.RTC_WAKEUP,
+			 * cal.getTimeInMillis(), 5 * 60 * 1000, pintent);
+			 */
 			editor = preferences.edit();
 			editor.putString("user", entered_username);
 			editor.commit();
@@ -116,4 +162,37 @@ public class LoginActivity extends ActionBarActivity {
 		}
 
 	}
+
+	@SuppressWarnings({ "rawtypes", "unchecked" })
+	public static void setMobileDataEnableOrDisable(Context context, boolean enabled) {
+		try {
+			final ConnectivityManager conman = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+			final Class conmanClass = Class.forName(conman.getClass().getName());
+			final Field iConnectivityManagerField = conmanClass.getDeclaredField("mService");
+			iConnectivityManagerField.setAccessible(true);
+			final Object iConnectivityManager = iConnectivityManagerField.get(conman);
+			final Class iConnectivityManagerClass = Class.forName(iConnectivityManager.getClass().getName());
+			final Method setMobileDataEnabledMethod = iConnectivityManagerClass.getDeclaredMethod("setMobileDataEnabled", Boolean.TYPE);
+			setMobileDataEnabledMethod.setAccessible(true);
+
+			setMobileDataEnabledMethod.invoke(iConnectivityManager, enabled);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void setGpsEnableOrDisable(Context context, boolean enabled) {
+		Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
+		intent.putExtra("enabled", enabled);
+		context.sendBroadcast(intent);
+	}
+
+	public static boolean getNetworkStatus(Context context) {
+		ConnectivityManager connectivityManager = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetInfo = connectivityManager.getActiveNetworkInfo();
+		boolean gprsStatus = activeNetInfo != null && activeNetInfo.isConnectedOrConnecting();
+
+		return gprsStatus;
+	}
+
 }

@@ -21,7 +21,7 @@ import android.widget.Toast;
 
 public class DataBaseHelper extends SQLiteOpenHelper {
 
-	private static String DB_PATH = "/data/data/com.radiantexp.quitbuddy/databases/";
+	private static String DB_PATH = "/data/data/com.tracer/databases/";
 
 	private static String DB_NAME = "tracer.sqlite";
 

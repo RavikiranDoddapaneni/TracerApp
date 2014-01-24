@@ -109,22 +109,22 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/tv_total_cafs"
-                android:layout_below="@+id/editText3"
+                android:layout_below="@+id/et_total_cafs"
                 android:layout_marginTop="16dp"
                 android:text="@string/accepted_cafs" />
 
             <EditText
-                android:id="@+id/editText4"
+                android:id="@+id/et_accepted_cafs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/editText3"
-                android:layout_alignRight="@+id/editText3"
-                android:layout_below="@+id/editText3"
+                android:layout_alignLeft="@+id/et_total_cafs"
+                android:layout_alignRight="@+id/et_total_cafs"
+                android:layout_below="@+id/et_total_cafs"
                 android:ems="10"
                 android:inputType="number" />
 
             <EditText
-                android:id="@+id/editText3"
+                android:id="@+id/et_total_cafs"
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/tv_total_cafs"
@@ -138,17 +138,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/tv_accepted_cafs"
-                android:layout_below="@+id/editText4"
+                android:layout_below="@+id/et_accepted_cafs"
                 android:layout_marginTop="16dp"
                 android:text="@string/rejected_cafs" />
 
             <EditText
-                android:id="@+id/editText5"
+                android:id="@+id/et_rejected_cafs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@+id/editText4"
-                android:layout_alignRight="@+id/editText4"
-                android:layout_below="@+id/editText4"
+                android:layout_alignLeft="@+id/et_accepted_cafs"
+                android:layout_alignRight="@+id/et_accepted_cafs"
+                android:layout_below="@+id/et_accepted_cafs"
                 android:ems="10"
                 android:inputType="number" />
 
@@ -157,17 +157,17 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/tv_rejected_cafs"
-                android:layout_below="@+id/editText5"
+                android:layout_below="@+id/et_rejected_cafs"
                 android:layout_marginTop="16dp"
                 android:text="@string/returned_cafs" />
 
             <EditText
-                android:id="@+id/editText6"
+                android:id="@+id/et_returned_cafs"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignBottom="@+id/tv_returned_cafs"
-                android:layout_alignLeft="@+id/editText5"
-                android:layout_alignRight="@+id/editText5"
+                android:layout_alignLeft="@+id/et_rejected_cafs"
+                android:layout_alignRight="@+id/et_rejected_cafs"
                 android:ems="10"
                 android:inputType="number" />
 
@@ -175,7 +175,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="0.5dp"
                 android:layout_alignParentLeft="true"
-                android:layout_alignTop="@+id/editText3"
+                android:layout_alignTop="@+id/et_total_cafs"
                 android:background="@color/actionbar_background_end" />
         </RelativeLayout>
 
@@ -250,7 +250,7 @@
             android:layout_marginTop="5dp"
             android:background="@drawable/blue_button_click_action"
             android:onClick="saveCAF"
-            android:text="@string/save"
+            android:text="@string/submit"
             android:textColor="@color/white"
             android:textSize="15sp" />
 
