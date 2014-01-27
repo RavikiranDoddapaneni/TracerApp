@@ -1,7 +1,14 @@
 package com.tracer.activity.login;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.net.URLConnection;
+
+import org.json.JSONObject;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +17,7 @@ import android.content.SharedPreferences.Editor;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
@@ -28,6 +36,7 @@ import android.widget.Toast;
 import com.tracer.R;
 import com.tracer.activity.runner.RunnerHomeActivity;
 import com.tracer.activity.runner.RunnersActivity;
+import com.tracer.util.Constants;
 import com.tracer.util.Prefs;
 
 public class LoginActivity extends ActionBarActivity {
@@ -45,6 +54,7 @@ public class LoginActivity extends ActionBarActivity {
 	LocationManager manager;
 	boolean gpsStatus;
 	boolean gprsStatus;
+	JSONObject jsonObject;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -135,32 +145,10 @@ public class LoginActivity extends ActionBarActivity {
 	public void login(View view) {
 		entered_username = username.getText().toString();
 		entered_password = password.getText().toString();
-		if (entered_username.equalsIgnoreCase(entered_password)) {
-			/*
-			 * Calendar cal = Calendar.getInstance(); cal.add(Calendar.SECOND,
-			 * 10); Intent intent = new Intent(this, GpsService.class);
-			 * PendingIntent pintent = PendingIntent.getService(this, 0, intent,
-			 * 0); AlarmManager alarm = (AlarmManager)
-			 * getSystemService(Context.ALARM_SERVICE);
-			 * alarm.setRepeating(AlarmManager.RTC_WAKEUP,
-			 * cal.getTimeInMillis(), 5 * 60 * 1000, pintent);
-			 */
-			editor = preferences.edit();
-			editor.putString("user", entered_username);
-			editor.commit();
 
-			Toast.makeText(getApplicationContext(), "Login Successful", Toast.LENGTH_SHORT).show();
-			if (entered_username.equals("runner")) {
-				startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-			} else if (entered_username.equals("teamleader")) {
-				startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
-			}
-			overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
-
-		} else {
-			Toast.makeText(getApplicationContext(), "Login Failed, Please try Again!", Toast.LENGTH_SHORT).show();
+		if (!entered_username.isEmpty() || !entered_password.isEmpty()) {
+			new RetreiveLoginResponse().execute(entered_username, entered_password);
 		}
-
 	}
 
 	@SuppressWarnings({ "rawtypes", "unchecked" })
@@ -195,4 +183,64 @@ public class LoginActivity extends ActionBarActivity {
 		return gprsStatus;
 	}
 
+	class RetreiveLoginResponse extends AsyncTask<String, Void, String> {
+
+		protected String doInBackground(String... urls) {
+			try {
+
+				System.out.println(urls[0]);
+				System.out.println(urls[1]);
+
+				jsonObject = new JSONObject();
+				jsonObject.put("userName", urls[0]);
+				jsonObject.put("password", "11IZkFH57I0BtkxFa48WBw==");
+				String baseURL = "http://192.168.80.100:8080/TraceR_WS/GetAuthCode/";
+				URL url = new URL(baseURL + jsonObject);
+				URLConnection conn = url.openConnection();
+				conn.setDoOutput(true);
+				OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
+				wr.write(baseURL);
+				wr.flush();
+
+				// Get the response
+				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+				String line;
+				while ((line = rd.readLine()) != null) {
+					// Process line...
+					System.out.println("line ::::: " + line);
+					JSONObject jsonObject = new JSONObject(line);
+					if (jsonObject.has("authCode")) {
+						String roleType = jsonObject.getString(Constants.USERTYPE);
+						editor = preferences.edit();
+						editor.putString(Constants.AUTHCODE, jsonObject.getString(Constants.AUTHCODE));
+						editor.putString(Constants.USERTYPE, jsonObject.getString(Constants.USERTYPE));
+						editor.putString(Constants.USERNAME, jsonObject.getString(Constants.USERNAME));
+						editor.putString(Constants.TEAMLEADERCONTACTNUMBER, Constants.TEAMLEADERCONTACTNUMBER);
+						editor.commit();
+						if (roleType.equals("TSE")) {
+							startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
+							overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+						} else if (roleType.equals("TSM")) {
+							startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
+							overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+						}
+
+					} else if (jsonObject.has("errorMessage")) {
+						Toast.makeText(LoginActivity.this, "Please Login again with Correct credentials", Toast.LENGTH_LONG).show();
+					}
+				}
+				wr.close();
+				rd.close();
+				return line;
+			} catch (Exception e) {
+				return null;
+			}
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+	}
 }

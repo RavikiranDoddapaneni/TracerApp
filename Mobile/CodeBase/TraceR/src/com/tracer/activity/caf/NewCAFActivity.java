@@ -25,6 +25,7 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.tracer.R;
@@ -56,10 +57,14 @@ public class NewCAFActivity extends ActionBarActivity {
 	EditText returnedCafs;
 	EditText rejectedCafs;
 
+	TextView visitCount;
+
 	SharedPreferences prefs;
 	String userName;
 	String digital_signature_path;
 	String mCurrentPhotoPath;
+	String visitId;
+
 	File photoFile;
 	Bundle bundle;
 	DataBaseHelper dataBaseHelper = DataBaseHelper.getDBAdapterInstance(this);
@@ -76,12 +81,16 @@ public class NewCAFActivity extends ActionBarActivity {
 		bundle = new Bundle();
 		bundle = getIntent().getExtras();
 
+		visitId = bundle.getString("visit_id");
+
 		camera = (Button) findViewById(R.id.cameraButton);
 		digitalSignature = (Button) findViewById(R.id.digitalSignatureButton);
 
 		imagePreview = (ImageView) findViewById(R.id.imagePreview);
 		signaturePreview = (ImageView) findViewById(R.id.signaturePreview);
 		scanImage = (ImageView) findViewById(R.id.scanImage);
+
+		visitCount = (TextView) findViewById(R.id.visitCount);
 
 		dist_code = (EditText) findViewById(R.id.et_dist_code);
 		dist_name = (EditText) findViewById(R.id.dist_name);
@@ -92,6 +101,8 @@ public class NewCAFActivity extends ActionBarActivity {
 
 		dist_name.setText(bundle.getString("dist_name"));
 		dist_code.setText(bundle.getString("dist_code"));
+
+		visitCount.setText(bundle.getString("visit_count"));
 
 		/**
 		 * Called when user clicks on barcode scan image, in order to scan the
