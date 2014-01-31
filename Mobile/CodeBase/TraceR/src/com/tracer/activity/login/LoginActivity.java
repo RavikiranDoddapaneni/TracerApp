@@ -7,9 +7,12 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.Calendar;
 
 import org.json.JSONObject;
 
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -21,6 +24,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AlphaAnimation;
@@ -36,8 +41,10 @@ import android.widget.Toast;
 import com.tracer.R;
 import com.tracer.activity.runner.RunnerHomeActivity;
 import com.tracer.activity.runner.RunnersActivity;
+import com.tracer.service.gpsservice.GpsService;
 import com.tracer.util.Constants;
 import com.tracer.util.Prefs;
+import com.tracer.util.Utils;
 
 public class LoginActivity extends ActionBarActivity {
 
@@ -55,6 +62,8 @@ public class LoginActivity extends ActionBarActivity {
 	boolean gpsStatus;
 	boolean gprsStatus;
 	JSONObject jsonObject;
+	JSONObject jsonResponseObject;
+	static int RQS = 1;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -67,41 +76,38 @@ public class LoginActivity extends ActionBarActivity {
 		imageView = (ImageView) findViewById(R.id.appLogoImage);
 
 		preferences = Prefs.get(this);
-
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		int screenHeight = metrics.heightPixels;
+		int screenWidth = metrics.widthPixels;
+		Log.i("MY", "Actual Screen Height = " + screenHeight + " Width = " + screenWidth);
 		/**
 		 * Checking whether Gps and Gprs are enabled or not. If in Disable state
 		 * enabling them.
 		 */
-		/*
-		 * manager = (LocationManager)
-		 * getSystemService(Context.LOCATION_SERVICE); gpsStatus =
-		 * manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-		 * 
-		 * ConnectivityManager connectivityManager = (ConnectivityManager)
-		 * getApplicationContext
-		 * ().getSystemService(Context.CONNECTIVITY_SERVICE); NetworkInfo
-		 * activeNetInfo = connectivityManager.getActiveNetworkInfo();
-		 * 
-		 * gprsStatus = activeNetInfo.isAvailable();
-		 * 
-		 * // gprsStatus = manager.isProviderEnabled(LocationManager.);
-		 * 
-		 * System.out.println("GPRS :" + gprsStatus + "GPS :" + gpsStatus);
-		 */
-		/*
-		 * if (!gpsStatus) { setGpsEnableOrDisable(getApplicationContext(),
-		 * false); }
-		 */
-		/*
-		 * if (!gprsStatus) {
-		 * setMobileDataEnableOrDisable(getApplicationContext(), false); }
-		 */
+
+		manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		gpsStatus = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+		ConnectivityManager connectivityManager = (ConnectivityManager) getApplicationContext().getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo activeNetInfo = connectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);
+
+		gprsStatus = activeNetInfo.isAvailable();
+
+		// gprsStatus = manager.isProviderEnabled(LocationManager.);
+
+		System.out.println("GPRS :" + gprsStatus + "GPS :" + gpsStatus);
+
+		if (!gprsStatus) {
+			setMobileDataEnableOrDisable(getApplicationContext(), true);
+		}
+
 		/**
 		 * Below code is used to display animation for the App logo on the App
 		 * launch Screen
 		 */
 
-		TranslateAnimation tAnimation = new TranslateAnimation(0, 0, 0, -250);
+		TranslateAnimation tAnimation = new TranslateAnimation(0, 0, 0, -screenHeight / 3);
 		tAnimation.setDuration(2500);
 		tAnimation.setRepeatCount(0);
 		tAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
@@ -147,7 +153,13 @@ public class LoginActivity extends ActionBarActivity {
 		entered_password = password.getText().toString();
 
 		if (!entered_username.isEmpty() || !entered_password.isEmpty()) {
-			new RetreiveLoginResponse().execute(entered_username, entered_password);
+			if (Utils.getConnectivityStatusString(getApplicationContext())) {
+				new RetreiveLoginResponse().execute(entered_username, entered_password);
+			} else {
+				Toast.makeText(getApplicationContext(), "Please check the Network Connection!", Toast.LENGTH_SHORT).show();
+			}
+		} else {
+			Toast.makeText(getApplicationContext(), "Please enter Username and Password", Toast.LENGTH_SHORT).show();
 		}
 	}
 
@@ -171,7 +183,7 @@ public class LoginActivity extends ActionBarActivity {
 
 	public static void setGpsEnableOrDisable(Context context, boolean enabled) {
 		Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
-		intent.putExtra("enabled", enabled);
+		intent.putExtra("enabled", false);
 		context.sendBroadcast(intent);
 	}
 
@@ -185,6 +197,19 @@ public class LoginActivity extends ActionBarActivity {
 
 	class RetreiveLoginResponse extends AsyncTask<String, Void, String> {
 
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			/*
+			 * if (null != jsonResponseObject &
+			 * jsonResponseObject.has("errorMessage")) {
+			 * Toast.makeText(LoginActivity.this,
+			 * "Please Login again with Correct credentials",
+			 * Toast.LENGTH_LONG).show(); }
+			 */
+
+		}
+
 		protected String doInBackground(String... urls) {
 			try {
 
@@ -192,9 +217,9 @@ public class LoginActivity extends ActionBarActivity {
 				System.out.println(urls[1]);
 
 				jsonObject = new JSONObject();
-				jsonObject.put("userName", urls[0]);
-				jsonObject.put("password", "11IZkFH57I0BtkxFa48WBw==");
-				String baseURL = "http://192.168.80.100:8080/TraceR_WS/GetAuthCode/";
+				jsonObject.put(Constants.LOGIN_USERNAME, urls[0]);
+				jsonObject.put(Constants.LOGIN_PASSWORD, "11IZkFH57I0BtkxFa48WBw==");
+				String baseURL = Constants.WEBSERVICE_BASE_URL + "GetAuthCode/";
 				URL url = new URL(baseURL + jsonObject);
 				URLConnection conn = url.openConnection();
 				conn.setDoOutput(true);
@@ -206,17 +231,26 @@ public class LoginActivity extends ActionBarActivity {
 				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
 				String line;
 				while ((line = rd.readLine()) != null) {
+
 					// Process line...
 					System.out.println("line ::::: " + line);
-					JSONObject jsonObject = new JSONObject(line);
-					if (jsonObject.has("authCode")) {
-						String roleType = jsonObject.getString(Constants.USERTYPE);
+					jsonResponseObject = new JSONObject(line);
+					if (jsonResponseObject.has(Constants.AUTHCODE)) {
+						String roleType = jsonResponseObject.getString(Constants.USERTYPE);
 						editor = preferences.edit();
-						editor.putString(Constants.AUTHCODE, jsonObject.getString(Constants.AUTHCODE));
-						editor.putString(Constants.USERTYPE, jsonObject.getString(Constants.USERTYPE));
-						editor.putString(Constants.USERNAME, jsonObject.getString(Constants.USERNAME));
+						editor.putString(Constants.AUTHCODE, jsonResponseObject.getString(Constants.AUTHCODE));
+						editor.putString(Constants.USERTYPE, jsonResponseObject.getString(Constants.USERTYPE));
+						editor.putString(Constants.USERNAME, jsonResponseObject.getString(Constants.USERNAME));
 						editor.putString(Constants.TEAMLEADERCONTACTNUMBER, Constants.TEAMLEADERCONTACTNUMBER);
 						editor.commit();
+
+						Calendar cal = Calendar.getInstance();
+						cal.add(Calendar.SECOND, 10);
+						Intent intent = new Intent(LoginActivity.this, GpsService.class);
+						PendingIntent pintent = PendingIntent.getService(LoginActivity.this, RQS, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+						AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+						alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10 * 60 * 1000, pintent);
+
 						if (roleType.equals("TSE")) {
 							startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
 							overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
@@ -225,8 +259,6 @@ public class LoginActivity extends ActionBarActivity {
 							overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
 						}
 
-					} else if (jsonObject.has("errorMessage")) {
-						Toast.makeText(LoginActivity.this, "Please Login again with Correct credentials", Toast.LENGTH_LONG).show();
 					}
 				}
 				wr.close();
@@ -241,6 +273,13 @@ public class LoginActivity extends ActionBarActivity {
 	@Override
 	public void onResume() {
 		super.onResume();
-		overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+	}
+
+	public static void stopAlarmManagerService(Context context) {
+		Intent intent = new Intent(context, GpsService.class);
+		AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
+		// cancelling the request
+		alarmManager.cancel(PendingIntent.getService(context, RQS, intent, PendingIntent.FLAG_UPDATE_CURRENT));
 	}
 }

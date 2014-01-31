@@ -19,6 +19,8 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -26,20 +28,18 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.tracer.R;
+import com.tracer.activity.login.LoginActivity;
+import com.tracer.util.Constants;
 import com.tracer.util.Prefs;
 
 public class RunnersActivity extends ActionBarActivity {
 
 	ArrayList<HashMap<String, Object>> runnersDataList;
 	SharedPreferences prefs;
-	String userName;
 	RunnerAdapter runnerAdapter;
 	ListView runnersList;
 	Context context = this;
-	String[] runners;
-	String[] status;
-	String[] runnersContacts;
-	String[] runnersCafs;
+	String authCode;
 
 	JSONObject jsonObject;
 	Editor editor;
@@ -51,14 +51,10 @@ public class RunnersActivity extends ActionBarActivity {
 		setContentView(R.layout.activity_runners_list);
 
 		prefs = Prefs.get(this);
-		userName = prefs.getString("user", null);
-
-		runners = getResources().getStringArray(R.array.runners_names_array);
-		status = getResources().getStringArray(R.array.runners_status_array);
-		runnersContacts = getResources().getStringArray(R.array.runners_contacts_array);
-		runnersCafs = getResources().getStringArray(R.array.runners_cafs_array);
+		authCode = prefs.getString(Constants.AUTHCODE, null);
 
 		runnersList = (ListView) findViewById(R.id.runners_list);
+		new RetreiveBeatPlanResponse().execute(authCode);
 
 		/**
 		 * Called when the user selects any of the item from the list view.
@@ -67,16 +63,40 @@ public class RunnersActivity extends ActionBarActivity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-				String runnerStatus = status[position];
-				if (runnerStatus.equalsIgnoreCase("absent")) {
+				String runnerStatus = (String) runnersDataList.get(position).get(Constants.IS_PRESENT);
+				if (runnerStatus.equalsIgnoreCase("false")) {
 					startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-					overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+					overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
 				} else {
 					Toast.makeText(getApplicationContext(), "Active", Toast.LENGTH_LONG).show();
 				}
 			}
 		});
 
+	}
+
+	/**
+	 * Method for creating Menus in the current View
+	 */
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		getMenuInflater().inflate(R.menu.main, menu);
+		MenuItem item = menu.findItem(R.id.home_button);
+		item.setVisible(false);
+		return true;
+	}
+
+	/**
+	 * Action to be performed when the clicked on Menu icons.
+	 */
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		if (item.getItemId() == R.id.logout) {
+			LoginActivity.stopAlarmManagerService(getApplicationContext());
+			startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+		}
+		return true;
 	}
 
 	class RetreiveBeatPlanResponse extends AsyncTask<String, Void, String> {
@@ -96,7 +116,7 @@ public class RunnersActivity extends ActionBarActivity {
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			pDialog.dismiss();
-			runnerAdapter = new RunnerAdapter(context, runners, status, runnersContacts, runnersCafs);
+			runnerAdapter = new RunnerAdapter(context, runnersDataList);
 			runnersList.setAdapter(runnerAdapter);
 		}
 
@@ -110,8 +130,8 @@ public class RunnersActivity extends ActionBarActivity {
 
 				System.out.println(urls[0]);
 				jsonObject = new JSONObject();
-				jsonObject.put("authCode", urls[0]);
-				String baseURL = "http://192.168.80.100:8080/TraceR_WS/GetRunners/";
+				jsonObject.put(Constants.AUTHCODE, urls[0]);
+				String baseURL = Constants.WEBSERVICE_BASE_URL + "GetRunners/";
 				URL url = new URL(baseURL + jsonObject);
 				URLConnection conn = url.openConnection();
 				conn.setDoOutput(true);
@@ -128,18 +148,18 @@ public class RunnersActivity extends ActionBarActivity {
 					JSONObject jsonObject = new JSONObject(line);
 					System.out.println(jsonObject.toString());
 
-					JSONArray runnerObject = jsonObject.getJSONArray("runners");
+					JSONArray runnerObject = jsonObject.getJSONArray(Constants.RUNNERS);
 					System.out.println(runnerObject);
 
 					runnersDataList = new ArrayList<HashMap<String, Object>>();
 					for (int i = 0; i < runnerObject.length(); i++) {
 						HashMap<String, Object> map = new HashMap<String, Object>();
 						JSONObject distObject = runnerObject.getJSONObject(i);
-						map.put("contactNumber", distObject.getString("contactNumber"));
-						map.put("CAFCount", distObject.getString("CAFCount"));
-						map.put("runnerName", distObject.getString("runnerName"));
-						map.put("isPresent", distObject.getString("isPresent"));
-						map.put("runnerCode", distObject.getString("runnerCode"));
+						map.put(Constants.CONTACT_NUMBER, distObject.getString(Constants.CONTACT_NUMBER));
+						map.put(Constants.CAFCOUNT, distObject.getString(Constants.CAFCOUNT));
+						map.put(Constants.RUNNERNAME, distObject.getString(Constants.RUNNERNAME));
+						map.put(Constants.IS_PRESENT, distObject.getString(Constants.IS_PRESENT));
+						map.put(Constants.RUNNERCODE, distObject.getString(Constants.RUNNERCODE));
 						runnersDataList.add(map);
 					}
 

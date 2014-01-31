@@ -224,7 +224,7 @@ public class GpsTracker extends Service implements LocationListener {
 
 			return addressLine;
 		} else {
-			return null;
+			return "Unable to Track position";
 		}
 	}
 

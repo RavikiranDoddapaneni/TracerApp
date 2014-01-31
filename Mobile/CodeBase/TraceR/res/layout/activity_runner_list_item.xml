@@ -8,7 +8,7 @@
 
     <TextView
         android:id="@+id/item_runner_name"
-        android:layout_width="80dp"
+        android:layout_width="75dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
@@ -18,7 +18,7 @@
 
     <TextView
         android:id="@+id/item_runner_total_cafs"
-        android:layout_width="wrap_content"
+        android:layout_width="30dp"
         android:layout_height="wrap_content"
         android:layout_alignBaseline="@+id/item_runner_status"
         android:layout_alignBottom="@+id/item_runner_status"
@@ -43,7 +43,7 @@
         android:layout_width="20dp"
         android:layout_height="20dp"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="25dp"
         android:layout_toRightOf="@+id/item_runner_total_cafs"
         android:src="@drawable/ic_phonecall" />
 

@@ -60,6 +60,7 @@
             android:layout_alignLeft="@+id/dist_name"
             android:layout_alignRight="@+id/dist_name"
             android:ems="10"
+            android:lines="1"
             android:textColor="@color/white"
             android:textSize="15sp" />
 

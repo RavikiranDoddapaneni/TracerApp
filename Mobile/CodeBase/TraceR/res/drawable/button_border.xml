@@ -8,9 +8,9 @@
 
     <stroke
         android:width="0.5dp"
-        android:color="@color/grey_button" />
+        android:color="#E2E2E2" />
 
-    <corners android:radius="8dip" />
+    <corners android:radius="2dp" />
 
     <padding
         android:bottom="10dp"

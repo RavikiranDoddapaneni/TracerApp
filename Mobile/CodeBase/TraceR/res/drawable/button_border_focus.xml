@@ -3,14 +3,14 @@
 
     <gradient
         android:angle="270"
-        android:endColor="@color/buttons_bg_selected"
-        android:startColor="@color/buttons_bg_selected" />
+        android:endColor="@color/black"
+        android:startColor="@color/black" />
 
     <stroke
         android:width="0.5dp"
-        android:color="@color/grey_button" />
+        android:color="@color/red" />
 
-    <corners android:radius="8dip" />
+    <corners android:radius="2dp" />
 
     <padding
         android:bottom="10dp"

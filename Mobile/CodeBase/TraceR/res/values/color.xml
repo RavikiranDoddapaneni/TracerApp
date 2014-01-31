@@ -70,6 +70,12 @@
     <color name="dark_blue_three">#25294C</color>
     <color name="actionbar_start_color">#202048</color>
     <color name="actionbar_end_color">#404182</color>
+    <color name="divider_color">#F1F1F1</color>
+    <color name="list_view_item_text_color">#324148</color>
+    <color name="list_view_divider_color">#DEE2E3</color>
+    <color name="caf_header_color"> #01A89E</color>
+    <color name="caf_sub_header_color"> #7BCBC8</color>
+    <color name="caf_edit_text_hint_color"> #D0D0D0</color>
 
     <!-- Custom Colors -->
     <color name="light_green_one">#55B1AD</color>
@@ -81,12 +87,12 @@
     <color name="listview_header_color_gold">#B5AA50</color>
     <color name="login_button_blue_color">#004989</color>
     <color name="login_button_blue_select_color">#082E51</color>
-    <color name="action_bar_bg">#223D56</color>
+    <color name="action_bar_bg">#1576A1</color>
     <color name="ligth_green_two">#9FB0B5</color>
     <color name="ligth_green_two_selected">#808C90</color>
     <color name="buttons_bg">#005784</color>
     <color name="buttons_bg_selected">#243D70</color>
-    <color name="list_view_item_unselected">#457096</color>
+    <color name="list_view_item_unselected">#ECF0F1</color>
     <color name="list_view_item_selected">#678AD0</color>
     <color name="caf_button_unselect">#007D70</color>
     <color name="caf_button_select">#093F38</color>

@@ -23,8 +23,10 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.tracer.R;
+import com.tracer.activity.login.LoginActivity;
 import com.tracer.activity.runner.RunnerHomeActivity;
 import com.tracer.activity.runner.RunnersActivity;
+import com.tracer.util.Constants;
 import com.tracer.util.Prefs;
 
 public class DigitalSignatureActivity extends ActionBarActivity implements OnGesturePerformedListener {
@@ -32,7 +34,8 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	Context context = this;
 	ActionBar actionBar;
 	SharedPreferences prefs;
-	String userName;
+	String userType;
+	Bundle bundle;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -40,8 +43,11 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_digital_signature);
 
+		bundle = new Bundle();
+		bundle = getIntent().getExtras();
+
 		prefs = Prefs.get(this);
-		userName = prefs.getString("user", null);
+		userType = prefs.getString(Constants.USERTYPE, null);
 
 		actionBar = getSupportActionBar();
 		gestureOverlayView = (GestureOverlayView) findViewById(R.id.gestures);
@@ -94,18 +100,23 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	public boolean onOptionsItemSelected(MenuItem item) {
 		if (item.getItemId() == android.R.id.home) {
 			finish();
-			startActivity(new Intent(getApplicationContext(), NewCAFActivity.class));
+			startActivity(new Intent(getApplicationContext(), NewCAFActivity.class).putExtras(bundle));
 			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
 		} else if (item.getItemId() == R.id.home_button) {
-			if (userName.equalsIgnoreCase("manager")) {
+			if (userType.equalsIgnoreCase("TSM")) {
 				startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
-			} else if (userName.equalsIgnoreCase("teamleader")) {
+			} else if (userType.equalsIgnoreCase("TSM")) {
 				startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
-			} else if (userName.equalsIgnoreCase("runner")) {
+			} else if (userType.equalsIgnoreCase("TSE")) {
 				startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
 			}
 			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+		} else if (item.getItemId() == R.id.logout) {
+			LoginActivity.stopAlarmManagerService(getApplicationContext());
+			startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
 		}
+
 		return true;
 	}
 
@@ -118,7 +129,7 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	 */
 	public File saveBitmap(Bitmap bitmap) {
 
-		File cachePath = new File(context.getExternalCacheDir() + "/" + "Fins");
+		File cachePath = new File(context.getCacheDir() + "/" + "TraceR");
 		if (!cachePath.exists()) {
 			cachePath.mkdir();
 		}

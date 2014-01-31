@@ -26,9 +26,9 @@
     <string name="runner_name">Runner Name </string>
     <string name="total_cafs">Total CAFs :</string>
     <string name="total_caf">Total CAFs</string>
-    <string name="accepted_cafs">Accepted CAFs :</string>
-    <string name="rejected_cafs">Rejected CAFs :</string>
-    <string name="returned_cafs">Returned CAFs :</string>
+    <string name="accepted_cafs">Accepted CAFs </string>
+    <string name="rejected_cafs">Rejected CAFs </string>
+    <string name="returned_cafs">Returned CAFs </string>
     <string name="done">Done</string>
     <string name="reset">Reset</string>
     <string name="view_beat_plan">View Beat Plan</string>
@@ -36,10 +36,11 @@
     <string name="submit">Submit</string>
     <string name="save">Save</string>
     <string name="distributor">Distributor Name</string>
+    <string name="distributor_details">Distributor Details</string>
     <string name="total_visits">Total Visits</string>
     <string name="visits_frequency">Visit Freq</string>
     <string name="pending_visits">Pending Visits</string>
-    <string name="visits">Visits :</string>
+    <string name="visits">Visits </string>
     <string name="status">Status</string>
     <string name="distributors">Distributors</string>
     <string name="runners">Runners</string>
@@ -54,6 +55,9 @@
     <string name="scan">Scan</string>
     <string name="caf_details">CAF Details</string>
     <string name="scan_barcode">Scan Barcode</string>
+    <string name="home">Home</string>
+    <string name="logout">Logout</string>
+    <string name="menu">Menu</string>
 
     <string-array name="team_leaders_names">
         <item>Bhargav</item>

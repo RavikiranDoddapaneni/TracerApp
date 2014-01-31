@@ -2,13 +2,13 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_item_layout"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="30dp"
     android:background="@drawable/list_item_background"
     android:orientation="vertical" >
 
     <TextView
         android:id="@+id/item_beat_plan_distributor_name"
-        android:layout_width="60dp"
+        android:layout_width="80dp"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_centerVertical="true"
@@ -16,7 +16,8 @@
         android:ellipsize="end"
         android:singleLine="true"
         android:text="sampleasdddddddddasffasfafsa"
-        android:textColor="@color/white" />
+        android:textColor="@color/list_view_item_text_color"
+        android:textSize="12sp" />
 
     <Button
         android:id="@+id/collect_CAF"
@@ -39,20 +40,22 @@
         android:layout_width="60dp"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/collect_CAF"
-        android:layout_marginLeft="26dp"
+        android:layout_marginLeft="23dp"
         android:layout_toRightOf="@+id/item_beat_plan_distributor_name"
         android:text="11.45 Am"
-        android:textColor="@color/white" />
+        android:textColor="@color/list_view_item_text_color"
+        android:textSize="12sp" />
 
     <TextView
         android:id="@+id/item_beat_plan_distributor_visits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/collect_CAF"
-        android:layout_marginRight="44dp"
+        android:layout_marginRight="30dp"
         android:layout_toLeftOf="@+id/collect_CAF"
         android:gravity="center_vertical|center"
         android:text="2"
-        android:textColor="@color/white" />
+        android:textColor="@color/list_view_item_text_color"
+        android:textSize="12sp" />
 
 </RelativeLayout>

@@ -1,5 +1,8 @@
 package com.tracer.activity.runner;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import android.content.ActivityNotFoundException;
 import android.content.Context;
 import android.content.Intent;
@@ -12,29 +15,23 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.tracer.R;
+import com.tracer.util.Constants;
 
 public class RunnerAdapter extends BaseAdapter {
 
 	Context mContext;
-	String[] runnersNames;
-	String[] runnerStatus;
-	String[] runnerContacts;
-	String[] runnerCafs;
+	ArrayList<HashMap<String, Object>> runnersDataList;
 
-	public RunnerAdapter(Context context, String[] runners, String[] status, String[] runnersContacts, String[] runnersCafs) {
+	public RunnerAdapter(Context context, ArrayList<HashMap<String, Object>> runnersDataList) {
 		this.mContext = context;
-		this.runnersNames = runners;
-		this.runnerStatus = status;
-		this.runnerContacts = runnersContacts;
-		this.runnerCafs = runnersCafs;
+		this.runnersDataList = runnersDataList;
 	}
 
 	@Override
 	public int getCount() {
-		return runnersNames.length;
+		return runnersDataList.size();
 	}
 
 	@Override
@@ -67,10 +64,9 @@ public class RunnerAdapter extends BaseAdapter {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(mContext, "Call Runner" + runnerContacts[position], Toast.LENGTH_LONG).show();
 				try {
 					Intent callIntent = new Intent(Intent.ACTION_CALL);
-					callIntent.setData(Uri.parse("tel:" + runnerContacts[position]));
+					callIntent.setData(Uri.parse("tel:" + runnersDataList.get(position).get(Constants.CONTACT_NUMBER).toString()));
 					mContext.startActivity(callIntent);
 				} catch (ActivityNotFoundException activityException) {
 					Log.e("dialing-example", "Call failed", activityException);
@@ -85,17 +81,16 @@ public class RunnerAdapter extends BaseAdapter {
 
 			@Override
 			public void onClick(View v) {
-				Toast.makeText(mContext, "Message Runner" + runnerContacts[position], Toast.LENGTH_LONG).show();
 				Intent smsIntent = new Intent(Intent.ACTION_VIEW);
-				smsIntent.putExtra("address", runnerContacts[position]);
+				smsIntent.putExtra("address", runnersDataList.get(position).get(Constants.CONTACT_NUMBER).toString());
 				smsIntent.setType("vnd.android-dir/mms-sms");
 				mContext.startActivity(smsIntent);
 			}
 		});
 
-		runner_name.setText(runnersNames[position]);
-		runner_status.setText(runnerStatus[position]);
-		runner_cafs.setText(runnerCafs[position]);
+		runner_name.setText(runnersDataList.get(position).get(Constants.RUNNERNAME).toString());
+		runner_status.setText(runnersDataList.get(position).get(Constants.IS_PRESENT).toString());
+		runner_cafs.setText(runnersDataList.get(position).get(Constants.CAFCOUNT).toString());
 
 		return view;
 	}

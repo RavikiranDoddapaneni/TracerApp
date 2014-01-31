@@ -14,6 +14,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,6 +35,7 @@ public class BeatPlanAdapter extends BaseAdapter {
 	ArrayList<HashMap<String, Object>> distributorsList;
 	JSONObject jsonObject;
 	SharedPreferences preferences;
+	Editor editor;
 	String visitCount;
 	String visitId;
 
@@ -71,9 +73,9 @@ public class BeatPlanAdapter extends BaseAdapter {
 
 		Button collect_caf = (Button) view.findViewById(R.id.collect_CAF);
 
-		distributor_name.setText(distributorsList.get(position).get("distributorName").toString());
-		distributor_visits.setText(distributorsList.get(position).get("visitFrequency").toString());
-		distributor_codes.setText(distributorsList.get(position).get("scheduleTime").toString());
+		distributor_name.setText(distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
+		distributor_visits.setText(distributorsList.get(position).get(Constants.VISITFREQUENCY).toString());
+		distributor_codes.setText(distributorsList.get(position).get(Constants.SCHEDULETIME).toString());
 
 		collect_caf.setOnClickListener(new OnClickListener() {
 
@@ -88,9 +90,9 @@ public class BeatPlanAdapter extends BaseAdapter {
 							preferences = Prefs.get(mContext);
 							preferences.getString(Constants.AUTHCODE, "");
 							jsonObject = new JSONObject();
-							jsonObject.put("authCode", preferences.getString(Constants.AUTHCODE, ""));
-							jsonObject.put("distributorCode", distributorsList.get(position).get("distributorCode").toString());
-							String baseURL = "http://192.168.80.100:8080/TraceR_WS/GetVisitInfo/";
+							jsonObject.put(Constants.AUTHCODE, preferences.getString(Constants.AUTHCODE, ""));
+							jsonObject.put(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE).toString());
+							String baseURL = Constants.WEBSERVICE_BASE_URL + "GetVisitInfo/";
 							URL url = new URL(baseURL + jsonObject);
 							conn = url.openConnection();
 							conn.setDoOutput(true);
@@ -106,9 +108,22 @@ public class BeatPlanAdapter extends BaseAdapter {
 								JSONObject jsonObject = new JSONObject(line);
 								System.out.println(jsonObject.toString());
 
-								visitCount = jsonObject.getString("visitCount");
-								visitId = jsonObject.getString("visitCode");
+								visitCount = jsonObject.getString(Constants.VISITCOUNT);
+								visitId = jsonObject.getString(Constants.VISITCODE);
 							}
+
+							Bundle runnerBundle = new Bundle();
+							runnerBundle.putString(Constants.DISTRIBUTORNAME, distributorsList.get(position).get(Constants.DISTRIBUTORNAME)
+									.toString());
+							runnerBundle.putString(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE)
+									.toString());
+							runnerBundle.putString(Constants.VISITCOUNT, visitCount);
+							runnerBundle.putString(Constants.VISITCODE, visitId);
+							Intent intent = new Intent(mContext, NewCAFActivity.class);
+							intent.putExtras(runnerBundle);
+							mContext.startActivity(intent);
+							((Activity) mContext).overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+
 						} catch (Exception e) {
 							// TODO Auto-generated catch block
 							e.printStackTrace();
@@ -117,15 +132,6 @@ public class BeatPlanAdapter extends BaseAdapter {
 					}
 				}).start();
 
-				Bundle runnerBundle = new Bundle();
-				runnerBundle.putString("dist_name", distributorsList.get(position).get("distributorName").toString());
-				runnerBundle.putString("dist_code", distributorsList.get(position).get("distributorCode").toString());
-				runnerBundle.putString("visit_count", visitCount);
-				runnerBundle.putString("visit_id", visitId);
-				Intent intent = new Intent(mContext, NewCAFActivity.class);
-				intent.putExtras(runnerBundle);
-				mContext.startActivity(intent);
-				((Activity) mContext).overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
 			}
 		});
 

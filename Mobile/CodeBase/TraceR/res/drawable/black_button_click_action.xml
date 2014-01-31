@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <item android:drawable="@drawable/button_select" android:state_pressed="true"/>
-    <item android:drawable="@drawable/button_unselect"/>
+    <item android:drawable="@drawable/collect_btn_over" android:state_pressed="true"/>
+    <item android:drawable="@drawable/collect_btn"/>
 
 </selector>

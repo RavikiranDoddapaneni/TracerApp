@@ -8,61 +8,88 @@
 
     <RelativeLayout
         android:id="@+id/login_block"
-        android:layout_width="wrap_content"
-        android:layout_height="400dp"
-        android:layout_alignParentBottom="true"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
         android:visibility="gone" >
 
-        <EditText
-            android:id="@+id/login_password"
+        <RelativeLayout
+            android:id="@+id/login_block1"
             android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_alignLeft="@+id/login_username"
-            android:layout_alignRight="@+id/login_username"
-            android:layout_centerVertical="true"
-            android:background="@drawable/button_border"
-            android:ems="10"
-            android:hint="@string/password"
-            android:inputType="textPassword"
-            android:singleLine="true"
-            android:textColorHint="@color/black"
-            android:textSize="14sp" >
-        </EditText>
+            android:layout_height="80dp"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:background="@color/white"
+            android:visibility="visible" >
 
-        <Button
-            android:id="@+id/login"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_alignLeft="@+id/login_password"
-            android:layout_alignRight="@+id/login_password"
-            android:layout_below="@+id/login_password"
-            android:layout_marginTop="22dp"
-            android:background="@drawable/blue_button_click_action"
-            android:onClick="login"
-            android:text="@string/login"
-            android:textColor="@color/white"
-            android:textSize="13sp"
-            android:textStyle="bold" />
+            <EditText
+                android:id="@+id/login_username"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_above="@+id/login_password"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/button_border"
+                android:drawableLeft="@drawable/usericon"
+                android:drawablePadding="20dp"
+                android:ems="10"
+                android:hint="@string/username"
+                android:inputType="textEmailAddress"
+                android:paddingLeft="10dp"
+                android:textColorHint="#999999"
+                android:textSize="14sp" />
 
-        <EditText
-            android:id="@+id/login_username"
-            android:layout_width="wrap_content"
-            android:layout_height="40dp"
-            android:layout_above="@+id/login_password"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentRight="true"
-            android:layout_marginBottom="26dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginRight="15dp"
-            android:background="@drawable/button_border"
-            android:ems="10"
-            android:hint="@string/username"
-            android:inputType="textEmailAddress"
-            android:textColorHint="@color/black"
-            android:textSize="14sp" />
-        <requestFocus />
+            <EditText
+                android:id="@+id/login_password"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignLeft="@+id/login_username"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@+id/login_username"
+                android:background="@drawable/button_border_bottom"
+                android:drawableLeft="@drawable/passicon"
+                android:drawablePadding="20dp"
+                android:ems="10"
+                android:hint="@string/password"
+                android:inputType="textPassword"
+                android:singleLine="true"
+                android:textColorHint="#999999"
+                android:textSize="14sp" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginRight="10dp"
+                android:background="@color/divider_color" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/login_block1"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="15dp" >
+
+            <Button
+                android:id="@+id/login"
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentRight="true"
+                android:background="@drawable/blue_button_click_action"
+                android:onClick="login"
+                android:text="@string/login"
+                android:textColor="@color/white"
+                android:textSize="13sp"
+                android:textStyle="bold" />
+        </RelativeLayout>
     </RelativeLayout>
 
     <ImageView
@@ -70,7 +97,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
         android:layout_centerVertical="true"
-        android:src="@drawable/rtlogo" />
+        android:src="@drawable/tracer_final_logo" />
 
 </RelativeLayout>
