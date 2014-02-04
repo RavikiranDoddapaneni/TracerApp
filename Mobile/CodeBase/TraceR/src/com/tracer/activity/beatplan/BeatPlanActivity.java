@@ -1,13 +1,16 @@
 package com.tracer.activity.beatplan;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -18,10 +21,12 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
 
+import com.testflightapp.lib.TestFlight;
 import com.tracer.R;
 import com.tracer.activity.login.LoginActivity;
 import com.tracer.activity.runner.RunnerHomeActivity;
@@ -42,6 +47,7 @@ public class BeatPlanActivity extends ActionBarActivity {
 
 	JSONObject jsonObject;
 	Editor editor;
+	private static final String TAG = "BeatPlanActivity";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -112,50 +118,49 @@ public class BeatPlanActivity extends ActionBarActivity {
 
 		protected String doInBackground(String... urls) {
 			try {
-
+				TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse()");
 				System.out.println(urls[0]);
-				jsonObject = new JSONObject();
-				jsonObject.put(Constants.AUTHCODE, urls[0]);
-				String baseURL = Constants.WEBSERVICE_BASE_URL + "GetBeatPlan/";
-				URL url = new URL(baseURL + jsonObject);
-				URLConnection conn = url.openConnection();
-				conn.setDoOutput(true);
-				OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-				wr.write(baseURL);
-				wr.flush();
+				HttpClient client = new DefaultHttpClient();
+				HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+				HttpResponse response;
+				HttpGet get = new HttpGet(Constants.WEBSERVICE_BASE_URL + "beatplans/get/" + urls[0]);
+				response = client.execute(get);
 
-				// Get the response
-				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				String line;
-				while ((line = rd.readLine()) != null) {
-					// Process line...
-					System.out.println("line ::::: " + line);
-					JSONObject jsonObject = new JSONObject(line);
-					System.out.println(jsonObject.toString());
+				if (response != null) {
+					InputStream in = response.getEntity().getContent();
+					BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+					String line;
+					while ((line = rd.readLine()) != null) {
+						// Process line...
+						System.out.println("line ::::: " + line);
+						JSONObject jsonObject = new JSONObject(line);
+						System.out.println(jsonObject.toString());
 
-					JSONArray distributorObject = jsonObject.getJSONArray(Constants.DISTRIBUTORS);
-					System.out.println(distributorObject);
+						JSONArray distributorObject = jsonObject.getJSONArray(Constants.DISTRIBUTORS);
+						System.out.println(distributorObject);
 
-					distributorsList = new ArrayList<HashMap<String, Object>>();
-					for (int i = 0; i < distributorObject.length(); i++) {
-						HashMap<String, Object> map = new HashMap<String, Object>();
-						JSONObject distObject = distributorObject.getJSONObject(i);
-						map.put(Constants.DISTRIBUTORNAME, distObject.getString(Constants.DISTRIBUTORNAME));
-						map.put(Constants.DISTRIBUTORCODE, distObject.getString(Constants.DISTRIBUTORCODE));
-						map.put(Constants.SCHEDULETIME, distObject.getString(Constants.SCHEDULETIME));
-						map.put(Constants.VISITFREQUENCY, distObject.getString(Constants.VISITFREQUENCY));
-						distributorsList.add(map);
+						distributorsList = new ArrayList<HashMap<String, Object>>();
+						for (int i = 0; i < distributorObject.length(); i++) {
+							HashMap<String, Object> map = new HashMap<String, Object>();
+							JSONObject distObject = distributorObject.getJSONObject(i);
+							map.put(Constants.DISTRIBUTORNAME, distObject.getString(Constants.DISTRIBUTORNAME));
+							map.put(Constants.DISTRIBUTORCODE, distObject.getString(Constants.DISTRIBUTORCODE));
+							map.put(Constants.SCHEDULETIME, distObject.getString(Constants.SCHEDULETIME));
+							map.put(Constants.VISITFREQUENCY, distObject.getString(Constants.VISITFREQUENCY));
+							distributorsList.add(map);
+						}
+
+						System.out.println("Distributor List :" + distributorsList.toString());
+
 					}
-
-					System.out.println("Distributor List :" + distributorsList.toString());
-
+					rd.close();
+					TestFlight.passCheckpoint("BeatPlanActivity.RetreiveBeatPlanResponse()");
 				}
-				wr.close();
-				rd.close();
-				return line;
 			} catch (Exception e) {
-				return null;
+				TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse() catch Exception " + e.getMessage());
+				Log.e(TAG, "BeatPlanActivity.RetreiveBeatPlanResponse():" + e.getMessage());
 			}
+			return authCode;
 		}
 
 		@Override

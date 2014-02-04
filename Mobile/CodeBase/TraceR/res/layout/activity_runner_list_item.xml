@@ -2,7 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/list_item_layout_tl"
     android:layout_width="match_parent"
-    android:layout_height="40dp"
+    android:layout_height="30dp"
     android:background="@drawable/list_item_background"
     android:orientation="vertical" >
 
@@ -14,7 +14,7 @@
         android:layout_centerVertical="true"
         android:layout_marginLeft="10dp"
         android:text="@string/button_google_shopper"
-        android:textColor="@color/white" />
+        android:textColor="@color/list_view_item_text_color" />
 
     <TextView
         android:id="@+id/item_runner_total_cafs"
@@ -25,7 +25,7 @@
         android:layout_marginLeft="24dp"
         android:layout_toRightOf="@+id/item_runner_status"
         android:text="32"
-        android:textColor="@color/white" />
+        android:textColor="@color/list_view_item_text_color" />
 
     <TextView
         android:id="@+id/item_runner_status"
@@ -36,7 +36,7 @@
         android:layout_toRightOf="@+id/item_runner_name"
         android:gravity="center_vertical|center"
         android:text="@string/button_google_shopper"
-        android:textColor="@color/white" />
+        android:textColor="@color/list_view_item_text_color" />
 
     <ImageView
         android:id="@+id/callRunner"

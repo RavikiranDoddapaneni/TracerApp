@@ -1,13 +1,16 @@
 package com.tracer.activity.runner;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -19,6 +22,7 @@ import android.content.SharedPreferences.Editor;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +31,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.testflightapp.lib.TestFlight;
 import com.tracer.R;
 import com.tracer.activity.login.LoginActivity;
 import com.tracer.util.Constants;
@@ -43,13 +48,14 @@ public class RunnersActivity extends ActionBarActivity {
 
 	JSONObject jsonObject;
 	Editor editor;
+	private static final String TAG = "RunnersActivity";
 
 	/** Called when the activity is first created. */
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		TestFlight.log("RunnersActivity.onCreate()");
 		setContentView(R.layout.activity_runners_list);
-
 		prefs = Prefs.get(this);
 		authCode = prefs.getString(Constants.AUTHCODE, null);
 
@@ -63,6 +69,7 @@ public class RunnersActivity extends ActionBarActivity {
 
 			@Override
 			public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
+				TestFlight.log("RunnersActivity.runnerlist.setOnItemClickListener()");
 				String runnerStatus = (String) runnersDataList.get(position).get(Constants.IS_PRESENT);
 				if (runnerStatus.equalsIgnoreCase("false")) {
 					startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
@@ -72,7 +79,7 @@ public class RunnersActivity extends ActionBarActivity {
 				}
 			}
 		});
-
+		TestFlight.passCheckpoint("RunnersActivity.runnerlist.setOnItemClickListener()");
 	}
 
 	/**
@@ -103,16 +110,6 @@ public class RunnersActivity extends ActionBarActivity {
 		private ProgressDialog pDialog;
 
 		@Override
-		protected void onCancelled() {
-			super.onCancelled();
-		}
-
-		@Override
-		protected void onCancelled(String result) {
-			super.onCancelled(result);
-		}
-
-		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			pDialog.dismiss();
@@ -120,58 +117,51 @@ public class RunnersActivity extends ActionBarActivity {
 			runnersList.setAdapter(runnerAdapter);
 		}
 
-		@Override
-		protected void onProgressUpdate(Void... values) {
-			super.onProgressUpdate(values);
-		}
-
 		protected String doInBackground(String... urls) {
 			try {
-
+				TestFlight.log("RunnersActivity.RetreiveBeatPlanResponse()");
 				System.out.println(urls[0]);
-				jsonObject = new JSONObject();
-				jsonObject.put(Constants.AUTHCODE, urls[0]);
-				String baseURL = Constants.WEBSERVICE_BASE_URL + "GetRunners/";
-				URL url = new URL(baseURL + jsonObject);
-				URLConnection conn = url.openConnection();
-				conn.setDoOutput(true);
-				OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-				wr.write(baseURL);
-				wr.flush();
+				HttpClient client = new DefaultHttpClient();
+				HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+				HttpResponse response;
+				HttpGet get = new HttpGet(Constants.WEBSERVICE_BASE_URL + "user/runners/get/" + urls[0]);
+				response = client.execute(get);
+				if (response != null) {
+					InputStream in = response.getEntity().getContent();
+					BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+					String line;
+					while ((line = rd.readLine()) != null) {
+						// Process line...
+						System.out.println("line ::::: " + line);
+						JSONObject jsonObject = new JSONObject(line);
+						System.out.println(jsonObject.toString());
 
-				// Get the response
-				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				String line;
-				while ((line = rd.readLine()) != null) {
-					// Process line...
-					System.out.println("line ::::: " + line);
-					JSONObject jsonObject = new JSONObject(line);
-					System.out.println(jsonObject.toString());
+						JSONArray runnerObject = jsonObject.getJSONArray(Constants.RUNNERS);
+						System.out.println(runnerObject);
 
-					JSONArray runnerObject = jsonObject.getJSONArray(Constants.RUNNERS);
-					System.out.println(runnerObject);
+						runnersDataList = new ArrayList<HashMap<String, Object>>();
+						for (int i = 0; i < runnerObject.length(); i++) {
+							HashMap<String, Object> map = new HashMap<String, Object>();
+							JSONObject distObject = runnerObject.getJSONObject(i);
+							map.put(Constants.CONTACT_NUMBER, distObject.getString(Constants.CONTACT_NUMBER));
+							map.put(Constants.CAFCOUNT, distObject.getString(Constants.CAFCOUNT));
+							map.put(Constants.RUNNERNAME, distObject.getString(Constants.RUNNERNAME));
+							map.put(Constants.IS_PRESENT, distObject.getString(Constants.IS_PRESENT));
+							map.put(Constants.RUNNERCODE, distObject.getString(Constants.RUNNERCODE));
+							runnersDataList.add(map);
+						}
 
-					runnersDataList = new ArrayList<HashMap<String, Object>>();
-					for (int i = 0; i < runnerObject.length(); i++) {
-						HashMap<String, Object> map = new HashMap<String, Object>();
-						JSONObject distObject = runnerObject.getJSONObject(i);
-						map.put(Constants.CONTACT_NUMBER, distObject.getString(Constants.CONTACT_NUMBER));
-						map.put(Constants.CAFCOUNT, distObject.getString(Constants.CAFCOUNT));
-						map.put(Constants.RUNNERNAME, distObject.getString(Constants.RUNNERNAME));
-						map.put(Constants.IS_PRESENT, distObject.getString(Constants.IS_PRESENT));
-						map.put(Constants.RUNNERCODE, distObject.getString(Constants.RUNNERCODE));
-						runnersDataList.add(map);
+						System.out.println("Runners Data List :" + runnersDataList.toString());
 					}
-
-					System.out.println("Runners Data List :" + runnersDataList.toString());
-
+					rd.close();
 				}
-				wr.close();
-				rd.close();
-				return line;
+
+				TestFlight.passCheckpoint("RunnersActivity.RetreiveBeatPlanResponse()");
 			} catch (Exception e) {
-				return null;
+				TestFlight.log("RunnersActivity.RetreiveBeatPlanResponse() catch Exception " + e.getMessage());
+				Log.e(TAG, "RunnersActivity.RetreiveBeatPlanResponse():" + e.getMessage());
 			}
+			return authCode;
 		}
 
 		@Override

@@ -8,12 +8,15 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.testflightapp.lib.TestFlight;
 import com.tracer.R;
 import com.tracer.activity.beatplan.BeatPlanActivity;
 import com.tracer.activity.login.LoginActivity;
 import com.tracer.util.Constants;
 import com.tracer.util.Prefs;
+import com.tracer.util.Utils;
 
 public class RunnerHomeActivity extends ActionBarActivity {
 
@@ -29,6 +32,7 @@ public class RunnerHomeActivity extends ActionBarActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		TestFlight.log("RunnerHomeActivity.onCreate()");
 		setContentView(R.layout.activity_runner_home);
 
 		welcomeText = (TextView) findViewById(R.id.welcomeText);
@@ -46,6 +50,7 @@ public class RunnerHomeActivity extends ActionBarActivity {
 			welcomeText.setText("Welcome " + userName);
 			userTypeDisplay.setText("You are logged in as TeamLeader");
 		}
+		TestFlight.passCheckpoint("RunnerHomeActivity.onCreate()");
 	}
 
 	/**
@@ -84,8 +89,13 @@ public class RunnerHomeActivity extends ActionBarActivity {
 	 * @param view
 	 */
 	public void getBeatPlan(View view) {
-		startActivity(new Intent(getApplicationContext(), BeatPlanActivity.class));
-		overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+		TestFlight.log("RunnerHomeActivity.getBeatPlan()");
+		if (Utils.getConnectivityStatusString(getApplicationContext())) {
+			startActivity(new Intent(getApplicationContext(), BeatPlanActivity.class));
+			overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+		} else {
+			Toast.makeText(getApplicationContext(), R.string.check_network_connection, Toast.LENGTH_LONG).show();
+		}
+		TestFlight.passCheckpoint("RunnerHomeActivity.getBeatPlan()");
 	}
-
 }

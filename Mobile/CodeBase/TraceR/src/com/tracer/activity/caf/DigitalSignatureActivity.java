@@ -57,8 +57,8 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	}
 
 	/**
-	 * Called when the user clicked on Save button. Saves the digital signature
-	 * in the application cache after saving.
+	 * Called when the user clicked on Save button. Saves the digital signature in
+	 * the application cache after saving.
 	 * 
 	 * @param view
 	 */
@@ -74,8 +74,8 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	}
 
 	/**
-	 * Called when the user clicked on Reset button in order to clear the
-	 * digital signature screen for giving new digital signature input.
+	 * Called when the user clicked on Reset button in order to clear the digital
+	 * signature screen for giving new digital signature input.
 	 * 
 	 * @param view
 	 */
@@ -121,8 +121,7 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	}
 
 	/**
-	 * Method is used to the save the digital signature to the application
-	 * cache.
+	 * Method is used to the save the digital signature to the application cache.
 	 * 
 	 * @param bitmap
 	 * @return Image path where digital signature is saved.

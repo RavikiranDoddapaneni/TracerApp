@@ -4,16 +4,19 @@ import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.URL;
-import java.net.URLConnection;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -23,7 +26,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
@@ -43,6 +45,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.testflightapp.lib.TestFlight;
 import com.tracer.R;
 import com.tracer.activity.beatplan.BeatPlanActivity;
 import com.tracer.activity.login.LoginActivity;
@@ -51,6 +54,7 @@ import com.tracer.activity.runner.RunnersActivity;
 import com.tracer.util.Constants;
 import com.tracer.util.DataBaseHelper;
 import com.tracer.util.Prefs;
+import com.tracer.util.Utils;
 
 public class NewCAFActivity extends ActionBarActivity {
 
@@ -90,6 +94,7 @@ public class NewCAFActivity extends ActionBarActivity {
 	File photoFile;
 	Bundle bundle;
 	DataBaseHelper dataBaseHelper = DataBaseHelper.getDBAdapterInstance(this);
+	private static final String TAG = "NewCAFActivity";
 
 	/** Called when the activity is first created. */
 	@Override
@@ -151,25 +156,9 @@ public class NewCAFActivity extends ActionBarActivity {
 	 * @param view
 	 */
 	public void onCameraButtonClick(View view) {
-		/*
-		 * Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-		 * this.startActivityForResult(camera, Constants.PICTURE_RESULT);
-		 */
-		// create new Intentwith with Standard Intent action that can be
-		// sent to have the camera application capture an video and return it.
-		Intent intents = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
-		// create a file to save the video
-		cameraImagePath = getOutputMediaFileUri(MEDIA_TYPE_IMAGE, getApplicationContext());
-
-		// set the image file name
-		intents.putExtra(MediaStore.EXTRA_OUTPUT, cameraImagePath);
-
-		// set the video image quality to high
-		intents.putExtra(MediaStore.EXTRA_VIDEO_QUALITY, 1);
-
-		// start the Video Capture Intent
-		this.startActivityForResult(intents, Constants.PICTURE_RESULT);
+		Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+		this.startActivityForResult(camera, Constants.PICTURE_RESULT);
 
 	}
 
@@ -186,26 +175,26 @@ public class NewCAFActivity extends ActionBarActivity {
 	}
 
 	/**
-	 * Method is called when the user clicks on Submit button for sending the
-	 * CAF details to the server.
+	 * Method is called when the user clicks on Submit button for sending the CAF
+	 * details to the server.
 	 * 
 	 * @param view
 	 */
 	public void saveCAF(View view) {
 
-		boolean gprsStatus = LoginActivity.getNetworkStatus(getApplicationContext());
+		boolean gprsStatus = Utils.getConnectivityStatusString(getApplicationContext());
 		if (!totalCafs.getText().toString().equalsIgnoreCase("")) {
 			Toast.makeText(getApplicationContext(), "CAF has been successfully submitted.", Toast.LENGTH_LONG).show();
 			if (gprsStatus) {
 				/*
 				 * String digitalSignatureData =
-				 * imageBase64Encode(digital_signature_path); String
-				 * imageCaptureData = imageBase64Encode(digital_signature_path);
+				 * imageBase64Encode(digital_signature_path); String imageCaptureData =
+				 * imageBase64Encode(digital_signature_path);
 				 */
 
 				System.out.println("Network Enabled");
-				new sendCAFDetails().execute(authCode, totalCafs.getText().toString(), acceptedCafs.getText().toString(), rejectedCafs
-						.getText().toString(), returnedCafs.getText().toString(), digital_signature_path, digital_signature_path, visitId);
+				new sendCAFDetails().execute(authCode, totalCafs.getText().toString(), acceptedCafs.getText().toString(), rejectedCafs.getText()
+						.toString(), returnedCafs.getText().toString(), digital_signature_path, digital_signature_path, visitId);
 			} else {
 				dataBaseHelper.checkAndOpenDatabase();
 
@@ -234,9 +223,8 @@ public class NewCAFActivity extends ActionBarActivity {
 	}
 
 	/**
-	 * Method is called in order to capture the data after the user takes
-	 * digital signature or after scanning the barcode or after taking the
-	 * picture.
+	 * Method is called in order to capture the data after the user takes digital
+	 * signature or after scanning the barcode or after taking the picture.
 	 */
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -247,26 +235,22 @@ public class NewCAFActivity extends ActionBarActivity {
 		 */
 		if (requestCode == Constants.PICTURE_RESULT) {
 			if (resultCode == Activity.RESULT_OK) {
-				/*
-				 * Bundle b = data.getExtras(); Bitmap pic = (Bitmap)
-				 * b.get("data");
-				 * 
-				 * if (pic != null) { imagePreview.setImageBitmap(pic);
-				 * imagePreview.invalidate(); camera.setVisibility(View.GONE);
-				 * imagePreview.setVisibility(View.VISIBLE); }
-				 */
-				String imagePath = prefs.getString("camera_image_path", "");
-				System.out.println(imagePath);
-				imagePreview.setImageURI(Uri.parse(imagePath));
-				imagePreview.invalidate();
-				camera.setVisibility(View.INVISIBLE);
-				imagePreview.setVisibility(View.VISIBLE);
+
+				Bundle b = data.getExtras();
+				Bitmap pic = (Bitmap) b.get("data");
+
+				if (pic != null) {
+					imagePreview.setImageBitmap(pic);
+					imagePreview.invalidate();
+					camera.setVisibility(View.GONE);
+					imagePreview.setVisibility(View.VISIBLE);
+				}
 
 			}
 		}
 		/**
-		 * Get the barcode scan result and displaying result in the distributor
-		 * code field.
+		 * Get the barcode scan result and displaying result in the distributor code
+		 * field.
 		 */
 		else if (requestCode == Constants.BARCODE_SCAN_RESULT) {
 			if (resultCode == RESULT_OK) {
@@ -281,8 +265,8 @@ public class NewCAFActivity extends ActionBarActivity {
 			}
 		}
 		/**
-		 * Get the digital signature image and set the image to the image view
-		 * for the preview
+		 * Get the digital signature image and set the image to the image view for
+		 * the preview
 		 */
 		else if (requestCode == Constants.DIGITAL_SIGNATURE_RESULT) {
 			if (resultCode == Activity.RESULT_OK) {
@@ -335,43 +319,6 @@ public class NewCAFActivity extends ActionBarActivity {
 	}
 
 	/** Create a file Uri for saving an image or video */
-	private static Uri getOutputMediaFileUri(int type, Context context) {
-
-		return Uri.fromFile(getOutputMediaFile(type, context));
-	}
-
-	/** Create a File for saving an image or video */
-	private static File getOutputMediaFile(int type, Context context) {
-
-		// Check that the SDCard is mounted
-		File mediaStorageDir = new File(context.getCacheDir(), "MyCameraVideo");
-		// Create the storage directory(MyCameraVideo) if it does not exist
-		if (!mediaStorageDir.exists()) {
-
-			if (!mediaStorageDir.mkdirs()) {
-				Toast.makeText(context, "Failed to create directory MyCameraVideo.", Toast.LENGTH_LONG).show();
-				Log.d("MyCameraVideo", "Failed to create directory MyCameraVideo.");
-				return null;
-			}
-		}
-		// Create a media file name
-
-		// For unique file name appending current timeStamp with file name
-		java.util.Date date = new java.util.Date();
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(date.getTime());
-
-		File mediaFile;
-		if (type == MEDIA_TYPE_IMAGE) {
-			// For unique video file name appending current timeStamp with file
-			// name
-			mediaFile = new File(context.getCacheDir() + File.separator + "Image_" + timeStamp + ".png");
-		} else {
-			return null;
-		}
-
-		return mediaFile;
-	}
-
 	class sendCAFDetails extends AsyncTask<String, Void, String> {
 		private ProgressDialog pDialog;
 
@@ -390,7 +337,7 @@ public class NewCAFActivity extends ActionBarActivity {
 
 		protected String doInBackground(String... urls) {
 			try {
-
+				TestFlight.log("NewCAFActivity.sendCAFDetails()");
 				System.out.println(urls[0]);
 				jsonObject = new JSONObject();
 
@@ -403,38 +350,41 @@ public class NewCAFActivity extends ActionBarActivity {
 				jsonObject.put("signature", "");
 				jsonObject.put("visitCode", urls[7]);
 
-				String baseURL = Constants.WEBSERVICE_BASE_URL + "SaveCAFCollectionDetails/";
-				URL url = new URL(baseURL + jsonObject);
-				System.out.println(url.toString());
-				URLConnection conn = url.openConnection();
-				conn.setDoOutput(true);
-				OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-				wr.write(baseURL);
-				wr.flush();
+				HttpClient client = new DefaultHttpClient();
+				HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+				HttpResponse response;
+				HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "caf/save");
 
-				// Get the response
-				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				String line;
-				while ((line = rd.readLine()) != null) {
-					// Process line...
-					System.out.println("line ::::: " + line);
-					JSONObject jsonObject = new JSONObject(line);
-					cafResponse = jsonObject.getString("responseMessage");
-					System.out.println(jsonObject.toString());
-				}
-
-				if (cafResponse.equalsIgnoreCase("ok")) {
-					File dir = context.getDir("TraceR", MODE_PRIVATE);
-					if (dir != null && dir.isDirectory()) {
-						deleteCacheDir(dir);
+				StringEntity se = new StringEntity(jsonObject.toString());
+				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+				post.setEntity(se);
+				response = client.execute(post);
+				if (response != null) {
+					InputStream in = response.getEntity().getContent();
+					BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+					String line;
+					while ((line = rd.readLine()) != null) {
+						// Process line...
+						System.out.println("line ::::: " + line);
+						JSONObject jsonObject = new JSONObject(line);
+						cafResponse = jsonObject.getString("responseMessage");
+						System.out.println(jsonObject.toString());
 					}
+					if (cafResponse.equalsIgnoreCase("ok")) {
+						File dir = context.getDir("TraceR", MODE_PRIVATE);
+						if (dir != null && dir.isDirectory()) {
+							deleteCacheDir(dir);
+						}
+					}
+					rd.close();
+					TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()");
 				}
-				wr.close();
-				rd.close();
-				return line;
+
 			} catch (Exception e) {
-				return null;
+				TestFlight.log("NewCAFActivity.sendCAFDetails() catch Exception " + e.getMessage());
+				Log.e(TAG, "NewCAFActivity.sendCAFDetails():" + e.getMessage());
 			}
+			return authCode;
 		}
 
 		@Override
@@ -457,39 +407,6 @@ public class NewCAFActivity extends ActionBarActivity {
 		return strBase64;
 	}
 
-	public String getRealPathFromURI(Context context, Uri contentUri) {
-		Cursor cursor = null;
-		try {
-			String[] proj = { MediaStore.Images.Media.DATA };
-			cursor = context.getContentResolver().query(contentUri, proj, null, null, null);
-			int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
-			cursor.moveToFirst();
-			return cursor.getString(column_index);
-		} finally {
-			if (cursor != null) {
-				cursor.close();
-			}
-		}
-	}
-
-	private File createImageFile() throws IOException {
-		// Create an image file name
-		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-		String imageFileName = "JPEG_" + timeStamp + "_";
-		File storageDir = new File(context.getDir("TraceR", MODE_PRIVATE), "TraceR");
-		if (!storageDir.exists()) {
-			storageDir.mkdir();
-		}
-		File image = File.createTempFile(imageFileName, /* prefix */
-				".jpg", /* suffix */
-				storageDir /* directory */
-		);
-
-		// Save a file: path for use with ACTION_VIEW intents
-		mCurrentPhotoPath = "file:" + image.getAbsolutePath();
-		return image;
-	}
-
 	public static boolean deleteCacheDir(File dir) {
 		if (dir != null && dir.isDirectory()) {
 			String[] children = dir.list();
@@ -503,6 +420,7 @@ public class NewCAFActivity extends ActionBarActivity {
 		return dir.delete();
 	}
 
+	@SuppressWarnings("unused")
 	private void loadImageToCache(String imagePath) {
 		try {
 			File cachePath = new File(context.getDir("TraceR", MODE_PRIVATE), "TraceR");

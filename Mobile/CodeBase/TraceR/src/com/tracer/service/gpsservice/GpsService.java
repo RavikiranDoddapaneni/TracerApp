@@ -1,11 +1,18 @@
 package com.tracer.service.gpsservice;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
-import java.net.URLConnection;
+import java.net.URLEncoder;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
 import android.app.Service;
@@ -20,6 +27,7 @@ import android.os.IBinder;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
+import com.tracer.activity.login.LoginActivity;
 import com.tracer.util.ConnectionChangeReceiver;
 import com.tracer.util.Constants;
 import com.tracer.util.DataBaseHelper;
@@ -82,6 +90,7 @@ public class GpsService extends Service {
 		}
 
 		boolean status = Utils.getConnectivityStatusString(getApplicationContext());
+		System.out.println(status);
 		if (status) {
 			new SendLocation().execute(stringLatitude, stringLongitude, stringLocation);
 		} else {
@@ -125,38 +134,45 @@ public class GpsService extends Service {
 		protected String doInBackground(String... urls) {
 			try {
 
+				HttpClient client = new DefaultHttpClient();
+				HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+				HttpResponse response;
+				HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "user/runner/location/save");
+
 				System.out.println(urls[0]);
 				System.out.println(urls[1]);
 
 				String authCode = preferences.getString(Constants.AUTHCODE, null);
-
 				jsonObject = new JSONObject();
 				jsonObject.put("authCode", authCode);
-				jsonObject.put("latitude", urls[0]);
-				jsonObject.put("longtitude", urls[1]);
-				jsonObject.put("location", urls[2]);
+				jsonObject.put("lattitude", urls[0]);
+				jsonObject.put("longitude", urls[1]);
+				jsonObject.put("location", URLEncoder.encode(urls[2], "UTF-8"));
 
-				String baseURL = "http://192.168.80.100:8080/TraceR_WS/SaveRunnerLocation/";
-				URL url = new URL(baseURL + jsonObject);
-				URLConnection conn = url.openConnection();
-				conn.setDoOutput(true);
-				OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-				wr.write(baseURL);
-				wr.flush();
+				StringEntity se = new StringEntity(jsonObject.toString());
+				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+				post.setEntity(se);
+				response = client.execute(post);
 
-				// Get the response
-				BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-				String line;
-				while ((line = rd.readLine()) != null) {
-					// Process line...
-					System.out.println("line ::::: " + line);
-					jsonResponseObject = new JSONObject(line);
-					if (jsonResponseObject.has("responseMessage")) {
-						System.out.println(jsonResponseObject.getString("responseMessage"));
+				/* Checking response */
+				if (response != null) {
+					InputStream in = response.getEntity().getContent(); // Get the
+					BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+					String line;
+					while ((line = rd.readLine()) != null) {
+						// Process line...
+						System.out.println("line ::::: " + line);
+						jsonResponseObject = new JSONObject(line);
+						if (jsonResponseObject.has("responseMessage")) {
+							if (jsonResponseObject.has("logout")) {
+								if (jsonResponseObject.getString("logout").equalsIgnoreCase("true")) {
+									LoginActivity.stopAlarmManagerService(getApplicationContext());
+								}
+							}
+						}
 					}
+					rd.close();
 				}
-				wr.close();
-				rd.close();
 
 				boolean dbStatus = preferences.getBoolean("hasDBRecords", false);
 				if (dbStatus) {
@@ -166,6 +182,12 @@ public class GpsService extends Service {
 						int noOfRecords = cursor.getCount();
 						if (noOfRecords > 0) {
 							while (cursor.moveToNext()) {
+
+								HttpClient offlineCAFClient = new DefaultHttpClient();
+								HttpConnectionParams.setConnectionTimeout(offlineCAFClient.getParams(), 10000);
+								HttpResponse offlineCAFresponse;
+								HttpPost offlineCAFPost = new HttpPost(Constants.WEBSERVICE_BASE_URL + "caf/save");
+
 								JSONObject offlineCAFObject = new JSONObject();
 
 								offlineCAFObject.put("authCode", urls[0]);
@@ -177,30 +199,30 @@ public class GpsService extends Service {
 								offlineCAFObject.put("signature", "");
 								offlineCAFObject.put("visitCode", urls[7]);
 
-								String offlinebaseURL = Constants.WEBSERVICE_BASE_URL + "SaveCAFCollectionDetails/";
-								URL offlineurl = new URL(offlinebaseURL + offlineCAFObject);
-								System.out.println(offlineurl.toString());
-								URLConnection offlineconn = offlineurl.openConnection();
-								offlineconn.setDoOutput(true);
-								OutputStreamWriter wr1 = new OutputStreamWriter(offlineconn.getOutputStream());
-								wr1.write(offlinebaseURL);
-								wr1.flush();
+								StringEntity stringEntity = new StringEntity(jsonObject.toString());
+								stringEntity.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+								offlineCAFPost.setEntity(stringEntity);
+								offlineCAFresponse = offlineCAFClient.execute(post);
 
-								// Get the response
-								BufferedReader rd1 = new BufferedReader(new InputStreamReader(offlineconn.getInputStream()));
-								String line1;
-								while ((line1 = rd1.readLine()) != null) {
-									// Process line...
-									System.out.println("line ::::: " + line1);
-									JSONObject jsonObject = new JSONObject(line1);
-									String cafResponse = jsonObject.getString("responseMessage");
-									System.out.println(jsonObject.toString());
+								/* Checking response */
+								if (offlineCAFresponse != null) {
+									InputStream in = offlineCAFresponse.getEntity().getContent(); // Get
+																																								// the
+									BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+									String line;
+									while ((line = rd.readLine()) != null) {
+										// Process line...
+										System.out.println("line ::::: " + line);
+										JSONObject jsonObject = new JSONObject(line);
+										String cafResponse = jsonObject.getString("responseMessage");
+										System.out.println(jsonObject.toString());
 
-									if (cafResponse.equals("ok")) {
-										dataBaseHelper.deleteRecordsInDB("caf_collection_details", "caf_collection_id=?",
-												new String[] { String.valueOf(cursor.getInt(0)) });
+										if (cafResponse.equals("ok")) {
+											dataBaseHelper.deleteRecordsInDB("caf_collection_details", "caf_collection_id=?",
+													new String[] { String.valueOf(cursor.getInt(0)) });
+										}
 									}
-
+									rd.close();
 								}
 							}
 							editor = preferences.edit();
@@ -210,15 +232,13 @@ public class GpsService extends Service {
 					} catch (Exception e) {
 						e.printStackTrace();
 					} finally {
-
+						dataBaseHelper.close(); // Closing database connection
 					}
-
 				}
-
-				return line;
 			} catch (Exception e) {
-				return null;
+				e.printStackTrace();
 			}
+			return stringLatitude;
 		}
 	}
 }

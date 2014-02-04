@@ -8,14 +8,14 @@
     <RelativeLayout
         android:id="@+id/relativeLayout1"
         android:layout_width="wrap_content"
-        android:layout_height="25dp"
+        android:layout_height="40dp"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentTop="true"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
         android:layout_marginTop="10dp"
-        android:background="@color/listview_header_color_gold" >
+        android:background="@drawable/list_view_header" >
 
         <TextView
             android:id="@+id/item_runner_name_header"
@@ -57,21 +57,21 @@
             android:textSize="12sp"
             android:textStyle="bold"
             android:typeface="serif" />
-
     </RelativeLayout>
 
     <ListView
         android:id="@+id/runners_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="false"
+        android:layout_alignParentTop="false"
+        android:layout_below="@id/relativeLayout1"
         android:layout_marginBottom="10dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginTop="35dp"
         android:divider="@color/white"
         android:dividerHeight="1dip" >
+
     </ListView>
 
     <View

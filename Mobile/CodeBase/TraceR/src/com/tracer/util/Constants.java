@@ -5,8 +5,8 @@ public class Constants {
 	/**
 	 * Webservice Base URL
 	 */
-	public static final String WEBSERVICE_BASE_URL = "http://118.102.131.157:8080/TraceR_WS/";
-
+	public static final String WEBSERVICE_BASE_URL = "http://192.168.80.101:8080/TraceR_RWS/api/";
+	public static final String LOGIN_STATUS = "login_status";
 	/**
 	 * LOGIN RESPONSE DATA
 	 */
@@ -55,7 +55,7 @@ public class Constants {
 	 */
 	public static final String RUNNERS = "runners";
 	public static final String CONTACT_NUMBER = "contactNumber";
-	public static final String CAFCOUNT = "CAFCount";
+	public static final String CAFCOUNT = "cafcount";
 	public static final String IS_PRESENT = "isPresent";
 	public static final String RUNNERCODE = "runnerCode";
 	public static final String RUNNERNAME = "runnerName";

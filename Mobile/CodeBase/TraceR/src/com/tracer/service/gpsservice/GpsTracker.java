@@ -203,8 +203,7 @@ public class GpsTracker extends Service implements LocationListener {
 				List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
 				return addresses;
 			} catch (IOException e) {
-				// e.printStackTrace();
-				Log.e("Error : Geocoder", "Impossible to connect to Geocoder", e);
+				Log.e("Error : Geocoder", "Impossible to connect to Geocoder");
 			}
 		}
 

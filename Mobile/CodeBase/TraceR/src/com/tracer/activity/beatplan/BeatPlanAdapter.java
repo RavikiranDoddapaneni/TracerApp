@@ -1,13 +1,20 @@
 package com.tracer.activity.beatplan;
 
 import java.io.BufferedReader;
+import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
 import android.app.Activity;
@@ -92,31 +99,34 @@ public class BeatPlanAdapter extends BaseAdapter {
 							jsonObject = new JSONObject();
 							jsonObject.put(Constants.AUTHCODE, preferences.getString(Constants.AUTHCODE, ""));
 							jsonObject.put(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE).toString());
-							String baseURL = Constants.WEBSERVICE_BASE_URL + "GetVisitInfo/";
-							URL url = new URL(baseURL + jsonObject);
-							conn = url.openConnection();
-							conn.setDoOutput(true);
-							OutputStreamWriter wr = new OutputStreamWriter(conn.getOutputStream());
-							wr.write(baseURL);
-							wr.flush();
-							// Get the response
-							BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-							String line;
 
-							while ((line = rd.readLine()) != null) {
-								System.out.println("line ::::: " + line);
-								JSONObject jsonObject = new JSONObject(line);
-								System.out.println(jsonObject.toString());
+							HttpClient client = new DefaultHttpClient();
+							HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+							HttpResponse response;
+							HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "user/runner/visitinfo/get");
 
-								visitCount = jsonObject.getString(Constants.VISITCOUNT);
-								visitId = jsonObject.getString(Constants.VISITCODE);
+							StringEntity se = new StringEntity(jsonObject.toString());
+							se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+							post.setEntity(se);
+							response = client.execute(post);
+
+							/* Checking response */
+							if (response != null) {
+								InputStream in = response.getEntity().getContent();
+								BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+								String line;
+								while ((line = rd.readLine()) != null) {
+									System.out.println("line ::::: " + line);
+									JSONObject jsonObject = new JSONObject(line);
+									System.out.println(jsonObject.toString());
+
+									visitCount = jsonObject.getString(Constants.VISITCOUNT);
+									visitId = jsonObject.getString(Constants.VISITCODE);
+								}
 							}
-
 							Bundle runnerBundle = new Bundle();
-							runnerBundle.putString(Constants.DISTRIBUTORNAME, distributorsList.get(position).get(Constants.DISTRIBUTORNAME)
-									.toString());
-							runnerBundle.putString(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE)
-									.toString());
+							runnerBundle.putString(Constants.DISTRIBUTORNAME, distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
+							runnerBundle.putString(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE).toString());
 							runnerBundle.putString(Constants.VISITCOUNT, visitCount);
 							runnerBundle.putString(Constants.VISITCODE, visitId);
 							Intent intent = new Intent(mContext, NewCAFActivity.class);
