@@ -147,6 +147,8 @@ public class BeatPlanActivity extends ActionBarActivity {
 							map.put(Constants.DISTRIBUTORCODE, distObject.getString(Constants.DISTRIBUTORCODE));
 							map.put(Constants.SCHEDULETIME, distObject.getString(Constants.SCHEDULETIME));
 							map.put(Constants.VISITFREQUENCY, distObject.getString(Constants.VISITFREQUENCY));
+							// map.put(Constants.VISITCOUNT,
+							// distObject.getString(Constants.VISITCOUNT));
 							distributorsList.add(map);
 						}
 

@@ -15,7 +15,10 @@
         android:layout_marginLeft="15dp"
         android:layout_marginRight="15dp"
         android:background="@drawable/button_select_action"
+        android:drawableLeft="@drawable/get_beat_plan"
         android:onClick="getBeatPlan"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
         android:text="@string/get_beat_plan"
         android:textColor="@color/white"
         android:typeface="serif" />

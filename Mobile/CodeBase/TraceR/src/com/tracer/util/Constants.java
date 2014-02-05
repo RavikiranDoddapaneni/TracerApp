@@ -5,7 +5,7 @@ public class Constants {
 	/**
 	 * Webservice Base URL
 	 */
-	public static final String WEBSERVICE_BASE_URL = "http://192.168.80.101:8080/TraceR_RWS/api/";
+	public static final String WEBSERVICE_BASE_URL = "http://118.102.131.157:8080/TraceR_RWS/api/";
 	public static final String LOGIN_STATUS = "login_status";
 	/**
 	 * LOGIN RESPONSE DATA

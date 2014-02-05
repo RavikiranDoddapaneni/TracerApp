@@ -39,6 +39,7 @@
                 android:layout_marginRight="5dp"
                 android:layout_marginTop="10dp"
                 android:background="@drawable/button_border"
+                android:editable="false"
                 android:ems="10"
                 android:hint="@string/distributor"
                 android:inputType="textNoSuggestions"
@@ -309,6 +310,7 @@
                 android:layout_alignParentTop="true"
                 android:layout_alignRight="@+id/cameraButton"
                 android:background="@drawable/image_border"
+                android:onClick="onCameraButtonClick"
                 android:scaleType="fitXY"
                 android:src="@drawable/login_background"
                 android:visibility="invisible" />
@@ -322,6 +324,7 @@
                 android:layout_alignParentRight="true"
                 android:layout_alignParentTop="true"
                 android:background="@drawable/image_border"
+                android:onClick="onDigitalSignatureButtonClick"
                 android:scaleType="fitXY"
                 android:src="@drawable/login_background"
                 android:visibility="invisible" />

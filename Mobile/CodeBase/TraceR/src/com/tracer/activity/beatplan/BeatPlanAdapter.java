@@ -22,6 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -83,6 +84,11 @@ public class BeatPlanAdapter extends BaseAdapter {
 		distributor_name.setText(distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
 		distributor_visits.setText(distributorsList.get(position).get(Constants.VISITFREQUENCY).toString());
 		distributor_codes.setText(distributorsList.get(position).get(Constants.SCHEDULETIME).toString());
+
+		if (position % 2 == 0) {
+			collect_caf.setEnabled(false);
+			collect_caf.setBackgroundResource(R.drawable.collect_btn_over);
+		}
 
 		collect_caf.setOnClickListener(new OnClickListener() {
 

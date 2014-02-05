@@ -92,6 +92,7 @@ public class NewCAFActivity extends ActionBarActivity {
 	public static final int MEDIA_TYPE_IMAGE = 2;
 
 	File photoFile;
+	String strBitMap;
 	Bundle bundle;
 	DataBaseHelper dataBaseHelper = DataBaseHelper.getDBAdapterInstance(this);
 	private static final String TAG = "NewCAFActivity";
@@ -181,20 +182,16 @@ public class NewCAFActivity extends ActionBarActivity {
 	 * @param view
 	 */
 	public void saveCAF(View view) {
-
 		boolean gprsStatus = Utils.getConnectivityStatusString(getApplicationContext());
-		if (!totalCafs.getText().toString().equalsIgnoreCase("")) {
+		if ((!totalCafs.getText().toString().equalsIgnoreCase("")) && (digital_signature_path != null) && (strBitMap != null)) {
 			Toast.makeText(getApplicationContext(), "CAF has been successfully submitted.", Toast.LENGTH_LONG).show();
 			if (gprsStatus) {
-				/*
-				 * String digitalSignatureData =
-				 * imageBase64Encode(digital_signature_path); String imageCaptureData =
-				 * imageBase64Encode(digital_signature_path);
-				 */
+				String digitalSignatureData = imageBase64Encode(digital_signature_path);
+				// String imageCaptureData = imageBase64Encode(digital_signature_path);
 
 				System.out.println("Network Enabled");
 				new sendCAFDetails().execute(authCode, totalCafs.getText().toString(), acceptedCafs.getText().toString(), rejectedCafs.getText()
-						.toString(), returnedCafs.getText().toString(), digital_signature_path, digital_signature_path, visitId);
+						.toString(), returnedCafs.getText().toString(), strBitMap, digitalSignatureData, visitId);
 			} else {
 				dataBaseHelper.checkAndOpenDatabase();
 
@@ -217,8 +214,8 @@ public class NewCAFActivity extends ActionBarActivity {
 				overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
 			}
 		} else {
-			Toast.makeText(getApplicationContext(), "Please enter the Total CAFs details", Toast.LENGTH_SHORT).show();
-			totalCafs.requestFocus();
+			Toast.makeText(getApplicationContext(), "Please provide Digital Signature, Image and Total CAFs details", Toast.LENGTH_SHORT).show();
+			// totalCafs.requestFocus();
 		}
 	}
 
@@ -238,6 +235,10 @@ public class NewCAFActivity extends ActionBarActivity {
 
 				Bundle b = data.getExtras();
 				Bitmap pic = (Bitmap) b.get("data");
+				ByteArrayOutputStream baos = new ByteArrayOutputStream();
+				pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
+				byte[] byteArray = baos.toByteArray();
+				strBitMap = Base64.encodeToString(byteArray, Base64.DEFAULT);
 
 				if (pic != null) {
 					imagePreview.setImageBitmap(pic);
@@ -346,16 +347,18 @@ public class NewCAFActivity extends ActionBarActivity {
 				jsonObject.put("acceptedCAF", urls[2]);
 				jsonObject.put("rejectedCAF", urls[3]);
 				jsonObject.put("returnedCAF", urls[4]);
-				jsonObject.put("photo", "");
-				jsonObject.put("signature", "");
+				jsonObject.put("photo", urls[5]);
+				jsonObject.put("signature", urls[6]);
 				jsonObject.put("visitCode", urls[7]);
 
+				System.out.println(jsonObject.toString());
 				HttpClient client = new DefaultHttpClient();
 				HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 				HttpResponse response;
 				HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "caf/save");
 
 				StringEntity se = new StringEntity(jsonObject.toString());
+
 				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 				post.setEntity(se);
 				response = client.execute(post);
@@ -401,7 +404,7 @@ public class NewCAFActivity extends ActionBarActivity {
 	public String imageBase64Encode(String filePath) {
 		Bitmap selectedImage = BitmapFactory.decodeFile(digital_signature_path);
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		selectedImage.compress(Bitmap.CompressFormat.JPEG, 100, stream);
+		selectedImage.compress(Bitmap.CompressFormat.JPEG, 10, stream);
 		byte[] byteArray = stream.toByteArray();
 		String strBase64 = Base64.encodeToString(byteArray, 0);
 		return strBase64;

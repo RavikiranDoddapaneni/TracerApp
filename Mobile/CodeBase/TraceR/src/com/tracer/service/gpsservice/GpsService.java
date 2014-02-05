@@ -109,7 +109,7 @@ public class GpsService extends Service {
 		System.out.println("Battery Level Remaining: " + level + "%");
 
 		if (level <= 30) {
-			isMessageSent = preferences.getBoolean("isMessageSent", false);
+			isMessageSent = preferences.getBoolean("isMessageSent", true);
 			if (!isMessageSent) {
 				String phoneNumber = preferences.getString(Constants.TEAMLEADERCONTACTNUMBER, "");
 				String message = "My Battery is Running below 30% !";

@@ -9,7 +9,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_above="@+id/bottomLayout"
-        android:layout_margin="10dp"
+        android:layout_margin="5dp"
         android:background="@drawable/button_border"
         android:padding="0dp" >
 
@@ -33,11 +33,11 @@
     <LinearLayout
         android:id="@+id/bottomLayout"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
+        android:layout_marginBottom="2dp"
         android:layout_marginLeft="2dp"
         android:layout_marginRight="2dp"
-        android:gravity="center"
         android:orientation="horizontal"
         android:weightSum="2" >
 
@@ -49,9 +49,13 @@
             android:layout_marginRight="2dp"
             android:layout_weight="1"
             android:background="@drawable/button_select_action"
+            android:drawableLeft="@drawable/reset_icon"
             android:onClick="onResetButton"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
             android:text="@string/reset"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:typeface="serif" />
 
         <Button
             android:id="@+id/button2"
@@ -60,9 +64,14 @@
             android:layout_marginRight="2dp"
             android:layout_weight="1"
             android:background="@drawable/button_select_action"
+            android:drawableLeft="@drawable/save_icon"
             android:onClick="digitalSignatureDone"
+            android:paddingLeft="30dp"
+            android:paddingRight="30dp"
             android:text="@string/save"
-            android:textColor="@color/white" />
+            android:textColor="@color/white"
+            android:typeface="serif" />
+
     </LinearLayout>
 
 </RelativeLayout>

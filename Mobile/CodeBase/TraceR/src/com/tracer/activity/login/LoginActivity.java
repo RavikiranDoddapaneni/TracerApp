@@ -234,7 +234,7 @@ public class LoginActivity extends ActionBarActivity {
 				HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "user/authenticate");
 				jsonObject = new JSONObject();
 				jsonObject.put(Constants.LOGIN_USERNAME, urls[0]);
-				jsonObject.put(Constants.LOGIN_PASSWORD, urls[1]);
+				jsonObject.put(Constants.LOGIN_PASSWORD, "11IZkFH57I0BtkxFa48WBw==");
 				StringEntity se = new StringEntity(jsonObject.toString());
 				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
 				post.setEntity(se);
@@ -347,5 +347,14 @@ public class LoginActivity extends ActionBarActivity {
 		}).start();
 
 		TestFlight.passCheckpoint("LoginActivity.stopAlarmManagerService()");
+	}
+
+	@Override
+	public void onBackPressed() {
+		Log.i("LoginActivity", "Finishing");
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.addCategory(Intent.CATEGORY_HOME);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
 	}
 }
