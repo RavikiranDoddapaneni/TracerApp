@@ -43,15 +43,15 @@ public class GpsTracker extends Service implements LocationListener {
 	boolean canGetLocation = false;
 
 	Location location;
-	double latitude;
-	double longitude;
+	public double latitude;
+	public double longitude;
 
 	// The minimum distance to change updates in metters
-	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10; // 10
-																	// metters
+	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // 10
+	// metters
 
 	// The minimum time beetwen updates in milliseconds
-	private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
+	private static final long MIN_TIME_BW_UPDATES = 1000 * 30 * 1; // 1 minute
 
 	// Declaring a Location Manager
 	protected LocationManager locationManager;
@@ -78,8 +78,7 @@ public class GpsTracker extends Service implements LocationListener {
 
 				// First get location from Network Provider
 				if (isNetworkEnabled) {
-					locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES,
-							MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+					locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
 					Log.d("Network", "Network");
 
@@ -92,8 +91,7 @@ public class GpsTracker extends Service implements LocationListener {
 				// if GPS Enabled get lat/long using GPS Services
 				if (isGPSEnabled) {
 					if (location == null) {
-						locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES,
-								MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+						locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
 
 						Log.d("GPS Enabled", "GPS Enabled");
 
@@ -135,6 +133,7 @@ public class GpsTracker extends Service implements LocationListener {
 	 */
 	public double getLatitude() {
 		if (location != null) {
+			location.getAccuracy();
 			latitude = location.getLatitude();
 		}
 
@@ -146,6 +145,7 @@ public class GpsTracker extends Service implements LocationListener {
 	 */
 	public double getLongitude() {
 		if (location != null) {
+			location.getAccuracy();
 			longitude = location.getLongitude();
 		}
 

@@ -4,14 +4,17 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.gesture.Gesture;
+import android.gesture.GestureLibrary;
 import android.gesture.GestureOverlayView;
 import android.gesture.GestureOverlayView.OnGesturePerformedListener;
+import android.gesture.Prediction;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.os.Bundle;
@@ -20,13 +23,17 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnTouchListener;
+import android.widget.Toast;
 
 import com.tracer.R;
 import com.tracer.activity.login.LoginActivity;
 import com.tracer.activity.runner.RunnerHomeActivity;
 import com.tracer.activity.runner.RunnersActivity;
 import com.tracer.util.Constants;
+import com.tracer.util.CustomizeDialog;
 import com.tracer.util.Prefs;
 
 public class DigitalSignatureActivity extends ActionBarActivity implements OnGesturePerformedListener {
@@ -36,6 +43,8 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	SharedPreferences prefs;
 	String userType;
 	Bundle bundle;
+	private GestureLibrary gestureLib;
+	boolean isSignatureEnabled = false;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -54,6 +63,15 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 		gestureOverlayView.addOnGesturePerformedListener(this);
 		gestureOverlayView.setFadeEnabled(false);
 
+		gestureOverlayView.setOnTouchListener(new OnTouchListener() {
+
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
+				isSignatureEnabled = true;
+				return false;
+			}
+		});
+
 	}
 
 	/**
@@ -63,13 +81,17 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	 * @param view
 	 */
 	public void digitalSignatureDone(View view) {
-		gestureOverlayView.setDrawingCacheEnabled(true);
-		Bitmap bitmap = gestureOverlayView.getDrawingCache();
-		File imagePath = saveBitmap(bitmap);
-		Intent intent = new Intent();
-		intent.putExtra("digital_signature_path", imagePath.toString());
-		setResult(RESULT_OK, intent);
-		finish();
+		if (isSignatureEnabled) {
+			gestureOverlayView.setDrawingCacheEnabled(true);
+			Bitmap bitmap = gestureOverlayView.getDrawingCache();
+			File imagePath = saveBitmap(bitmap);
+			Intent intent = new Intent();
+			intent.putExtra("digital_signature_path", imagePath.toString());
+			setResult(RESULT_OK, intent);
+			finish();
+		} else {
+			createAlert("Please provide Digital Signature");
+		}
 
 	}
 
@@ -82,6 +104,7 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 
 	public void onResetButton(View view) {
 		gestureOverlayView.clear(false);
+		isSignatureEnabled = false;
 	}
 
 	/**
@@ -152,7 +175,30 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
 	}
 
 	@Override
-	public void onGesturePerformed(GestureOverlayView arg0, Gesture arg1) {
+	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
+		ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
+		for (Prediction prediction : predictions) {
+			if (prediction.score > 1.0) {
+				Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT).show();
+			}
+		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		Intent intent = new Intent(getApplicationContext(), NewCAFActivity.class);
+		intent.putExtras(bundle);
+		startActivity(intent);
+	}
+
+	public void createAlert(String message) {
+		CustomizeDialog customizeDialog = new CustomizeDialog(context);
+		customizeDialog.setTitle("Digital Signature");
+		customizeDialog.setMessage(message);
+		customizeDialog.show();
+
+		if (!customizeDialog.isShowing())
+			customizeDialog.show();
 
 	}
 }

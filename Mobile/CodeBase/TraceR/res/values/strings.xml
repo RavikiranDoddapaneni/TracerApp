@@ -8,7 +8,9 @@
     <string name="password">Password</string>
     <string name="login">Login</string>
     <string name="signup">Sign Up</string>
-    <string name="camera">Take Picture</string>
+    <string name="camera">Take Photo</string>
+    <string name="distributor_photo">Distributor Photo</string>
+    <string name="runner_photo">Runner Photo</string>
     <string name="signature">Digital Signature</string>
     <string name="retailer_name">Retailer Name</string>
     <string name="retailer_shop_name">Retailer Shop Name</string>
@@ -29,18 +31,21 @@
     <string name="accepted_cafs">Accepted CAFs </string>
     <string name="rejected_cafs">Rejected CAFs </string>
     <string name="returned_cafs">Returned CAFs </string>
+    <string name="mobile_number">Mobile No </string>
+    <string name="remarks">Remarks </string>
     <string name="done">Done</string>
     <string name="reset">Reset</string>
     <string name="view_beat_plan">View Beat Plan</string>
     <string name="new_caf_collection">New CAF Collection</string>
-    <string name="submit">Submit</string>
+    <string name="submit">Submit CAF</string>
     <string name="save">Save</string>
     <string name="distributor">Distributor Name</string>
     <string name="distributor_details">Distributor Details</string>
     <string name="total_visits">Total Visits</string>
     <string name="visits_frequency">Visit Freq</string>
     <string name="pending_visits">Pending Visits</string>
-    <string name="visits">Visits </string>
+    <string name="visits">Current Visit </string>
+    <string name="visits_no">Visit No </string>
     <string name="status">Status</string>
     <string name="distributors">Distributors</string>
     <string name="runners">Runners</string>
@@ -71,5 +76,16 @@
     <string name="you_are_logged_in_as">You are logged in as Runner.</string>
     <string name="welcome_user">Welcome Runner</string>
     <string name="check_network_connection">Please check the Network Connection !</string>
+    <string name="submit_attendance">Submit Attendance</string>
+    <string name="runner_attendance">Runner Attendance</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="select_remark">Select Remark</string>
+
+    <string-array name="remarks_array">
+        <item>Door lock</item>
+        <item>CAF Not available</item>
+    </string-array>
+
+    <string name="barcode_hint_text">Click Image to Scan Distributor Barcode</string>
 
 </resources>

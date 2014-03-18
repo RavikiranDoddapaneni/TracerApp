@@ -27,21 +27,19 @@
         android:name="android.hardware.camera"
         android:required="true" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature
+        android:name="android.hardware.camera.front"
+        android:required="false" />
 
     <application
         android:name="com.tracer.util.TracerApplication"
-        android:allowBackup="true"
         android:icon="@drawable/favicon"
         android:label="@string/app_name"
         android:theme="@style/Theme.Styled.App" >
         <activity
             android:name="com.tracer.activity.login.LoginActivity"
-            android:clearTaskOnLaunch="true"
-            android:finishOnCloseSystemDialogs="true"
-            android:finishOnTaskLaunch="true"
             android:label="@string/app_name"
-            android:noHistory="true"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -50,46 +48,65 @@
         </activity>
         <activity
             android:name="com.tracer.activity.runner.RunnerHomeActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
             android:label="@string/runners"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
+        </activity>
+        <activity
+            android:name="com.tracer.activity.runner.RunnerAttendanceActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/runner_attendance"
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name="com.tracer.activity.runner.RunnersActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
             android:label="@string/runners"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
         </activity>
         <activity
             android:name="com.tracer.activity.beatplan.BeatPlanActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
             android:label="@string/beat_plan"
             android:parentActivityName="com.tracer.activity.runner.RunnerHomeActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tracer.activity.runner.RunnerHomeActivity" />
         </activity>
         <activity
             android:name="com.tracer.activity.caf.NewCAFActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
             android:label="@string/new_caf_collection"
             android:parentActivityName="com.tracer.activity.beatplan.BeatPlanActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tracer.activity.beatplan.BeatPlanActivity" />
         </activity>
         <activity
             android:name="com.tracer.activity.caf.DigitalSignatureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
             android:label="@string/digital_signature"
             android:parentActivityName="com.tracer.activity.caf.NewCAFActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tracer.activity.caf.NewCAFActivity" />
         </activity>
         <activity
             android:name="com.tracer.activity.teamleader.TeamLeaderHomeActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
             android:label="@string/team_leader"
             android:parentActivityName="com.tracer.activity.teamleader.TeamLeaderHomeActivity"
-            android:screenOrientation="portrait" >
+            android:screenOrientation="landscape" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.tracer.activity..teamleader.TeamLeaderHomeActivity" />

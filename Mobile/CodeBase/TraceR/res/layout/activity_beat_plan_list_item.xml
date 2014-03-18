@@ -47,7 +47,7 @@
         android:textColor="@color/list_view_item_text_color"
         android:textSize="12sp" />
 
-    <TextView
+     <TextView
         android:id="@+id/item_beat_plan_distributor_visits"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -57,6 +57,6 @@
         android:gravity="center_vertical|center"
         android:text="2"
         android:textColor="@color/list_view_item_text_color"
-        android:textSize="12sp" />
+        android:textSize="12sp" /> 
 
 </RelativeLayout>

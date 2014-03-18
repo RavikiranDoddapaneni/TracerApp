@@ -5,6 +5,6 @@ import android.content.SharedPreferences;
 
 public class Prefs {
 	public static SharedPreferences get(Context context) {
-		return context.getSharedPreferences("QUIT_BUDDY_PREF", 0);
+		return context.getSharedPreferences("TRACER_PREFS", 0);
 	}
 }

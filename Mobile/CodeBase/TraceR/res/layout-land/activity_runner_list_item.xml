@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/list_item_layout_tl"
+    android:layout_width="match_parent"
+    android:layout_height="35dp"
+    android:background="@drawable/list_item_background"
+    android:orientation="horizontal"
+    android:weightSum="5" >
+
+    <TextView
+        android:id="@+id/item_runner_name"
+        android:layout_width="75dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="10dp"
+        android:layout_weight="2"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="@string/button_google_shopper"
+        android:textColor="@color/list_view_item_text_color"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/item_runner_status"
+        android:layout_width="80dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="0.5"
+        android:gravity="center_vertical|center"
+        android:text="@string/button_google_shopper"
+        android:textColor="@color/list_view_item_text_color"
+        android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/item_runner_total_cafs"
+        android:layout_width="30dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:text="3235467764"
+        android:textColor="@color/list_view_item_text_color"
+        android:textSize="12sp" />
+
+    <ImageView
+        android:id="@+id/callRunner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="20dp"
+        android:src="@drawable/ic_phonecall" />
+
+    <View
+        android:layout_width="1dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginTop="5dp"
+        android:background="@color/white" />
+
+    <ImageView
+        android:id="@+id/messageRunner"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
+        android:layout_marginLeft="12dp"
+        android:src="@drawable/ic_messages" />
+
+</LinearLayout>

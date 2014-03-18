@@ -29,12 +29,12 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.testflightapp.lib.TestFlight;
 import com.tracer.R;
 import com.tracer.activity.login.LoginActivity;
 import com.tracer.util.Constants;
+import com.tracer.util.CustomizeDialog;
 import com.tracer.util.Prefs;
 
 public class RunnersActivity extends ActionBarActivity {
@@ -71,11 +71,12 @@ public class RunnersActivity extends ActionBarActivity {
 			public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
 				TestFlight.log("RunnersActivity.runnerlist.setOnItemClickListener()");
 				String runnerStatus = (String) runnersDataList.get(position).get(Constants.IS_PRESENT);
-				if (runnerStatus.equalsIgnoreCase("false")) {
+				if (runnerStatus != null && runnerStatus.equalsIgnoreCase("false13")) {
 					startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-					overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+					overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
 				} else {
-					Toast.makeText(getApplicationContext(), "Active", Toast.LENGTH_LONG).show();
+					// Toast.makeText(getApplicationContext(), "Active",
+					// Toast.LENGTH_LONG).show();
 				}
 			}
 		});
@@ -113,8 +114,12 @@ public class RunnersActivity extends ActionBarActivity {
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			pDialog.dismiss();
-			runnerAdapter = new RunnerAdapter(context, runnersDataList);
-			runnersList.setAdapter(runnerAdapter);
+			if (runnersDataList != null && runnersDataList.size() > 0) {
+				runnerAdapter = new RunnerAdapter(context, runnersDataList);
+				runnersList.setAdapter(runnerAdapter);
+			} else {
+				createAlert("No Data Available", "Runners");
+			}
 		}
 
 		protected String doInBackground(String... urls) {
@@ -160,6 +165,13 @@ public class RunnersActivity extends ActionBarActivity {
 			} catch (Exception e) {
 				TestFlight.log("RunnersActivity.RetreiveBeatPlanResponse() catch Exception " + e.getMessage());
 				Log.e(TAG, "RunnersActivity.RetreiveBeatPlanResponse():" + e.getMessage());
+			} finally {
+				/*
+				 * if (Utils.getConnectivityStatusString(getApplicationContext())) {
+				 * Toast.makeText(getApplicationContext(),
+				 * "Please check the Network Connection and Try again!",
+				 * Toast.LENGTH_SHORT).show(); }
+				 */
 			}
 			return authCode;
 		}
@@ -170,9 +182,30 @@ public class RunnersActivity extends ActionBarActivity {
 			pDialog = new ProgressDialog(RunnersActivity.this);
 			pDialog.setMessage("Getting Data ...");
 			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(true);
+			pDialog.setCancelable(false);
+			pDialog.setCanceledOnTouchOutside(false);
 			pDialog.show();
 		}
+
+	}
+
+	@Override
+	public void onBackPressed() {
+		Log.i("RunnersActivity", "Finishing");
+		Intent intent = new Intent(Intent.ACTION_MAIN);
+		intent.addCategory(Intent.CATEGORY_HOME);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		startActivity(intent);
+	}
+
+	public void createAlert(String message, String title) {
+		CustomizeDialog customizeDialog = new CustomizeDialog(context);
+		customizeDialog.setTitle(title);
+		customizeDialog.setMessage(message);
+		customizeDialog.show();
+
+		if (!customizeDialog.isShowing())
+			customizeDialog.show();
 
 	}
 }

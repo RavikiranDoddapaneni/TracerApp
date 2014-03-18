@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -15,7 +16,9 @@ import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
+import android.app.Activity;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
@@ -27,6 +30,7 @@ import android.os.IBinder;
 import android.telephony.SmsManager;
 import android.widget.Toast;
 
+import com.tracer.R;
 import com.tracer.activity.login.LoginActivity;
 import com.tracer.util.ConnectionChangeReceiver;
 import com.tracer.util.Constants;
@@ -44,6 +48,7 @@ public class GpsService extends Service {
 	boolean isMessageSent;
 	JSONObject jsonObject;
 	JSONObject jsonResponseObject;
+	Context context = this;
 	ConnectionChangeReceiver changeReceiver;
 	DataBaseHelper dataBaseHelper = DataBaseHelper.getDBAdapterInstance(this);
 
@@ -113,8 +118,7 @@ public class GpsService extends Service {
 			if (!isMessageSent) {
 				String phoneNumber = preferences.getString(Constants.TEAMLEADERCONTACTNUMBER, "");
 				String message = "My Battery is Running below 30% !";
-				SmsManager smsManager = SmsManager.getDefault();
-				smsManager.sendTextMessage(phoneNumber, null, message, null, null);
+				sendLongSMS(phoneNumber, message);
 				editor = preferences.edit();
 				editor.putBoolean("isMessageSent", true);
 				editor.commit();
@@ -164,9 +168,11 @@ public class GpsService extends Service {
 						System.out.println("line ::::: " + line);
 						jsonResponseObject = new JSONObject(line);
 						if (jsonResponseObject.has("responseMessage")) {
-							if (jsonResponseObject.has("logout")) {
-								if (jsonResponseObject.getString("logout").equalsIgnoreCase("true")) {
+							if (jsonResponseObject.has("Logout")) {
+								if (jsonResponseObject.getString("Logout").equalsIgnoreCase("true")) {
 									LoginActivity.stopAlarmManagerService(getApplicationContext());
+									startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+									((Activity) context).overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
 								}
 							}
 						}
@@ -240,5 +246,11 @@ public class GpsService extends Service {
 			}
 			return stringLatitude;
 		}
+	}
+
+	public static void sendLongSMS(String phoneNumber, String message) {
+		SmsManager smsManager = SmsManager.getDefault();
+		ArrayList<String> parts = smsManager.divideMessage(message);
+		smsManager.sendMultipartTextMessage(phoneNumber, null, parts, null, null);
 	}
 }

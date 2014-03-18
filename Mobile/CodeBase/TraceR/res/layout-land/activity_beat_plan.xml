@@ -14,22 +14,35 @@
         android:layout_alignParentTop="true"
         android:layout_margin="10dp" >
 
-        <RelativeLayout
+        <LinearLayout
             android:id="@+id/relativeLayout1"
             android:layout_width="wrap_content"
             android:layout_height="40dp"
             android:layout_alignParentLeft="true"
             android:layout_alignParentRight="true"
             android:layout_alignParentTop="true"
-            android:background="@drawable/list_view_header" >
+            android:background="@drawable/list_view_header"
+            android:weightSum="6" >
+
+            <TextView
+                android:id="@+id/item_beat_plan_dist_name_header"
+                android:layout_width="110dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="2dp"
+                android:layout_weight="3"
+                android:text="@string/distributors"
+                android:textColor="@color/white"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:typeface="serif" />
 
             <TextView
                 android:id="@+id/item_beat_plan_distributor_code"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="25dp"
-                android:layout_toRightOf="@+id/item_beat_plan_dist_name_header"
+                android:layout_gravity="center_vertical"
+                android:layout_weight="0"
                 android:text="@string/schedule"
                 android:textColor="@color/white"
                 android:textSize="12sp"
@@ -40,29 +53,16 @@
                 android:id="@+id/item_beat_plan_dist_visit_header"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginLeft="30dp"
-                android:layout_toRightOf="@+id/item_beat_plan_distributor_code"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="80dp"
+                android:layout_weight="0"
                 android:text="@string/visits_no"
                 android:textColor="@color/white"
                 android:textSize="12sp"
                 android:textStyle="bold"
                 android:typeface="serif" />
 
-            <TextView
-                android:id="@+id/item_beat_plan_dist_name_header"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignBaseline="@+id/item_beat_plan_distributor_code"
-                android:layout_alignBottom="@+id/item_beat_plan_distributor_code"
-                android:layout_alignParentLeft="true"
-                android:layout_marginLeft="2dp"
-                android:text="@string/distributors"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                android:textStyle="bold"
-                android:typeface="serif" />
-        </RelativeLayout>
+        </LinearLayout>
 
         <ListView
             android:id="@+id/beatPlanList"

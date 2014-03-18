@@ -7,6 +7,11 @@ public class Constants {
 	 */
 	public static final String WEBSERVICE_BASE_URL = "http://118.102.131.157:8080/TraceR_RWS/api/";
 	public static final String LOGIN_STATUS = "login_status";
+	
+	public static final String INVALID_ACCESS_TIME = "login_status";
+	public static final String INVALID_CREDENTIALS = "Invalid Credentials";
+	public static final String USER_ALREADY_LOGGED_IN = "User already logged in";
+
 	/**
 	 * LOGIN RESPONSE DATA
 	 */
@@ -29,11 +34,15 @@ public class Constants {
 	public static final String DISTRIBUTORCODE = "distributorCode";
 	public static final String SCHEDULETIME = "scheduleTime";
 	public static final String VISITFREQUENCY = "visitFrequency";
+	public static final String VISITNUMBER = "visitNo";
+	public static final String DISTRIBUTORCONTACTNUMBER = "distributorContactNumber";
+	public static final String DISTRIBUTORLATITIUDE = "distributorLattitude";
+	public static final String DISTRIBUTORLONGITUDE = "distributorLongitude";
 
 	/**
 	 * VISIT INFO
 	 */
-	public static final String VISITCODE = "visitCode";
+	public static final String RUNNER_VISIT_ID = "runnerVisitId";
 	public static final String VISITCOUNT = "visitCount";
 
 	/**
@@ -45,10 +54,11 @@ public class Constants {
 	public static final String RETURNED_CAF_COUNT = "returned_caf_count";
 	public static final String DISTRIBUTOR_PHOTO_PATH = "distributor_photo_path";
 	public static final String DISTRIBUTOR_SIGNATURE_PATH = "dstributor_sign_path";
-	public static final String RUNNER_VISIT_ID = "runner_visit_id";
 	public final static int PICTURE_RESULT = 1;
 	public final static int BARCODE_SCAN_RESULT = 2;
 	public final static int DIGITAL_SIGNATURE_RESULT = 3;
+	public final static int RUNNER_PICTURE_RESULT = 4;
+	public final static String ISCAFSUBMITTED = "cafSubmitted";
 
 	/**
 	 * RUNNERS DATA

@@ -89,7 +89,11 @@ public class RunnerAdapter extends BaseAdapter {
 		});
 
 		runner_name.setText(runnersDataList.get(position).get(Constants.RUNNERNAME).toString());
-		runner_status.setText(runnersDataList.get(position).get(Constants.IS_PRESENT).toString());
+		if (runnersDataList.get(position).get(Constants.IS_PRESENT).toString().equalsIgnoreCase("true")) {
+			runner_status.setText("Present");
+		} else {
+			runner_status.setText("Absent");
+		}
 		runner_cafs.setText(runnersDataList.get(position).get(Constants.CAFCOUNT).toString());
 
 		return view;

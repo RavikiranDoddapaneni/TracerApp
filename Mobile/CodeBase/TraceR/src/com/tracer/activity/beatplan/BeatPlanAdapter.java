@@ -22,7 +22,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
-import android.graphics.Color;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,10 +31,14 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.testflightapp.lib.TestFlight;
 import com.tracer.R;
 import com.tracer.activity.caf.NewCAFActivity;
+import com.tracer.service.gpsservice.GpsTracker;
 import com.tracer.util.Constants;
+import com.tracer.util.CustomizeDialog;
 import com.tracer.util.Prefs;
 
 public class BeatPlanAdapter extends BaseAdapter {
@@ -46,6 +50,9 @@ public class BeatPlanAdapter extends BaseAdapter {
 	Editor editor;
 	String visitCount;
 	String visitId;
+	String visitFrequency;
+	double currentLatitude;
+	double currentLongitude;
 
 	public BeatPlanAdapter(BeatPlanActivity beatPlanActivity, ArrayList<HashMap<String, Object>> distributorsList) {
 		this.mContext = beatPlanActivity;
@@ -82,75 +89,136 @@ public class BeatPlanAdapter extends BaseAdapter {
 		Button collect_caf = (Button) view.findViewById(R.id.collect_CAF);
 
 		distributor_name.setText(distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
-		distributor_visits.setText(distributorsList.get(position).get(Constants.VISITFREQUENCY).toString());
+		distributor_visits.setText(distributorsList.get(position).get(Constants.VISITNUMBER).toString());
 		distributor_codes.setText(distributorsList.get(position).get(Constants.SCHEDULETIME).toString());
 
-		if (position % 2 == 0) {
+		if ((Boolean) distributorsList.get(position).get(Constants.ISCAFSUBMITTED)) {
 			collect_caf.setEnabled(false);
-			collect_caf.setBackgroundResource(R.drawable.collect_btn_over);
+			collect_caf.setBackgroundResource(R.drawable.collect_btn_disabled);
 		}
 
 		collect_caf.setOnClickListener(new OnClickListener() {
 
 			@Override
 			public void onClick(View v) {
-
-				new Thread(new Runnable() {
-					public void run() {
-
-						URLConnection conn;
-						try {
-							preferences = Prefs.get(mContext);
-							preferences.getString(Constants.AUTHCODE, "");
-							jsonObject = new JSONObject();
-							jsonObject.put(Constants.AUTHCODE, preferences.getString(Constants.AUTHCODE, ""));
-							jsonObject.put(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE).toString());
-
-							HttpClient client = new DefaultHttpClient();
-							HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
-							HttpResponse response;
-							HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "user/runner/visitinfo/get");
-
-							StringEntity se = new StringEntity(jsonObject.toString());
-							se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-							post.setEntity(se);
-							response = client.execute(post);
-
-							/* Checking response */
-							if (response != null) {
-								InputStream in = response.getEntity().getContent();
-								BufferedReader rd = new BufferedReader(new InputStreamReader(in));
-								String line;
-								while ((line = rd.readLine()) != null) {
-									System.out.println("line ::::: " + line);
-									JSONObject jsonObject = new JSONObject(line);
-									System.out.println(jsonObject.toString());
-
-									visitCount = jsonObject.getString(Constants.VISITCOUNT);
-									visitId = jsonObject.getString(Constants.VISITCODE);
-								}
-							}
-							Bundle runnerBundle = new Bundle();
-							runnerBundle.putString(Constants.DISTRIBUTORNAME, distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
-							runnerBundle.putString(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE).toString());
-							runnerBundle.putString(Constants.VISITCOUNT, visitCount);
-							runnerBundle.putString(Constants.VISITCODE, visitId);
-							Intent intent = new Intent(mContext, NewCAFActivity.class);
-							intent.putExtras(runnerBundle);
-							mContext.startActivity(intent);
-							((Activity) mContext).overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
-
-						} catch (Exception e) {
-							// TODO Auto-generated catch block
-							e.printStackTrace();
-						}
-
+				try {
+					GpsTracker gpsTracker = new GpsTracker(mContext);
+					if (gpsTracker.canGetLocation()) {
+						currentLatitude = gpsTracker.latitude;
+						currentLongitude = gpsTracker.longitude;
+					} else {
+						gpsTracker.showSettingsAlert();
 					}
-				}).start();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
 
+				float[] result = new float[5];
+				int d;
+				if (currentLatitude == 0.0 || currentLongitude == 0.0) {
+					d = 10;
+				} else {
+					Location.distanceBetween(Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLATITIUDE).toString()),
+							Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLONGITUDE).toString()), currentLatitude,
+							currentLongitude, result);
+					d = (int) result[0];
+				}
+
+				String data = "DistLat : " + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLATITIUDE).toString())
+						+ "   Dist Long : " + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLONGITUDE).toString())
+						+ "   Current Lat : " + currentLatitude + "  Current Long : " + currentLongitude;
+
+				createAlert(data);
+
+				/*Toast.makeText(
+						mContext,
+						"DistLat :" + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLATITIUDE).toString()) + "Dist Long"
+								+ Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLONGITUDE).toString()) + "Current Lat"
+								+ currentLatitude + "Current Long" + currentLongitude, Toast.LENGTH_SHORT).show();
+*/
+				Toast.makeText(mContext, "Distance :" + d, Toast.LENGTH_SHORT).show();
+
+				System.out.println("Distance :" + d);
+
+				TestFlight.log("Distance :" + d);
+
+				if (d < 50) {
+					new Thread(new Runnable() {
+						public void run() {
+
+							URLConnection conn = null;
+							try {
+								preferences = Prefs.get(mContext);
+								preferences.getString(Constants.AUTHCODE, "");
+								jsonObject = new JSONObject();
+								jsonObject.put(Constants.AUTHCODE, preferences.getString(Constants.AUTHCODE, ""));
+								jsonObject.put(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE).toString());
+								jsonObject.put(Constants.VISITNUMBER,
+										Integer.parseInt(String.valueOf(distributorsList.get(position).get(Constants.VISITNUMBER))));
+
+								HttpClient client = new DefaultHttpClient();
+								HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+								HttpResponse response;
+								HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "user/runner/visitinfo/get");
+
+								StringEntity se = new StringEntity(jsonObject.toString());
+								se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+								post.setEntity(se);
+								response = client.execute(post);
+
+								/* Checking response */
+								if (response != null) {
+									InputStream in = response.getEntity().getContent();
+									BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+									String line;
+									while ((line = rd.readLine()) != null) {
+										System.out.println("line ::::: " + line);
+										JSONObject jsonObject = new JSONObject(line);
+										System.out.println(jsonObject.toString());
+										visitId = jsonObject.getString(Constants.RUNNER_VISIT_ID);
+										visitFrequency = jsonObject.getString(Constants.VISITFREQUENCY);
+									}
+								}
+								Bundle runnerBundle = new Bundle();
+								runnerBundle.putString(Constants.DISTRIBUTORNAME, distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
+								runnerBundle.putString(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE).toString());
+								runnerBundle.putString(Constants.VISITCOUNT, distributorsList.get(position).get(Constants.VISITNUMBER).toString());
+								runnerBundle.putString(Constants.DISTRIBUTORCONTACTNUMBER,
+										distributorsList.get(position).get(Constants.DISTRIBUTORCONTACTNUMBER).toString());
+								runnerBundle.putString(Constants.DISTRIBUTORLATITIUDE, distributorsList.get(position).get(Constants.DISTRIBUTORLATITIUDE)
+										.toString());
+								runnerBundle.putString(Constants.DISTRIBUTORLONGITUDE, distributorsList.get(position).get(Constants.DISTRIBUTORLONGITUDE)
+										.toString());
+								runnerBundle.putString(Constants.RUNNER_VISIT_ID, visitId);
+								runnerBundle.putString(Constants.VISITFREQUENCY, visitFrequency);
+								Intent intent = new Intent(mContext, NewCAFActivity.class);
+								intent.putExtras(runnerBundle);
+								mContext.startActivity(intent);
+								((Activity) mContext).overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+
+							} catch (Exception e) {
+								e.printStackTrace();
+							} finally {
+							}
+
+						}
+					}).start();
+				} else {
+					Toast.makeText(mContext, "Please collect at Distributor location", Toast.LENGTH_SHORT).show();
+				}
 			}
 		});
 
 		return view;
+	}
+
+	public void createAlert(String message) {
+		CustomizeDialog customizeDialog = new CustomizeDialog(mContext);
+		customizeDialog.setTitle("New CAF Collection");
+		customizeDialog.setMessage(message);
+		customizeDialog.show();
+
+		if (!customizeDialog.isShowing())
+			customizeDialog.show();
 	}
 }

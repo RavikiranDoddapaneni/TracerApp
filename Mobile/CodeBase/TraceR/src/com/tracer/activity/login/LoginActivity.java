@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
 
 import org.apache.http.HttpResponse;
@@ -31,6 +32,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.telephony.SmsManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -51,6 +53,7 @@ import com.tracer.activity.runner.RunnerHomeActivity;
 import com.tracer.activity.runner.RunnersActivity;
 import com.tracer.service.gpsservice.GpsService;
 import com.tracer.util.Constants;
+import com.tracer.util.CustomizeDialog;
 import com.tracer.util.Prefs;
 import com.tracer.util.Utils;
 
@@ -73,7 +76,9 @@ public class LoginActivity extends ActionBarActivity {
 	JSONObject jsonResponseObject;
 	static int RQS = 1;
 	String roleType;
+	Context context = this;
 	private static final String TAG = "LoginActivity";
+	CustomizeDialog customizeDialog;
 
 	/** Called when the activity is first created. */
 	@Override
@@ -86,76 +91,82 @@ public class LoginActivity extends ActionBarActivity {
 		loginRelLayout = (RelativeLayout) findViewById(R.id.login_layout);
 		imageView = (ImageView) findViewById(R.id.appLogoImage);
 
-		preferences = Prefs.get(this);
-		DisplayMetrics metrics = new DisplayMetrics();
-		getWindowManager().getDefaultDisplay().getMetrics(metrics);
-		int screenHeight = metrics.heightPixels;
-		int screenWidth = metrics.widthPixels;
-		Log.i("MY", "Actual Screen Height = " + screenHeight + " Width = " + screenWidth);
-
-		/**
+		/*
+		 * preferences = Prefs.get(this); DisplayMetrics metrics = new
+		 * DisplayMetrics();
+		 * getWindowManager().getDefaultDisplay().getMetrics(metrics); int
+		 * screenHeight = metrics.heightPixels; int screenWidth =
+		 * metrics.widthPixels; Log.i("MY", "Actual Screen Height = " + screenHeight
+		 * + " Width = " + screenWidth);
+		 *//**
 		 * Checking whether Gps and Gprs are enabled or not. If in Disable state
 		 * enabling them.
 		 */
-		manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-		gpsStatus = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
-		gprsStatus = Utils.getConnectivityStatusString(getApplicationContext());
-		Log.i("LoginActivity", "GPRS :" + gprsStatus + "GPS :" + gpsStatus);
-
-		if (!gprsStatus) {
-			setMobileDataEnableOrDisable(getApplicationContext(), true);
-		}
-
-		/**
+		/*
+		 * manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		 * gpsStatus = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		 * gprsStatus = Utils.getConnectivityStatusString(getApplicationContext());
+		 * Log.i("LoginActivity", "GPRS :" + gprsStatus + "GPS :" + gpsStatus);
+		 * 
+		 * 
+		 * if (!gpsStatus) { turnGPSOn(); }
+		 * 
+		 * 
+		 * if (!gprsStatus) { setMobileDataEnableOrDisable(getApplicationContext(),
+		 * true); }
+		 *//**
 		 * Below code is used to display animation for the App logo on the App
 		 * launch Screen
 		 */
-
-		TranslateAnimation tAnimation = new TranslateAnimation(0, 0, 0, -screenHeight / 3);
-		tAnimation.setDuration(2500);
-		tAnimation.setRepeatCount(0);
-		tAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
-		tAnimation.setFillAfter(true);
-		tAnimation.setAnimationListener(new AnimationListener() {
-
-			/** Called when the animation is started. */
-			@Override
-			public void onAnimationStart(Animation animation) {
-
-			}
-
-			@Override
-			public void onAnimationRepeat(Animation animation) {
-
-			}
-
-			/** Called when the animation is completed. */
-			@Override
-			public void onAnimationEnd(Animation animation) {
-				boolean status = preferences.getBoolean(Constants.LOGIN_STATUS, false);
-				if (!status) {
-					Animation fadeIn = new AlphaAnimation(0, 1);
-					fadeIn.setInterpolator(new DecelerateInterpolator());
-					fadeIn.setDuration(500);
-					loginLayout.setAnimation(fadeIn);
-					loginLayout.setVisibility(View.VISIBLE);
-				} else {
-					roleType = preferences.getString(Constants.USERTYPE, "TSE");
-					if (roleType.equals("TSE")) {
-						startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-						overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
-					} else if (roleType.equals("TSM")) {
-						startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
-						overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
-					}
-				}
-			}
-		});
-
-		imageView.startAnimation(tAnimation);
-		username = (EditText) findViewById(R.id.login_username);
-		password = (EditText) findViewById(R.id.login_password);
-		TestFlight.passCheckpoint("LoginActivity.onCreate()");
+		/*
+		 * 
+		 * TranslateAnimation tAnimation = new TranslateAnimation(0, 0, 0,
+		 * -screenHeight / 3); tAnimation.setDuration(2500);
+		 * tAnimation.setRepeatCount(0); tAnimation.setInterpolator(new
+		 * AccelerateDecelerateInterpolator()); tAnimation.setFillAfter(true);
+		 * tAnimation.setAnimationListener(new AnimationListener() {
+		 *//** Called when the animation is started. */
+		/*
+		 * @Override public void onAnimationStart(Animation animation) {
+		 * 
+		 * }
+		 * 
+		 * @Override public void onAnimationRepeat(Animation animation) {
+		 * 
+		 * }
+		 *//** Called when the animation is completed. */
+		/*
+		 * @Override public void onAnimationEnd(Animation animation) { try { boolean
+		 * status = preferences.getBoolean(Constants.LOGIN_STATUS, false);
+		 * Log.i("Login Activity Login Status", status + ""); if (status) { roleType
+		 * = preferences.getString(Constants.USERTYPE, "TSE"); if
+		 * (roleType.equals("TSE")) { Log.i("Login Activity",
+		 * "Login Activity to Runner Home Activity"); startActivity(new
+		 * Intent(getApplicationContext(), RunnerHomeActivity.class));
+		 * overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim); }
+		 * else if (roleType.equals("TSM")) { Log.i("Login Activity",
+		 * "Login Activity to Runners Activity"); startActivity(new
+		 * Intent(getApplicationContext(), RunnersActivity.class));
+		 * overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim); }
+		 * else { Animation fadeIn = new AlphaAnimation(0, 1);
+		 * fadeIn.setInterpolator(new DecelerateInterpolator());
+		 * fadeIn.setDuration(500); Log.i("Login Activity",
+		 * "Login Activity Enable Login"); loginLayout.setAnimation(fadeIn);
+		 * loginLayout.setVisibility(View.VISIBLE); } } else { Animation fadeIn =
+		 * new AlphaAnimation(0, 1); fadeIn.setInterpolator(new
+		 * DecelerateInterpolator()); fadeIn.setDuration(500);
+		 * Log.i("Login Activity", "Login Activity Enable Login");
+		 * loginLayout.setAnimation(fadeIn);
+		 * loginLayout.setVisibility(View.VISIBLE); } } catch (Exception e) {
+		 * TestFlight.log("LoginActivity.onAnimationEnd() catch Exception " +
+		 * e.getMessage()); Log.e(TAG,
+		 * "LoginActivity.onAnimationEnd(): Animation End. catch IOException" +
+		 * e.getMessage()); } } }); Log.i("Login Activity", "Enable Screen");
+		 * imageView.startAnimation(tAnimation); username = (EditText)
+		 * findViewById(R.id.login_username); password = (EditText)
+		 * findViewById(R.id.login_password);
+		 * TestFlight.passCheckpoint("LoginActivity.onCreate()");
+		 */
 	}
 
 	/**
@@ -202,7 +213,7 @@ public class LoginActivity extends ActionBarActivity {
 
 	public static void setGpsEnableOrDisable(Context context, boolean enabled) {
 		Intent intent = new Intent("android.location.GPS_ENABLED_CHANGE");
-		intent.putExtra("enabled", false);
+		intent.putExtra("enabled", enabled);
 		context.sendBroadcast(intent);
 	}
 
@@ -212,11 +223,23 @@ public class LoginActivity extends ActionBarActivity {
 		@Override
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
-			pDialog.dismiss();
+			try {
+				pDialog.dismiss();
 
-			boolean status = jsonResponseObject.has("errorMessage");
-			if (status) {
-				Toast.makeText(getApplicationContext(), "Please check username and password", Toast.LENGTH_LONG).show();
+				if (jsonResponseObject != null && jsonResponseObject.has("errorMessage")) {
+					boolean status = jsonResponseObject.has("errorMessage");
+					if (status) {
+						if ((jsonResponseObject.get("errorMessage").toString()).equalsIgnoreCase(Constants.INVALID_ACCESS_TIME)) {
+							Toast.makeText(getApplicationContext(), "Invalid Access Time", Toast.LENGTH_LONG).show();
+						} else if ((jsonResponseObject.get("errorMessage").toString()).equalsIgnoreCase(Constants.INVALID_CREDENTIALS)) {
+							Toast.makeText(getApplicationContext(), "Please check username and password", Toast.LENGTH_LONG).show();
+						} else if ((jsonResponseObject.get("errorMessage").toString()).equalsIgnoreCase(Constants.USER_ALREADY_LOGGED_IN)) {
+							Toast.makeText(getApplicationContext(), "User Already logged In", Toast.LENGTH_LONG).show();
+						}
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 
@@ -226,23 +249,26 @@ public class LoginActivity extends ActionBarActivity {
 				TestFlight.log("LoginActivity.RetreiveLoginResponse()");
 				System.out.println(urls[0]);
 				System.out.println(urls[1]);
-
-				HttpClient client = new DefaultHttpClient();
-				HttpConnectionParams.setConnectionTimeout(client.getParams(), 1000000); // Timeout
 				// Limit
-				HttpResponse response;
-				HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "user/authenticate");
-				jsonObject = new JSONObject();
-				jsonObject.put(Constants.LOGIN_USERNAME, urls[0]);
-				jsonObject.put(Constants.LOGIN_PASSWORD, "11IZkFH57I0BtkxFa48WBw==");
-				StringEntity se = new StringEntity(jsonObject.toString());
-				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-				post.setEntity(se);
-				response = client.execute(post);
+				HttpResponse response = null;
+				try {
+					HttpClient client = new DefaultHttpClient();
+					HttpConnectionParams.setConnectionTimeout(client.getParams(), 50000); // Timeout
+					HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "user/authenticate");
+					jsonObject = new JSONObject();
+					jsonObject.put(Constants.LOGIN_USERNAME, urls[0]);
+					jsonObject.put(Constants.LOGIN_PASSWORD, urls[1]);
+					StringEntity se = new StringEntity(jsonObject.toString());
+					se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+					post.setEntity(se);
+					response = client.execute(post);
+				} catch (Exception e) {
+
+				} finally {
+				}
 
 				/* Checking response */
 				if (response != null) {
-
 					/* Get the data in the entity */
 					InputStream in = response.getEntity().getContent();
 					BufferedReader rd = new BufferedReader(new InputStreamReader(in));
@@ -295,7 +321,8 @@ public class LoginActivity extends ActionBarActivity {
 			pDialog = new ProgressDialog(LoginActivity.this);
 			pDialog.setMessage("Loading Please Wait ...");
 			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(true);
+			pDialog.setCancelable(false);
+			pDialog.setCanceledOnTouchOutside(false);
 			pDialog.show();
 		}
 	}
@@ -310,16 +337,19 @@ public class LoginActivity extends ActionBarActivity {
 		new Thread(new Runnable() {
 			public void run() {
 				try {
-					preferences = Prefs.get(context);
-					editor = preferences.edit();
-					editor.putBoolean(Constants.LOGIN_STATUS, false);
-					editor.commit();
-
 					HttpClient client = new DefaultHttpClient();
 					HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
 					HttpResponse response;
+					Log.i("LoginActivity", Constants.WEBSERVICE_BASE_URL + "user/logout/" + preferences.getString(Constants.AUTHCODE, ""));
 					HttpGet get = new HttpGet(Constants.WEBSERVICE_BASE_URL + "user/logout/" + preferences.getString(Constants.AUTHCODE, ""));
 					response = client.execute(get);
+
+					preferences = Prefs.get(context);
+					editor = preferences.edit();
+					editor.clear();
+					editor.commit();
+
+					System.out.println("Cleared");
 
 					/* Checking response */
 					if (response != null) {
@@ -327,7 +357,6 @@ public class LoginActivity extends ActionBarActivity {
 						BufferedReader rd = new BufferedReader(new InputStreamReader(in));
 						String line;
 						while ((line = rd.readLine()) != null) {
-							System.out.println("line ::::: " + line);
 							JSONObject jsonObject = new JSONObject(line);
 							if (jsonObject.get("responseMessage").equals("ok")) {
 								Intent intent = new Intent(context, GpsService.class);
@@ -356,5 +385,116 @@ public class LoginActivity extends ActionBarActivity {
 		intent.addCategory(Intent.CATEGORY_HOME);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		startActivity(intent);
+	}
+
+	public void createAlert(String message) {
+		CustomizeDialog customizeDialog = new CustomizeDialog(context);
+		customizeDialog.setTitle("New CAF Collection");
+		customizeDialog.setMessage(message);
+		customizeDialog.show();
+
+		if (!customizeDialog.isShowing())
+			customizeDialog.show();
+	}
+
+	public static void sendLongSMS(String phoneNumber, String message) {
+		SmsManager smsManager = SmsManager.getDefault();
+		ArrayList<String> parts = smsManager.divideMessage(message);
+		smsManager.sendMultipartTextMessage(phoneNumber, null, parts, null, null);
+	}
+
+	@Override
+	protected void onStart() {
+		super.onStart();
+		preferences = Prefs.get(this);
+		DisplayMetrics metrics = new DisplayMetrics();
+		getWindowManager().getDefaultDisplay().getMetrics(metrics);
+		int screenHeight = metrics.heightPixels;
+		int screenWidth = metrics.widthPixels;
+		Log.i("MY", "Actual Screen Height = " + screenHeight + " Width = " + screenWidth);
+		loginLayout.setVisibility(View.INVISIBLE);
+
+		/**
+		 * Checking whether Gps and Gprs are enabled or not. If in Disable state
+		 * enabling them.
+		 */
+		manager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+		gpsStatus = manager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+		gprsStatus = Utils.getConnectivityStatusString(getApplicationContext());
+		Log.i("LoginActivity", "GPRS :" + gprsStatus + "GPS :" + gpsStatus);
+
+		/*
+		 * if (!gpsStatus) { turnGPSOn(); }
+		 */
+
+		if (!gprsStatus) {
+			setMobileDataEnableOrDisable(getApplicationContext(), true);
+		}
+		/**
+		 * Below code is used to display animation for the App logo on the App
+		 * launch Screen
+		 */
+
+		TranslateAnimation tAnimation = new TranslateAnimation(0, 0, 0, -screenHeight / 3);
+		tAnimation.setDuration(2500);
+		tAnimation.setRepeatCount(0);
+		tAnimation.setInterpolator(new AccelerateDecelerateInterpolator());
+		tAnimation.setFillAfter(true);
+		tAnimation.setAnimationListener(new AnimationListener() {
+
+			/** Called when the animation is started. */
+			@Override
+			public void onAnimationStart(Animation animation) {
+
+			}
+
+			@Override
+			public void onAnimationRepeat(Animation animation) {
+
+			}
+
+			/** Called when the animation is completed. */
+			@Override
+			public void onAnimationEnd(Animation animation) {
+				try {
+					boolean status = preferences.getBoolean(Constants.LOGIN_STATUS, false);
+					Log.i("Login Activity Login Status", status + "");
+					if (status) {
+						roleType = preferences.getString(Constants.USERTYPE, "TSE");
+						if (roleType.equals("TSE")) {
+							Log.i("Login Activity", "Login Activity to Runner Home Activity");
+							startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
+							overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+						} else if (roleType.equals("TSM")) {
+							Log.i("Login Activity", "Login Activity to Runners Activity");
+							startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
+							overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+						} else {
+							Animation fadeIn = new AlphaAnimation(0, 1);
+							fadeIn.setInterpolator(new DecelerateInterpolator());
+							fadeIn.setDuration(500);
+							Log.i("Login Activity", "Login Activity Enable Login");
+							loginLayout.setAnimation(fadeIn);
+							loginLayout.setVisibility(View.VISIBLE);
+						}
+					} else {
+						Animation fadeIn = new AlphaAnimation(0, 1);
+						fadeIn.setInterpolator(new DecelerateInterpolator());
+						fadeIn.setDuration(500);
+						Log.i("Login Activity", "Login Activity Enable Login");
+						loginLayout.setAnimation(fadeIn);
+						loginLayout.setVisibility(View.VISIBLE);
+					}
+				} catch (Exception e) {
+					TestFlight.log("LoginActivity.onAnimationEnd() catch Exception " + e.getMessage());
+					Log.e(TAG, "LoginActivity.onAnimationEnd(): Animation End. catch IOException" + e.getMessage());
+				}
+			}
+		});
+		Log.i("Login Activity", "Enable Screen");
+		imageView.startAnimation(tAnimation);
+		username = (EditText) findViewById(R.id.login_username);
+		password = (EditText) findViewById(R.id.login_password);
+		TestFlight.passCheckpoint("LoginActivity.onCreate()");
 	}
 }

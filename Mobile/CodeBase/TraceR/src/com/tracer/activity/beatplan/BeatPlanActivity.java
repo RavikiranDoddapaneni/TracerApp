@@ -15,6 +15,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -33,6 +34,7 @@ import com.tracer.activity.runner.RunnerHomeActivity;
 import com.tracer.activity.runner.RunnersActivity;
 import com.tracer.activity.teamleader.TeamLeaderHomeActivity;
 import com.tracer.util.Constants;
+import com.tracer.util.CustomizeDialog;
 import com.tracer.util.Prefs;
 
 public class BeatPlanActivity extends ActionBarActivity {
@@ -45,8 +47,10 @@ public class BeatPlanActivity extends ActionBarActivity {
 	String authCode;
 	String userType;
 
+	Context context = this;
 	JSONObject jsonObject;
 	Editor editor;
+
 	private static final String TAG = "BeatPlanActivity";
 
 	/** Called when the activity is first created. */
@@ -112,8 +116,12 @@ public class BeatPlanActivity extends ActionBarActivity {
 		protected void onPostExecute(String result) {
 			super.onPostExecute(result);
 			pDialog.dismiss();
-			beatPlanAdapter = new BeatPlanAdapter(BeatPlanActivity.this, distributorsList);
-			beatPlanList.setAdapter(beatPlanAdapter);
+			if (distributorsList != null && distributorsList.size() > 0) {
+				beatPlanAdapter = new BeatPlanAdapter(BeatPlanActivity.this, distributorsList);
+				beatPlanList.setAdapter(beatPlanAdapter);
+			} else {
+				createAlert("No Data Available", "Beat Plans");
+			}
 		}
 
 		protected String doInBackground(String... urls) {
@@ -121,8 +129,10 @@ public class BeatPlanActivity extends ActionBarActivity {
 				TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse()");
 				System.out.println(urls[0]);
 				HttpClient client = new DefaultHttpClient();
-				HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+				HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000);
 				HttpResponse response;
+
+				Log.i(TAG, "Request URL :" + Constants.WEBSERVICE_BASE_URL + "beatplans/get/" + urls[0]);
 				HttpGet get = new HttpGet(Constants.WEBSERVICE_BASE_URL + "beatplans/get/" + urls[0]);
 				response = client.execute(get);
 
@@ -146,9 +156,12 @@ public class BeatPlanActivity extends ActionBarActivity {
 							map.put(Constants.DISTRIBUTORNAME, distObject.getString(Constants.DISTRIBUTORNAME));
 							map.put(Constants.DISTRIBUTORCODE, distObject.getString(Constants.DISTRIBUTORCODE));
 							map.put(Constants.SCHEDULETIME, distObject.getString(Constants.SCHEDULETIME));
-							map.put(Constants.VISITFREQUENCY, distObject.getString(Constants.VISITFREQUENCY));
-							// map.put(Constants.VISITCOUNT,
-							// distObject.getString(Constants.VISITCOUNT));
+							map.put(Constants.VISITFREQUENCY, distObject.getInt(Constants.VISITFREQUENCY));
+							map.put(Constants.ISCAFSUBMITTED, distObject.getBoolean(Constants.ISCAFSUBMITTED));
+							map.put(Constants.VISITNUMBER, distObject.getInt(Constants.VISITNUMBER));
+							map.put(Constants.DISTRIBUTORCONTACTNUMBER, distObject.getInt(Constants.DISTRIBUTORCONTACTNUMBER));
+							map.put(Constants.DISTRIBUTORLATITIUDE, distObject.getDouble(Constants.DISTRIBUTORLATITIUDE));
+							map.put(Constants.DISTRIBUTORLONGITUDE, distObject.getDouble(Constants.DISTRIBUTORLONGITUDE));
 							distributorsList.add(map);
 						}
 
@@ -161,6 +174,7 @@ public class BeatPlanActivity extends ActionBarActivity {
 			} catch (Exception e) {
 				TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse() catch Exception " + e.getMessage());
 				Log.e(TAG, "BeatPlanActivity.RetreiveBeatPlanResponse():" + e.getMessage());
+			} finally {
 			}
 			return authCode;
 		}
@@ -171,9 +185,26 @@ public class BeatPlanActivity extends ActionBarActivity {
 			pDialog = new ProgressDialog(BeatPlanActivity.this);
 			pDialog.setMessage("Getting Data ...");
 			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(true);
+			pDialog.setCancelable(false);
+			pDialog.setCanceledOnTouchOutside(false);
 			pDialog.show();
 		}
+	}
+
+	@Override
+	public void onBackPressed() {
+		Intent intent = new Intent(getApplicationContext(), RunnerHomeActivity.class);
+		startActivity(intent);
+	}
+
+	public void createAlert(String message, String title) {
+		CustomizeDialog customizeDialog = new CustomizeDialog(context);
+		customizeDialog.setTitle(title);
+		customizeDialog.setMessage(message);
+		customizeDialog.show();
+
+		if (!customizeDialog.isShowing())
+			customizeDialog.show();
 
 	}
 }
