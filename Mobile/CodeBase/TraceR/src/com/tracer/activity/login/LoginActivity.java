@@ -183,6 +183,7 @@ public class LoginActivity extends ActionBarActivity {
     entered_password = password.getText().toString();
 
     if (!entered_username.isEmpty() || !entered_password.isEmpty()) {
+      
       if (Utils.getConnectivityStatusString(getApplicationContext())) {
         new RetreiveLoginResponse().execute(entered_username, entered_password);
       } else {
@@ -198,6 +199,7 @@ public class LoginActivity extends ActionBarActivity {
   
   @SuppressWarnings({ "rawtypes", "unchecked" })
   public static void setMobileDataEnableOrDisable(Context context, boolean enabled) {
+    
     try {
       TestFlight.log("LoginActivity.setMobileDataEnableOrDisable()");
       final ConnectivityManager conman = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -262,6 +264,7 @@ public class LoginActivity extends ActionBarActivity {
 
         // Limit
         HttpResponse response = null;
+        
         try {
           HttpClient client = new DefaultHttpClient();
           HttpConnectionParams.setConnectionTimeout(client.getParams(), 50000); // Timeout
