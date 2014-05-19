@@ -26,276 +26,294 @@ import com.tracer.R;
  * http://www.androidhive.info/2012/07/android-gps-location-manager-tutorial
  * 
  * For Geocoder read this :
- * http://stackoverflow.com/questions/472313/android-reverse
- * -geocoding-getfromlocation
+ * http://stackoverflow.com/questions/472313/android-reverse-geocoding-getfromlocation
  * 
  */
 
 public class GpsTracker extends Service implements LocationListener {
-	private final Context mContext;
+  private final Context mContext;
 
-	// flag for GPS Status
-	boolean isGPSEnabled = false;
+  // flag for GPS Status
+  boolean isGPSEnabled = false;
 
-	// flag for network status
-	boolean isNetworkEnabled = false;
+  // flag for network status
+  boolean isNetworkEnabled = false;
 
-	boolean canGetLocation = false;
+  boolean canGetLocation = false;
 
-	Location location;
-	public double latitude;
-	public double longitude;
+  Location location;
+  public double latitude;
+  public double longitude;
 
-	// The minimum distance to change updates in metters
-	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // 10
-	// metters
+  // The minimum distance to change updates in meters
+  private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 1; // 10 meters
 
-	// The minimum time beetwen updates in milliseconds
-	private static final long MIN_TIME_BW_UPDATES = 1000 * 30 * 1; // 1 minute
+  // The minimum time between updates in milliseconds
+  private static final long MIN_TIME_BW_UPDATES = 1000 * 30 * 1; // 1 minute
 
-	// Declaring a Location Manager
-	protected LocationManager locationManager;
+  // Declaring a Location Manager
+  protected LocationManager locationManager;
 
-	public GpsTracker(Context context) {
-		this.mContext = context;
-		getLocation();
-	}
+  //==========================================================================
+  
+  public GpsTracker(Context context) {
+    this.mContext = context;
+    getLocation();
+  }
 
-	public Location getLocation() {
-		try {
-			locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
+  //==========================================================================
+  
+  public Location getLocation() {
+    try {
+      locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
-			// getting GPS status
-			isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+      // getting GPS status
+      isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
-			// getting network status
-			isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+      // getting network status
+      isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-			if (!isGPSEnabled && !isNetworkEnabled) {
-				// no network provider is enabled
-			} else {
-				this.canGetLocation = true;
+      if (!isGPSEnabled && !isNetworkEnabled) {
+        // no network provider is enabled
+      } else {
+        this.canGetLocation = true;
 
-				// First get location from Network Provider
-				if (isNetworkEnabled) {
-					locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+        // First get location from Network Provider
+        if (isNetworkEnabled) {
+          locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+          Log.d("Network", "Network");
 
-					Log.d("Network", "Network");
+          if (locationManager != null) {
+            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+            updateGPSCoordinates();
+          }
+        }
 
-					if (locationManager != null) {
-						location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-						updateGPSCoordinates();
-					}
-				}
+        // if GPS Enabled get lat/long using GPS Services
+        if (isGPSEnabled) {
+          if (location == null) {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+            Log.d("GPS Enabled", "GPS Enabled");
 
-				// if GPS Enabled get lat/long using GPS Services
-				if (isGPSEnabled) {
-					if (location == null) {
-						locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, MIN_TIME_BW_UPDATES, MIN_DISTANCE_CHANGE_FOR_UPDATES, this);
+            if (locationManager != null) {
+              location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+              updateGPSCoordinates();
+            }
+          }
+        }
+      }
+    } catch (Exception e) {
+      // e.printStackTrace();
+      Log.e("Error : Location", "Impossible to connect to LocationManager", e);
+    }
+    return location;
+  }
 
-						Log.d("GPS Enabled", "GPS Enabled");
+  //==========================================================================
+  
+  public void updateGPSCoordinates() {
+    if (location != null) {
+      latitude = location.getLatitude();
+      longitude = location.getLongitude();
+    }
+  }
 
-						if (locationManager != null) {
-							location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-							updateGPSCoordinates();
-						}
-					}
-				}
-			}
-		} catch (Exception e) {
-			// e.printStackTrace();
-			Log.e("Error : Location", "Impossible to connect to LocationManager", e);
-		}
+  //==========================================================================
+  
+  /**
+   * Stop using GPS listener Calling this function will stop using GPS in your
+   * app
+   */
+  public void stopUsingGPS() {
+    if (locationManager != null) {
+      locationManager.removeUpdates(GpsTracker.this);
+    }
+  }
 
-		return location;
-	}
+  //==========================================================================
+  
+  /**
+   * Function to get latitude
+   */
+  public double getLatitude() {
+    if (location != null) {
+      location.getAccuracy();
+      latitude = location.getLatitude();
+    }
+    return latitude;
+  }
 
-	public void updateGPSCoordinates() {
-		if (location != null) {
-			latitude = location.getLatitude();
-			longitude = location.getLongitude();
-		}
-	}
+  //==========================================================================
+  
+  /**
+   * Function to get longitude
+   */
+  public double getLongitude() {
+    if (location != null) {
+      location.getAccuracy();
+      longitude = location.getLongitude();
+    }
+    return longitude;
+  }
 
-	/**
-	 * Stop using GPS listener Calling this function will stop using GPS in your
-	 * app
-	 */
+  //==========================================================================
+  
+  /**
+   * Function to check GPS/wifi enabled
+   */
+  public boolean canGetLocation() {
+    return this.canGetLocation;
+  }
 
-	public void stopUsingGPS() {
-		if (locationManager != null) {
-			locationManager.removeUpdates(GpsTracker.this);
-		}
-	}
+  //==========================================================================
+  
+  /**
+   * Function to show settings alert dialog
+   */
+  public void showSettingsAlert() {
+    AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
 
-	/**
-	 * Function to get latitude
-	 */
-	public double getLatitude() {
-		if (location != null) {
-			location.getAccuracy();
-			latitude = location.getLatitude();
-		}
+    // Setting Dialog Title
+    alertDialog.setTitle(R.string.GPSAlertDialogTitle);
 
-		return latitude;
-	}
+    // Setting Dialog Message
+    alertDialog.setMessage(R.string.GPSAlertDialogMessage);
 
-	/**
-	 * Function to get longitude
-	 */
-	public double getLongitude() {
-		if (location != null) {
-			location.getAccuracy();
-			longitude = location.getLongitude();
-		}
+    // On Pressing Setting button
+    alertDialog.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+        mContext.startActivity(intent);
+      }
+    });
 
-		return longitude;
-	}
+    // On pressing cancel button
+    alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+      @Override
+      public void onClick(DialogInterface dialog, int which) {
+        dialog.cancel();
+      }
+    });
+    alertDialog.show();
+  }
 
-	/**
-	 * Function to check GPS/wifi enabled
-	 */
-	public boolean canGetLocation() {
-		return this.canGetLocation;
-	}
+  //==========================================================================
+  
+  /**
+   * Get list of address by latitude and longitude
+   * 
+   * @return null or List<Address>
+   */
+  public List<Address> getGeocoderAddress(Context context) {
+    if (location != null) {
+      Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
+      try {
+        List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
+        return addresses;
+      } catch (IOException e) {
+        Log.e("Error : Geocoder", "Impossible to connect to Geocoder");
+      }
+    }
+    return null;
+  }
 
-	/**
-	 * Function to show settings alert dialog
-	 */
-	public void showSettingsAlert() {
-		AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+  //==========================================================================
+  
+  /**
+   * Try to get AddressLine
+   * 
+   * @return null or addressLine
+   */
+  public String getAddressLine(Context context) {
+    List<Address> addresses = getGeocoderAddress(context);
+    
+    if (addresses != null && addresses.size() > 0) {
+      Address address = addresses.get(0);
+      String addressLine = address.getAddressLine(0);
+      return addressLine;
+    } else {
+      return "Unable to Track position";
+    }
+  }
 
-		// Setting Dialog Title
-		alertDialog.setTitle(R.string.GPSAlertDialogTitle);
+  //==========================================================================
+  
+  /**
+   * Try to get Locality
+   * 
+   * @return null or locality
+   */
+  public String getLocality(Context context) {
+    List<Address> addresses = getGeocoderAddress(context);
+    if (addresses != null && addresses.size() > 0) {
+      Address address = addresses.get(0);
+      String locality = address.getLocality();
+      return locality;
+    } else {
+      return null;
+    }
+  }
 
-		// Setting Dialog Message
-		alertDialog.setMessage(R.string.GPSAlertDialogMessage);
+  //==========================================================================
+  
+  /**
+   * Try to get Postal Code
+   * 
+   * @return null or postalCode
+   */
+  public String getPostalCode(Context context) {
+    List<Address> addresses = getGeocoderAddress(context);
+    if (addresses != null && addresses.size() > 0) {
+      Address address = addresses.get(0);
+      String postalCode = address.getPostalCode();
 
-		// On Pressing Setting button
-		alertDialog.setPositiveButton(R.string.settings, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-				mContext.startActivity(intent);
-			}
-		});
+      return postalCode;
+    } else {
+      return null;
+    }
+  }
 
-		// On pressing cancel button
-		alertDialog.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-			@Override
-			public void onClick(DialogInterface dialog, int which) {
-				dialog.cancel();
-			}
-		});
+  //==========================================================================
+  
+  /**
+   * Try to get CountryName
+   * 
+   * @return null or postalCode
+   */
+  public String getCountryName(Context context) {
+    List<Address> addresses = getGeocoderAddress(context);
+    if (addresses != null && addresses.size() > 0) {
+      Address address = addresses.get(0);
+      String countryName = address.getCountryName();
+      return countryName;
+    } else {
+      return null;
+    }
+  }
 
-		alertDialog.show();
-	}
+  //==========================================================================
+  
+  @Override
+  public void onLocationChanged(Location location) {
+  }
 
-	/**
-	 * Get list of address by latitude and longitude
-	 * 
-	 * @return null or List<Address>
-	 */
-	public List<Address> getGeocoderAddress(Context context) {
-		if (location != null) {
-			Geocoder geocoder = new Geocoder(context, Locale.ENGLISH);
-			try {
-				List<Address> addresses = geocoder.getFromLocation(latitude, longitude, 1);
-				return addresses;
-			} catch (IOException e) {
-				Log.e("Error : Geocoder", "Impossible to connect to Geocoder");
-			}
-		}
+  @Override
+  public void onProviderDisabled(String provider) {
+  }
 
-		return null;
-	}
+  @Override
+  public void onProviderEnabled(String provider) {
+  }
 
-	/**
-	 * Try to get AddressLine
-	 * 
-	 * @return null or addressLine
-	 */
-	public String getAddressLine(Context context) {
-		List<Address> addresses = getGeocoderAddress(context);
-		if (addresses != null && addresses.size() > 0) {
-			Address address = addresses.get(0);
-			String addressLine = address.getAddressLine(0);
+  @Override
+  public void onStatusChanged(String provider, int status, Bundle extras) {
+  }
 
-			return addressLine;
-		} else {
-			return "Unable to Track position";
-		}
-	}
-
-	/**
-	 * Try to get Locality
-	 * 
-	 * @return null or locality
-	 */
-	public String getLocality(Context context) {
-		List<Address> addresses = getGeocoderAddress(context);
-		if (addresses != null && addresses.size() > 0) {
-			Address address = addresses.get(0);
-			String locality = address.getLocality();
-
-			return locality;
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Try to get Postal Code
-	 * 
-	 * @return null or postalCode
-	 */
-	public String getPostalCode(Context context) {
-		List<Address> addresses = getGeocoderAddress(context);
-		if (addresses != null && addresses.size() > 0) {
-			Address address = addresses.get(0);
-			String postalCode = address.getPostalCode();
-
-			return postalCode;
-		} else {
-			return null;
-		}
-	}
-
-	/**
-	 * Try to get CountryName
-	 * 
-	 * @return null or postalCode
-	 */
-	public String getCountryName(Context context) {
-		List<Address> addresses = getGeocoderAddress(context);
-		if (addresses != null && addresses.size() > 0) {
-			Address address = addresses.get(0);
-			String countryName = address.getCountryName();
-
-			return countryName;
-		} else {
-			return null;
-		}
-	}
-
-	@Override
-	public void onLocationChanged(Location location) {
-	}
-
-	@Override
-	public void onProviderDisabled(String provider) {
-	}
-
-	@Override
-	public void onProviderEnabled(String provider) {
-	}
-
-	@Override
-	public void onStatusChanged(String provider, int status, Bundle extras) {
-	}
-
-	@Override
-	public IBinder onBind(Intent intent) {
-		return null;
-	}
+  @Override
+  public IBinder onBind(Intent intent) {
+    return null;
+  }
+  
+  //==========================================================================
 }

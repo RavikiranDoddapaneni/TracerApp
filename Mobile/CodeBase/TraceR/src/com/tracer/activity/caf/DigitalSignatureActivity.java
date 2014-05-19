@@ -37,168 +37,177 @@ import com.tracer.util.CustomizeDialog;
 import com.tracer.util.Prefs;
 
 public class DigitalSignatureActivity extends ActionBarActivity implements OnGesturePerformedListener {
-	GestureOverlayView gestureOverlayView;
-	Context context = this;
-	ActionBar actionBar;
-	SharedPreferences prefs;
-	String userType;
-	Bundle bundle;
-	private GestureLibrary gestureLib;
-	boolean isSignatureEnabled = false;
+  GestureOverlayView gestureOverlayView;
+  Context context = this;
+  ActionBar actionBar;
+  SharedPreferences prefs;
+  String userType;
+  Bundle bundle;
+  private GestureLibrary gestureLib;
+  boolean isSignatureEnabled = false;
 
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_digital_signature);
+  //==========================================================================
+  
+  /** Called when the activity is first created. */
+  @Override
+  public void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_digital_signature);
+    bundle = new Bundle();
+    bundle = getIntent().getExtras();
+    prefs = Prefs.get(this);
+    userType = prefs.getString(Constants.USERTYPE, null);
+    actionBar = getSupportActionBar();
+    gestureOverlayView = (GestureOverlayView) findViewById(R.id.gestures);
+    gestureOverlayView.addOnGesturePerformedListener(this);
+    gestureOverlayView.setFadeEnabled(false);
+    gestureOverlayView.setOnTouchListener(new OnTouchListener() {
 
-		bundle = new Bundle();
-		bundle = getIntent().getExtras();
+      @Override
+      public boolean onTouch(View v, MotionEvent event) {
+        isSignatureEnabled = true;
+        return false;
+      }
+    });
+  }
 
-		prefs = Prefs.get(this);
-		userType = prefs.getString(Constants.USERTYPE, null);
+  //==========================================================================
+  
+  /**
+   * Called when the user clicked on Save button. Saves the digital signature in
+   * the application cache after saving.
+   * 
+   * @param view
+   */
+  public void digitalSignatureDone(View view) {
+    if (isSignatureEnabled) {
+      gestureOverlayView.setDrawingCacheEnabled(true);
+      Bitmap bitmap = gestureOverlayView.getDrawingCache();
+      File imagePath = saveBitmap(bitmap);
+      Intent intent = new Intent();
+      intent.putExtra("digital_signature_path", imagePath.toString());
+      setResult(RESULT_OK, intent);
+      finish();
+    } else {
+      createAlert("Please provide Digital Signature");
+    }
+  }
 
-		actionBar = getSupportActionBar();
-		gestureOverlayView = (GestureOverlayView) findViewById(R.id.gestures);
-		gestureOverlayView.addOnGesturePerformedListener(this);
-		gestureOverlayView.setFadeEnabled(false);
+  //==========================================================================
+  
+  /**
+   * Called when the user clicked on Reset button in order to clear the digital
+   * signature screen for giving new digital signature input.
+   * 
+   * @param view
+   */
+  public void onResetButton(View view) {
+    gestureOverlayView.clear(false);
+    isSignatureEnabled = false;
+  }
 
-		gestureOverlayView.setOnTouchListener(new OnTouchListener() {
+  //==========================================================================
+  
+  /**
+   * Method for creating Menus in the current View
+   */
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.main, menu);
+    return true;
+  }
 
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				isSignatureEnabled = true;
-				return false;
-			}
-		});
+  //==========================================================================
+  
+  /**
+   * Action to be performed when the clicked on Menu icons.
+   */
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
+      startActivity(new Intent(getApplicationContext(), NewCAFActivity.class).putExtras(bundle));
+      overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+    } else if (item.getItemId() == R.id.home_button) {
+      if (userType.equalsIgnoreCase("TSM")) {
+        startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
+      } else if (userType.equalsIgnoreCase("TSM")) {
+        startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
+      } else if (userType.equalsIgnoreCase("TSE")) {
+        startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
+      }
+      overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+    } else if (item.getItemId() == R.id.logout) {
+      LoginActivity.stopAlarmManagerService(getApplicationContext());
+      startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+      overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+    }
+    return true;
+  }
 
-	}
+  //==========================================================================
+  
+  /**
+   * Method is used to the save the digital signature to the application cache.
+   * @param bitmap
+   * @return Image path where digital signature is saved.
+   */
+  public File saveBitmap(Bitmap bitmap) {
+    File cachePath = new File(context.getCacheDir() + "/" + "TraceR");
+    
+    if (!cachePath.exists()) {
+      cachePath.mkdir();
+    }
+    Calendar cal = Calendar.getInstance();
+    File imagePath = new File(cachePath, (cal.getTimeInMillis() + ".jpg"));
+    //System.out.println(imagePath.toString());
+    FileOutputStream fos;
+    
+    try {
+      fos = new FileOutputStream(imagePath);
+      bitmap.compress(CompressFormat.JPEG, 100, fos);
+      fos.flush();
+      fos.close();
+    } catch (FileNotFoundException e) {
+      Log.e("GREC", e.getMessage(), e);
+    } catch (IOException e) {
+      Log.e("GREC", e.getMessage(), e);
+    }
+    return imagePath;
+  }
 
-	/**
-	 * Called when the user clicked on Save button. Saves the digital signature in
-	 * the application cache after saving.
-	 * 
-	 * @param view
-	 */
-	public void digitalSignatureDone(View view) {
-		if (isSignatureEnabled) {
-			gestureOverlayView.setDrawingCacheEnabled(true);
-			Bitmap bitmap = gestureOverlayView.getDrawingCache();
-			File imagePath = saveBitmap(bitmap);
-			Intent intent = new Intent();
-			intent.putExtra("digital_signature_path", imagePath.toString());
-			setResult(RESULT_OK, intent);
-			finish();
-		} else {
-			createAlert("Please provide Digital Signature");
-		}
+  //==========================================================================
+  
+  @Override
+  public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
+    ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
+    for (Prediction prediction : predictions) {
+      if (prediction.score > 1.0) {
+        Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT).show();
+      }
+    }
+  }
 
-	}
+  //==========================================================================
+  
+  @Override
+  public void onBackPressed() {
+    Intent intent = new Intent(getApplicationContext(), NewCAFActivity.class);
+    intent.putExtras(bundle);
+    startActivity(intent);
+  }
 
-	/**
-	 * Called when the user clicked on Reset button in order to clear the digital
-	 * signature screen for giving new digital signature input.
-	 * 
-	 * @param view
-	 */
+  //==========================================================================
+  
+  public void createAlert(String message) {
+    CustomizeDialog customizeDialog = new CustomizeDialog(context);
+    customizeDialog.setTitle("Digital Signature");
+    customizeDialog.setMessage(message);
+    customizeDialog.show();
 
-	public void onResetButton(View view) {
-		gestureOverlayView.clear(false);
-		isSignatureEnabled = false;
-	}
-
-	/**
-	 * Method for creating Menus in the current View
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	/**
-	 * Action to be performed when the clicked on Menu icons.
-	 */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			finish();
-			startActivity(new Intent(getApplicationContext(), NewCAFActivity.class).putExtras(bundle));
-			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
-		} else if (item.getItemId() == R.id.home_button) {
-			if (userType.equalsIgnoreCase("TSM")) {
-				startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
-			} else if (userType.equalsIgnoreCase("TSM")) {
-				startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
-			} else if (userType.equalsIgnoreCase("TSE")) {
-				startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-			}
-			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
-		} else if (item.getItemId() == R.id.logout) {
-			LoginActivity.stopAlarmManagerService(getApplicationContext());
-			startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
-		}
-
-		return true;
-	}
-
-	/**
-	 * Method is used to the save the digital signature to the application cache.
-	 * 
-	 * @param bitmap
-	 * @return Image path where digital signature is saved.
-	 */
-	public File saveBitmap(Bitmap bitmap) {
-
-		File cachePath = new File(context.getCacheDir() + "/" + "TraceR");
-		if (!cachePath.exists()) {
-			cachePath.mkdir();
-		}
-		Calendar cal = Calendar.getInstance();
-		File imagePath = new File(cachePath, (cal.getTimeInMillis() + ".jpg"));
-
-		System.out.println(imagePath.toString());
-
-		FileOutputStream fos;
-		try {
-			fos = new FileOutputStream(imagePath);
-			bitmap.compress(CompressFormat.JPEG, 100, fos);
-			fos.flush();
-			fos.close();
-		} catch (FileNotFoundException e) {
-			Log.e("GREC", e.getMessage(), e);
-		} catch (IOException e) {
-			Log.e("GREC", e.getMessage(), e);
-		}
-		return imagePath;
-	}
-
-	@Override
-	public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
-		ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
-		for (Prediction prediction : predictions) {
-			if (prediction.score > 1.0) {
-				Toast.makeText(this, prediction.name, Toast.LENGTH_SHORT).show();
-			}
-		}
-	}
-
-	@Override
-	public void onBackPressed() {
-		Intent intent = new Intent(getApplicationContext(), NewCAFActivity.class);
-		intent.putExtras(bundle);
-		startActivity(intent);
-	}
-
-	public void createAlert(String message) {
-		CustomizeDialog customizeDialog = new CustomizeDialog(context);
-		customizeDialog.setTitle("Digital Signature");
-		customizeDialog.setMessage(message);
-		customizeDialog.show();
-
-		if (!customizeDialog.isShowing())
-			customizeDialog.show();
-
-	}
+    if (!customizeDialog.isShowing())
+      customizeDialog.show();
+  }
+  
+  //==========================================================================
 }

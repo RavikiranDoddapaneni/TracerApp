@@ -38,173 +38,186 @@ import com.tracer.util.CustomizeDialog;
 import com.tracer.util.Prefs;
 
 public class BeatPlanActivity extends ActionBarActivity {
+  ArrayList<HashMap<String, Object>> distributorsList;
+  BeatPlanAdapter beatPlanAdapter;
+  ListView beatPlanList;
+  SharedPreferences prefs;
 
-	ArrayList<HashMap<String, Object>> distributorsList;
-	BeatPlanAdapter beatPlanAdapter;
-	ListView beatPlanList;
-	SharedPreferences prefs;
+  String authCode;
+  String userType;
 
-	String authCode;
-	String userType;
+  Context context = this;
+  JSONObject jsonObject;
+  Editor editor;
 
-	Context context = this;
-	JSONObject jsonObject;
-	Editor editor;
+  private static final String TAG = "BeatPlanActivity";
 
-	private static final String TAG = "BeatPlanActivity";
+  //==========================================================================
+  
+  /** Called when the activity is first created. */
+  @Override
+  protected void onCreate(Bundle savedInstanceState) {
+    super.onCreate(savedInstanceState);
+    setContentView(R.layout.activity_beat_plan);
 
-	/** Called when the activity is first created. */
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_beat_plan);
+    beatPlanList = (ListView) findViewById(R.id.beatPlanList);
+    prefs = Prefs.get(this);
+    authCode = prefs.getString(Constants.AUTHCODE, null);
+    userType = prefs.getString(Constants.USERTYPE, null);
+    new RetreiveBeatPlanResponse().execute(authCode);
+  }
 
-		beatPlanList = (ListView) findViewById(R.id.beatPlanList);
-		prefs = Prefs.get(this);
-		authCode = prefs.getString(Constants.AUTHCODE, null);
-		userType = prefs.getString(Constants.USERTYPE, null);
+  //==========================================================================
+  
+  /**
+   * Method for creating Menus in the current View
+   */
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.main, menu);
+    return true;
+  }
 
-		new RetreiveBeatPlanResponse().execute(authCode);
-	}
+  //==========================================================================
+  
+  /**
+   * Action to be performed when the clicked on Menu icons.
+   */
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == android.R.id.home) {
+      finish();
+      if (userType.equalsIgnoreCase("TSM")) {
+        startActivity(new Intent(getApplicationContext(), TeamLeaderHomeActivity.class));
+      } else if (userType.equalsIgnoreCase("TSM")) {
+        startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
+      } else if (userType.equalsIgnoreCase("TSE")) {
+        startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
+      }
+      overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+    } else if (item.getItemId() == R.id.home_button) {
+      if (userType.equalsIgnoreCase("TSM")) {
+        startActivity(new Intent(getApplicationContext(), TeamLeaderHomeActivity.class));
+      } else if (userType.equalsIgnoreCase("TSM")) {
+        startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
+      } else if (userType.equalsIgnoreCase("TSE")) {
+        startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
+      }
+      overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+    } else if (item.getItemId() == R.id.logout) {
+      LoginActivity.stopAlarmManagerService(getApplicationContext());
+      startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+      overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+    }
+    return true;
+  }
 
-	/**
-	 * Method for creating Menus in the current View
-	 */
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
+  //==========================================================================
+  
+  class RetreiveBeatPlanResponse extends AsyncTask<String, Void, String> {
+    private ProgressDialog pDialog;
 
-	/**
-	 * Action to be performed when the clicked on Menu icons.
-	 */
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
-		if (item.getItemId() == android.R.id.home) {
-			finish();
-			if (userType.equalsIgnoreCase("TSM")) {
-				startActivity(new Intent(getApplicationContext(), TeamLeaderHomeActivity.class));
-			} else if (userType.equalsIgnoreCase("TSM")) {
-				startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-			} else if (userType.equalsIgnoreCase("TSE")) {
-				startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-			}
-			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
-		} else if (item.getItemId() == R.id.home_button) {
-			if (userType.equalsIgnoreCase("TSM")) {
-				startActivity(new Intent(getApplicationContext(), TeamLeaderHomeActivity.class));
-			} else if (userType.equalsIgnoreCase("TSM")) {
-				startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
-			} else if (userType.equalsIgnoreCase("TSE")) {
-				startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-			}
-			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
-		} else if (item.getItemId() == R.id.logout) {
-			LoginActivity.stopAlarmManagerService(getApplicationContext());
-			startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-			overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
-		}
+    @Override
+    protected void onPostExecute(String result) {
+      super.onPostExecute(result);
+      pDialog.dismiss();
+      
+      if (distributorsList != null && distributorsList.size() > 0) {
+        beatPlanAdapter = new BeatPlanAdapter(BeatPlanActivity.this, distributorsList);
+        beatPlanList.setAdapter(beatPlanAdapter);
+      } else {
+        createAlert("No Data Available", "Beat Plans");
+      }
+    }
 
-		return true;
-	}
+    //==========================================================================
+    
+    protected String doInBackground(String... urls) {
+      
+      try {
+        TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse()");
+        //System.out.println(urls[0]);
+        HttpClient client = new DefaultHttpClient();
+        HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000);
+        HttpResponse response;
 
-	class RetreiveBeatPlanResponse extends AsyncTask<String, Void, String> {
-		private ProgressDialog pDialog;
+        Log.i(TAG, "Request URL :" + Constants.WEBSERVICE_BASE_URL + "beatplans/get/" + urls[0]);
+        HttpGet get = new HttpGet(Constants.WEBSERVICE_BASE_URL + "beatplans/get/" + urls[0]);
+        response = client.execute(get);
 
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			pDialog.dismiss();
-			if (distributorsList != null && distributorsList.size() > 0) {
-				beatPlanAdapter = new BeatPlanAdapter(BeatPlanActivity.this, distributorsList);
-				beatPlanList.setAdapter(beatPlanAdapter);
-			} else {
-				createAlert("No Data Available", "Beat Plans");
-			}
-		}
+        if (response != null) {
+          InputStream in = response.getEntity().getContent();
+          BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+          String line;
+          while ((line = rd.readLine()) != null) {
+            // Process line...
+            //System.out.println("line ::::: " + line);
+            JSONObject jsonObject = new JSONObject(line);
+            //System.out.println(jsonObject.toString());
 
-		protected String doInBackground(String... urls) {
-			try {
-				TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse()");
-				System.out.println(urls[0]);
-				HttpClient client = new DefaultHttpClient();
-				HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000);
-				HttpResponse response;
+            JSONArray distributorObject = jsonObject.getJSONArray(Constants.DISTRIBUTORS);
+            //System.out.println(distributorObject);
+            distributorsList = new ArrayList<HashMap<String, Object>>();
+            
+            for (int i = 0; i < distributorObject.length(); i++) {
+              HashMap<String, Object> map = new HashMap<String, Object>();
+              JSONObject distObject = distributorObject.getJSONObject(i);
+              map.put(Constants.DISTRIBUTORNAME, distObject.getString(Constants.DISTRIBUTORNAME));
+              map.put(Constants.DISTRIBUTORCODE, distObject.getString(Constants.DISTRIBUTORCODE));
+              map.put(Constants.SCHEDULETIME, distObject.getString(Constants.SCHEDULETIME));
+              map.put(Constants.VISITFREQUENCY, distObject.getInt(Constants.VISITFREQUENCY));
+              map.put(Constants.ISCAFSUBMITTED, distObject.getBoolean(Constants.ISCAFSUBMITTED));
+              map.put(Constants.VISITNUMBER, distObject.getInt(Constants.VISITNUMBER));
+              map.put(Constants.DISTRIBUTORCONTACTNUMBER, distObject.getInt(Constants.DISTRIBUTORCONTACTNUMBER));
+              map.put(Constants.DISTRIBUTORLATITIUDE, distObject.getDouble(Constants.DISTRIBUTORLATITIUDE));
+              map.put(Constants.DISTRIBUTORLONGITUDE, distObject.getDouble(Constants.DISTRIBUTORLONGITUDE));
+              distributorsList.add(map);
+            }
+            //System.out.println("Distributor List :" + distributorsList.toString());
+          }
+          rd.close();
+          TestFlight.passCheckpoint("BeatPlanActivity.RetreiveBeatPlanResponse()");
+        }
+      } catch (Exception e) {
+        TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse() catch Exception " + e.getMessage());
+        Log.e(TAG, "BeatPlanActivity.RetreiveBeatPlanResponse():" + e.getMessage());
+      } finally { }
+      return authCode;
+    }
 
-				Log.i(TAG, "Request URL :" + Constants.WEBSERVICE_BASE_URL + "beatplans/get/" + urls[0]);
-				HttpGet get = new HttpGet(Constants.WEBSERVICE_BASE_URL + "beatplans/get/" + urls[0]);
-				response = client.execute(get);
+    //==========================================================================
+    
+    @Override
+    protected void onPreExecute() {
+      super.onPreExecute();
+      pDialog = new ProgressDialog(BeatPlanActivity.this);
+      pDialog.setMessage("Getting Data ...");
+      pDialog.setIndeterminate(false);
+      pDialog.setCancelable(false);
+      pDialog.setCanceledOnTouchOutside(false);
+      pDialog.show();
+    }
+  }
 
-				if (response != null) {
-					InputStream in = response.getEntity().getContent();
-					BufferedReader rd = new BufferedReader(new InputStreamReader(in));
-					String line;
-					while ((line = rd.readLine()) != null) {
-						// Process line...
-						System.out.println("line ::::: " + line);
-						JSONObject jsonObject = new JSONObject(line);
-						System.out.println(jsonObject.toString());
+  //==========================================================================
+  
+  @Override
+  public void onBackPressed() {
+    Intent intent = new Intent(getApplicationContext(), RunnerHomeActivity.class);
+    startActivity(intent);
+  }
 
-						JSONArray distributorObject = jsonObject.getJSONArray(Constants.DISTRIBUTORS);
-						System.out.println(distributorObject);
+  //==========================================================================
+  
+  public void createAlert(String message, String title) {
+    CustomizeDialog customizeDialog = new CustomizeDialog(context);
+    customizeDialog.setTitle(title);
+    customizeDialog.setMessage(message);
+    customizeDialog.show();
 
-						distributorsList = new ArrayList<HashMap<String, Object>>();
-						for (int i = 0; i < distributorObject.length(); i++) {
-							HashMap<String, Object> map = new HashMap<String, Object>();
-							JSONObject distObject = distributorObject.getJSONObject(i);
-							map.put(Constants.DISTRIBUTORNAME, distObject.getString(Constants.DISTRIBUTORNAME));
-							map.put(Constants.DISTRIBUTORCODE, distObject.getString(Constants.DISTRIBUTORCODE));
-							map.put(Constants.SCHEDULETIME, distObject.getString(Constants.SCHEDULETIME));
-							map.put(Constants.VISITFREQUENCY, distObject.getInt(Constants.VISITFREQUENCY));
-							map.put(Constants.ISCAFSUBMITTED, distObject.getBoolean(Constants.ISCAFSUBMITTED));
-							map.put(Constants.VISITNUMBER, distObject.getInt(Constants.VISITNUMBER));
-							map.put(Constants.DISTRIBUTORCONTACTNUMBER, distObject.getInt(Constants.DISTRIBUTORCONTACTNUMBER));
-							map.put(Constants.DISTRIBUTORLATITIUDE, distObject.getDouble(Constants.DISTRIBUTORLATITIUDE));
-							map.put(Constants.DISTRIBUTORLONGITUDE, distObject.getDouble(Constants.DISTRIBUTORLONGITUDE));
-							distributorsList.add(map);
-						}
-
-						System.out.println("Distributor List :" + distributorsList.toString());
-
-					}
-					rd.close();
-					TestFlight.passCheckpoint("BeatPlanActivity.RetreiveBeatPlanResponse()");
-				}
-			} catch (Exception e) {
-				TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse() catch Exception " + e.getMessage());
-				Log.e(TAG, "BeatPlanActivity.RetreiveBeatPlanResponse():" + e.getMessage());
-			} finally {
-			}
-			return authCode;
-		}
-
-		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			pDialog = new ProgressDialog(BeatPlanActivity.this);
-			pDialog.setMessage("Getting Data ...");
-			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(false);
-			pDialog.setCanceledOnTouchOutside(false);
-			pDialog.show();
-		}
-	}
-
-	@Override
-	public void onBackPressed() {
-		Intent intent = new Intent(getApplicationContext(), RunnerHomeActivity.class);
-		startActivity(intent);
-	}
-
-	public void createAlert(String message, String title) {
-		CustomizeDialog customizeDialog = new CustomizeDialog(context);
-		customizeDialog.setTitle(title);
-		customizeDialog.setMessage(message);
-		customizeDialog.show();
-
-		if (!customizeDialog.isShowing())
-			customizeDialog.show();
-
-	}
+    if (!customizeDialog.isShowing())
+      customizeDialog.show();
+  }
+  
+  //==========================================================================
 }
