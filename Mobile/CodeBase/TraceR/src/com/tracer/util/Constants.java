@@ -1,3 +1,7 @@
+/**
+ * @author Prashanth M
+ *
+ */
 package com.tracer.util;
 
 public class Constants {
@@ -5,7 +9,7 @@ public class Constants {
   /**
    * Webservice Base URL
    */
-  public static final String WEBSERVICE_BASE_URL = "http://192.168.80.20:8080/TraceR_RWS/api/";
+  public static final String WEBSERVICE_BASE_URL = "http://118.102.131.158:8080/TraceR_RWS/api/";
   public static final String LOGIN_STATUS = "login_status";
   
   public static final String INVALID_ACCESS_TIME = "login_status";
@@ -30,6 +34,7 @@ public class Constants {
    * BEAT PLAN DATA
    */
   public static final String DISTRIBUTORS = "distributors";
+  public static final String DISTRIBUTOR_ID = "distributorId";
   public static final String DISTRIBUTORNAME = "distributorName";
   public static final String DISTRIBUTORCODE = "distributorCode";
   public static final String SCHEDULETIME = "scheduleTime";
@@ -69,4 +74,20 @@ public class Constants {
   public static final String IS_PRESENT = "isPresent";
   public static final String RUNNERCODE = "runnerCode";
   public static final String RUNNERNAME = "runnerName";
+  
+  /**
+   * ONLINE CAF
+   */
+  public static final String UPLOAD_CAF_DETAILS_ID = "uploadCafDetailsId";
+  public static final String MOBILE_NO = "mobileNo";
+  public static final String CAF_STATUS = "cafStatus";
+  public static final String CAF_STATUS_STRING = "cafStatusString";
+  //public static final String ONLINE_CAFS = "onlineCAFs";
+  public static final String UPLOADED_CAF = "uploadedCAF";
+  
+  public static final String ACCEPTED = "Accepted";
+  public static final String REJECTED = "Rejected";
+  public static final String CUSTOMER_NOT_INTERESTED = "Customer not interested";
+  public static final String INCOMPLETE_DOCUMENTATION = "Incomplete documentation";
+  public static final String UPLOADED_CAF_LIST = "uploadedCafList";
 }

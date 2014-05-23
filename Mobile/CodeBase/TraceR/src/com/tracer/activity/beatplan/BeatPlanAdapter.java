@@ -90,6 +90,7 @@ public class BeatPlanAdapter extends BaseAdapter {
     TextView distributor_codes = (TextView) view.findViewById(R.id.item_beat_plan_distributor_codes);
 
     Button collect_caf = (Button) view.findViewById(R.id.collect_CAF);
+    
 
     distributor_name.setText(distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
     distributor_visits.setText(distributorsList.get(position).get(Constants.VISITNUMBER).toString());
@@ -177,6 +178,7 @@ public class BeatPlanAdapter extends BaseAdapter {
                 }
                 Bundle runnerBundle = new Bundle();
                 runnerBundle.putString(Constants.DISTRIBUTORNAME, distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
+                runnerBundle.putString(Constants.DISTRIBUTOR_ID, distributorsList.get(position).get(Constants.DISTRIBUTOR_ID).toString());
                 runnerBundle.putString(Constants.DISTRIBUTORCODE, distributorsList.get(position).get(Constants.DISTRIBUTORCODE).toString());
                 runnerBundle.putString(Constants.VISITCOUNT, distributorsList.get(position).get(Constants.VISITNUMBER).toString());
                 runnerBundle.putString(Constants.DISTRIBUTORCONTACTNUMBER, distributorsList.get(position).get(Constants.DISTRIBUTORCONTACTNUMBER).toString());

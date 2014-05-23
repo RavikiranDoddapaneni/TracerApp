@@ -38,9 +38,9 @@ import com.tracer.util.CustomizeDialog;
 import com.tracer.util.Prefs;
 
 public class BeatPlanActivity extends ActionBarActivity {
-  ArrayList<HashMap<String, Object>> distributorsList;
+  ArrayList<HashMap<String, Object>> beatPlansList;
   BeatPlanAdapter beatPlanAdapter;
-  ListView beatPlanList;
+  ListView beatPlansListView;
   SharedPreferences prefs;
 
   String authCode;
@@ -60,7 +60,7 @@ public class BeatPlanActivity extends ActionBarActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_beat_plan);
 
-    beatPlanList = (ListView) findViewById(R.id.beatPlanList);
+    beatPlansListView = (ListView) findViewById(R.id.beatPlanList);
     prefs = Prefs.get(this);
     authCode = prefs.getString(Constants.AUTHCODE, null);
     userType = prefs.getString(Constants.USERTYPE, null);
@@ -122,9 +122,9 @@ public class BeatPlanActivity extends ActionBarActivity {
       super.onPostExecute(result);
       pDialog.dismiss();
       
-      if (distributorsList != null && distributorsList.size() > 0) {
-        beatPlanAdapter = new BeatPlanAdapter(BeatPlanActivity.this, distributorsList);
-        beatPlanList.setAdapter(beatPlanAdapter);
+      if (beatPlansList != null && beatPlansList.size() > 0) {
+        beatPlanAdapter = new BeatPlanAdapter(BeatPlanActivity.this, beatPlansList);
+        beatPlansListView.setAdapter(beatPlanAdapter);
       } else {
         createAlert("No Data Available", "Beat Plans");
       }
@@ -150,19 +150,15 @@ public class BeatPlanActivity extends ActionBarActivity {
           BufferedReader rd = new BufferedReader(new InputStreamReader(in));
           String line;
           while ((line = rd.readLine()) != null) {
-            // Process line...
-            //System.out.println("line ::::: " + line);
             JSONObject jsonObject = new JSONObject(line);
-            //System.out.println(jsonObject.toString());
-
             JSONArray distributorObject = jsonObject.getJSONArray(Constants.DISTRIBUTORS);
-            //System.out.println(distributorObject);
-            distributorsList = new ArrayList<HashMap<String, Object>>();
+            beatPlansList = new ArrayList<HashMap<String, Object>>();
             
             for (int i = 0; i < distributorObject.length(); i++) {
               HashMap<String, Object> map = new HashMap<String, Object>();
               JSONObject distObject = distributorObject.getJSONObject(i);
               map.put(Constants.DISTRIBUTORNAME, distObject.getString(Constants.DISTRIBUTORNAME));
+              map.put(Constants.DISTRIBUTOR_ID, distObject.getString(Constants.DISTRIBUTOR_ID));
               map.put(Constants.DISTRIBUTORCODE, distObject.getString(Constants.DISTRIBUTORCODE));
               map.put(Constants.SCHEDULETIME, distObject.getString(Constants.SCHEDULETIME));
               map.put(Constants.VISITFREQUENCY, distObject.getInt(Constants.VISITFREQUENCY));
@@ -171,9 +167,8 @@ public class BeatPlanActivity extends ActionBarActivity {
               map.put(Constants.DISTRIBUTORCONTACTNUMBER, distObject.getInt(Constants.DISTRIBUTORCONTACTNUMBER));
               map.put(Constants.DISTRIBUTORLATITIUDE, distObject.getDouble(Constants.DISTRIBUTORLATITIUDE));
               map.put(Constants.DISTRIBUTORLONGITUDE, distObject.getDouble(Constants.DISTRIBUTORLONGITUDE));
-              distributorsList.add(map);
+              beatPlansList.add(map);
             }
-            //System.out.println("Distributor List :" + distributorsList.toString());
           }
           rd.close();
           TestFlight.passCheckpoint("BeatPlanActivity.RetreiveBeatPlanResponse()");

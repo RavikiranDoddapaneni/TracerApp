@@ -133,6 +133,19 @@
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>
         </activity>
+        
+        <activity
+            android:name="com.tracer.activity.caf.OnlineCafActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/online_caf_details"
+            android:parentActivityName="com.tracer.activity.caf.NewCAFActivity"
+            android:screenOrientation="landscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity.caf.NewCAFActivity" />
+        </activity>
+        
     </application>
 
 </manifest>

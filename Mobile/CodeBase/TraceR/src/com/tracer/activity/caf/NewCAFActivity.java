@@ -1,3 +1,7 @@
+/**
+ * @author Prashanth M
+ *
+ */
 package com.tracer.activity.caf;
 
 import java.io.BufferedReader;
@@ -102,6 +106,8 @@ public class NewCAFActivity extends ActionBarActivity {
   Bundle bundle;
   DataBaseHelper dataBaseHelper = DataBaseHelper.getDBAdapterInstance(this);
   private static final String TAG = "NewCAFActivity";
+  
+  ImageView onlineCAFImage;
 
   //==========================================================================
   
@@ -129,8 +135,10 @@ public class NewCAFActivity extends ActionBarActivity {
 
     imagePreview = (ImageView) findViewById(R.id.imagePreview);
     signaturePreview = (ImageView) findViewById(R.id.signaturePreview);
-    scanImage = (ImageView) findViewById(R.id.scanImage);
+    //scanImage = (ImageView) findViewById(R.id.scanImage);
     runnerImagePreview = (ImageView) findViewById(R.id.runnerImagePreview);
+    
+    onlineCAFImage = (ImageView) findViewById(R.id.onlineCAF);
 
     visit_count = (TextView) findViewById(R.id.visit_count_value);
 
@@ -165,7 +173,7 @@ public class NewCAFActivity extends ActionBarActivity {
      * Called when user clicks on barcode scan image, in order to scan the
      * barcode.
      */
-    scanImage.setOnClickListener(new OnClickListener() {
+   /* scanImage.setOnClickListener(new OnClickListener() {
 
       @Override
       public void onClick(View v) {
@@ -173,8 +181,16 @@ public class NewCAFActivity extends ActionBarActivity {
         intent.putExtra("com.google.zxing.client.android.SCAN.SCAN_MODE", "QR_CODE_MODE");
         startActivityForResult(intent, Constants.BARCODE_SCAN_RESULT);
       }
-    });
+    });*/
 
+    onlineCAFImage.setOnClickListener(new OnClickListener() {
+
+      @Override
+      public void onClick(View v) {
+        startActivityForResult(new Intent(getApplicationContext(), OnlineCafActivity.class).putExtras(bundle), 0);
+        
+      }
+    });
     remarksSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 
       @SuppressWarnings("unused")
@@ -505,7 +521,7 @@ public class NewCAFActivity extends ActionBarActivity {
           message.append("Total CAFS :" + totalCafs.getText().toString());
           message.append("Accepted CAFS :" + acceptedCafs.getText().toString());
           message.append("Rejected CAFS :" + rejectedCafs.getText().toString());
-          Toast.makeText(getApplicationContext(), "CAF has been successfully Submitted.", Toast.LENGTH_LONG).show();
+          Toast.makeText(getApplicationContext(), "CAF has been successfully submitted.", Toast.LENGTH_LONG).show();
           clearPreferenceData();
           // sendLongSMS(mobileNumber.getText().toString(),
           // message.toString());
@@ -567,7 +583,6 @@ public class NewCAFActivity extends ActionBarActivity {
         jsonObject.put("longitude", urls[11]);
         jsonObject.put("distributorContactNumber", distributorNumber);
 
-        //System.out.println (jsonObject.toString());
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000);
         HttpResponse response;
@@ -582,12 +597,10 @@ public class NewCAFActivity extends ActionBarActivity {
           InputStream in = response.getEntity().getContent();
           BufferedReader rd = new BufferedReader(new InputStreamReader(in));
           String line;
+          
           while ((line = rd.readLine()) != null) {
-            // Process line...
-            //System.out.println ("line ::::: " + line);
             JSONObject jsonObject = new JSONObject(line);
             cafResponse = jsonObject.getString("responseMessage");
-            //System.out.println (jsonObject.toString());
           }
           if (cafResponse != null && cafResponse.equalsIgnoreCase("ok")) {
             File dir = context.getDir("TraceR", MODE_PRIVATE);
