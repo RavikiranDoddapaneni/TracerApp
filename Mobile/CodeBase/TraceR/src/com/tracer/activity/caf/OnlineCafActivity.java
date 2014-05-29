@@ -186,7 +186,7 @@ public class OnlineCafActivity extends ActionBarActivity {
                   cafStatus = 4;
                 }
                 onlineCafsList.get(clickedPosition).put(Constants.CAF_STATUS_STRING, cafStatusString);
-                onlineCafsList.get(clickedPosition).put(Constants.CAF_STATUS, cafStatus);
+                onlineCafsList.get(clickedPosition).put(Constants.CAF_STATUS, String.valueOf(cafStatus));
                 onlineCAFAdapter.notifyDataSetChanged(); // To refresh the list view
               }
             });
@@ -313,7 +313,7 @@ public class OnlineCafActivity extends ActionBarActivity {
           if (Integer.parseInt(cafStatus) > 0) {
             JSONObject cafDetailsJson = new JSONObject();
             cafDetailsJson.put(Constants.UPLOAD_CAF_DETAILS_ID,(Long) onlineCafMap.get(Constants.UPLOAD_CAF_DETAILS_ID));
-            cafDetailsJson.put(Constants.CAF_STATUS,String.valueOf(onlineCafMap.get(Constants.CAF_STATUS)));
+            cafDetailsJson.put(Constants.CAF_STATUS, String.valueOf(onlineCafMap.get(Constants.CAF_STATUS)));
             uploadedCafJSONArray.put(i, cafDetailsJson);
             noOfCafsToUpdate++;
           }
