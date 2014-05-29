@@ -58,6 +58,8 @@ public class OnlineCafActivity extends ActionBarActivity {
   Context context = this;
   Bundle bundle;
   Long distributorId;
+  JSONObject jsonObj;
+  JSONArray uploadedCafJSONArray;
 
   OnlineCAFAdapter onlineCAFAdapter;
   ArrayList<HashMap<String, Object>> onlineCafsList;
@@ -214,162 +216,207 @@ public class OnlineCafActivity extends ActionBarActivity {
         inputJSONObj.put("distributorId", distributorId);
         Log.i(TAG, inputJSONObj.toString());
         StringEntity se = new StringEntity(inputJSONObj.toString());
-        se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-        post.setEntity(se);
-        response = client.execute(post);
-         
-        if (response != null) { 
-          InputStream in = response.getEntity().getContent(); 
-          BufferedReader rd = new BufferedReader(new InputStreamReader(in)); 
-          String line;
-          String cafStatus = null;
-          String cafStatusString = " ";
-          
-          while ((line = rd.readLine()) != null) { 
-            JSONObject jsonObject = new JSONObject(line);
-            JSONArray jsonArray = jsonObject.getJSONArray(Constants.UPLOADED_CAF);
-            onlineCafsList = new ArrayList<HashMap<String, Object>>();
+		se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE,"application/json"));
+		post.setEntity(se);
+		response = client.execute(post);
 
-            for (int i = 0; i < jsonArray.length(); i++) {
-              HashMap<String, Object> map = new HashMap<String, Object>();
-              JSONObject jsonObj = jsonArray.getJSONObject(i);
-              cafStatus = jsonObj.getString(Constants.CAF_STATUS);
+				if (response != null) {
+					InputStream in = response.getEntity().getContent();
+					BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+					String line;
+					String cafStatus = null;
+					String cafStatusString = " ";
 
-              map.put(Constants.UPLOAD_CAF_DETAILS_ID, jsonObj.getLong(Constants.UPLOAD_CAF_DETAILS_ID));
-              map.put(Constants.MOBILE_NO, jsonObj.getString(Constants.MOBILE_NO));
-              map.put(Constants.CAF_STATUS, cafStatus);
+					while ((line = rd.readLine()) != null) {
+						JSONObject jsonObject = new JSONObject(line);
+						JSONArray jsonArray = jsonObject.getJSONArray(Constants.UPLOADED_CAF);
+						onlineCafsList = new ArrayList<HashMap<String, Object>>();
 
-              switch (Integer.parseInt(cafStatus)) {
-                case 1:cafStatusString = Constants.ACCEPTED; break;
-                case 2:cafStatusString = Constants.REJECTED; break;
-                case 3:cafStatusString = Constants.CUSTOMER_NOT_INTERESTED; break;
-                case 4:cafStatusString = Constants.INCOMPLETE_DOCUMENTATION; break;
-                default:cafStatusString = " "; break;
-              }
-              map.put(Constants.CAF_STATUS_STRING, cafStatusString);
-              onlineCafsList.add(map);
-            }
-          }
-          rd.close();
-        }
-      } catch (Exception e) {
-        TestFlight.log("OnlineCafActivity.RetreiveOnlineCAFs() catch Exception " + e.getMessage());
-        Log.e(TAG, "OnlineCafActivity.RetreiveOnlineCAFs():"+ e.getMessage());
-      } finally {
-      }
-      return authCode;
-    }
+						for (int i = 0; i < jsonArray.length(); i++) {
+							HashMap<String, Object> map = new HashMap<String, Object>();
+							JSONObject jsonObj = jsonArray.getJSONObject(i);
+							cafStatus = jsonObj.getString(Constants.CAF_STATUS);
 
-    // ==========================================================================
+							map.put(Constants.UPLOAD_CAF_DETAILS_ID, jsonObj.getLong(Constants.UPLOAD_CAF_DETAILS_ID));
+							map.put(Constants.MOBILE_NO,jsonObj.getString(Constants.MOBILE_NO));
+							map.put(Constants.CAF_STATUS, cafStatus);
 
-    @Override
-    protected void onPreExecute() {
-      super.onPreExecute();
-      pDialog = new ProgressDialog(OnlineCafActivity.this);
-      pDialog.setMessage("Getting Data ...");
-      pDialog.setIndeterminate(false);
-      pDialog.setCancelable(false);
-      pDialog.setCanceledOnTouchOutside(false);
-      pDialog.show();
-    }
-  } // End of RetreiveOnlineCAFs class
+							switch (Integer.parseInt(cafStatus)) {
+							case 1:
+								cafStatusString = Constants.ACCEPTED;
+								break;
+							case 2:
+								cafStatusString = Constants.REJECTED;
+								break;
+							case 3:
+								cafStatusString = Constants.CUSTOMER_NOT_INTERESTED;
+								break;
+							case 4:
+								cafStatusString = Constants.INCOMPLETE_DOCUMENTATION;
+								break;
+							default:
+								cafStatusString = " ";
+								break;
+							}
+							map.put(Constants.CAF_STATUS_STRING,cafStatusString);
+							onlineCafsList.add(map);
+						}
+					}
+					rd.close();
+				}
+			} catch (Exception e) {
+				TestFlight.log("OnlineCafActivity.RetreiveOnlineCAFs() catch Exception "+ e.getMessage());
+				Log.e(TAG,"OnlineCafActivity.RetreiveOnlineCAFs():"+ e.getMessage());
+			} finally {
+			}
+			return authCode;
+		}
 
-  // ==========================================================================
+		// ==========================================================================
 
-  @Override
-  public void onBackPressed() {
-    finish();
-  }
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(OnlineCafActivity.this);
+			pDialog.setMessage("Getting Data ...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(false);
+			pDialog.setCanceledOnTouchOutside(false);
+			pDialog.show();
+		}
+	} // End of RetreiveOnlineCAFs class
 
-  // ==========================================================================
+	// ==========================================================================
 
-  public void createAlert(String message, String title) {
-    CustomizeDialog customizeDialog = new CustomizeDialog(context);
-    customizeDialog.setTitle(title);
-    customizeDialog.setMessage(message);
-    customizeDialog.show();
+	@Override
+	public void onBackPressed() {
+		finish();
+	}
 
-    if (!customizeDialog.isShowing())
-        customizeDialog.show();
-  }
+	// ==========================================================================
 
-    // ==========================================================================
+	public void createAlert(String message, String title) {
+		CustomizeDialog customizeDialog = new CustomizeDialog(context);
+		customizeDialog.setTitle(title);
+		customizeDialog.setMessage(message);
+		customizeDialog.show();
 
-  public void updateOnlineCAFsStaus(View view) {
-    Log.i(TAG, "START of the method updateOnlineCAFsStaus");
-    JSONObject jsonObj = null;
-    JSONArray uploadedCafJSONArray = null;
-    int noOfCafsToUpdate = 0;
-    String cafStatus = null;
+		if (!customizeDialog.isShowing())
+			customizeDialog.show();
+	}
 
-    try {
-      if (onlineCafsList != null && onlineCafsList.size() > 0) {
-        uploadedCafJSONArray = new JSONArray();
+	// ==========================================================================
 
-        for (int i = 0; i < onlineCafsList.size(); i++) {
-          HashMap<String, Object> onlineCafMap = onlineCafsList.get(i);
-          cafStatus = String.valueOf(onlineCafMap.get(Constants.CAF_STATUS));
-          
-          if(Integer.parseInt(cafStatus) > 0) {
-            JSONObject cafDetailsJson = new JSONObject();
-            cafDetailsJson.put(Constants.UPLOAD_CAF_DETAILS_ID, (Long) onlineCafMap.get(Constants.UPLOAD_CAF_DETAILS_ID));
-            cafDetailsJson.put(Constants.CAF_STATUS, String.valueOf(onlineCafMap.get(Constants.CAF_STATUS)));
-            uploadedCafJSONArray.put(i, cafDetailsJson); 
-            noOfCafsToUpdate++;
-          }
-        }
-        
-        if(noOfCafsToUpdate > 0) {
-          // Update the online cafs status
-          HttpClient client = new DefaultHttpClient();
-          HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000); HttpResponse response;
-          HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "caf/uploaded/update/status"); 
-          jsonObj = new JSONObject();
-          jsonObj.put(Constants.AUTHCODE, authCode);
-          jsonObj.put(Constants.UPLOADED_CAF_LIST, uploadedCafJSONArray);
-          StringEntity se = new StringEntity(jsonObj.toString());
-          se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
-          post.setEntity(se);
-          response = client.execute(post);
-        
-          if (response != null) {
-            InputStream in = response.getEntity().getContent();
-            BufferedReader rd = new BufferedReader(new InputStreamReader(in));
-            String line;
-            String responseMessage = null;
-          
-            while ((line = rd.readLine()) != null) {
-              JSONObject jsonObject = new JSONObject(line);
-              responseMessage = jsonObject.getString("responseMessage");
-            }
-            if (responseMessage != null) {
-              if (responseMessage.equalsIgnoreCase("ok")) {
-                Toast.makeText(getApplicationContext(), "CAF's status updated successfully.", Toast.LENGTH_LONG).show();
-                finish();
-              } else {
-                Toast.makeText(getApplicationContext(), "Unable to update the CAF's status at this time.", Toast.LENGTH_LONG).show();
-              }
-            }
-            rd.close();
-            TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()" + responseMessage);	
-          }
-        } else {
-          Toast.makeText(getApplicationContext(), "Update the CAF's status", Toast.LENGTH_LONG).show();
-        }
-      }
-    } catch (Exception e) {
-      Log.e(TAG, "PROBLEM in the method updateOnlineCAFsStaus");
-      Log.e(TAG, ">>>> :" + e.getMessage());
-    }
-    Log.i(TAG, "END of the method updateOnlineCAFsStaus");
-  }
+	public void updateOnlineCAFsStaus(View view) {
+		Log.i(TAG, "START of the method updateOnlineCAFsStaus");
+		int noOfCafsToUpdate = 0;
+		String cafStatus = null;
 
-  // ==========================================================================
+		try {
+			if (onlineCafsList != null && onlineCafsList.size() > 0) {
+				uploadedCafJSONArray = new JSONArray();
 
-  public void showNewCAFActivity(View view) {
-    finish();
-  }
+				for (int i = 0; i < onlineCafsList.size(); i++) {
+					HashMap<String, Object> onlineCafMap = onlineCafsList.get(i);
+					cafStatus = String.valueOf(onlineCafMap.get(Constants.CAF_STATUS));
 
-  // ==========================================================================
+					if (Integer.parseInt(cafStatus) > 0) {
+						JSONObject cafDetailsJson = new JSONObject();
+						cafDetailsJson.put(Constants.UPLOAD_CAF_DETAILS_ID,(Long) onlineCafMap.get(Constants.UPLOAD_CAF_DETAILS_ID));
+						cafDetailsJson.put(Constants.CAF_STATUS,String.valueOf(onlineCafMap.get(Constants.CAF_STATUS)));
+						uploadedCafJSONArray.put(i, cafDetailsJson);
+						noOfCafsToUpdate++;
+					}
+				}
+
+				if (noOfCafsToUpdate > 0) {
+					new SendOnlineCafs().execute(authCode);
+				} else {
+					Toast.makeText(getApplicationContext(),"Update the CAF's status", Toast.LENGTH_LONG).show();
+				}
+			}
+		} catch (Exception e) {
+			Log.e(TAG, "PROBLEM in the method updateOnlineCAFsStaus");
+			Log.e(TAG, ">>>> :" + e.getMessage());
+		}
+		Log.i(TAG, "END of the method updateOnlineCAFsStaus");
+	}
+
+	// ==========================================================================
+
+	public void showNewCAFActivity(View view) {
+		finish();
+	}
+
+	// ==========================================================================
+
+	class SendOnlineCafs extends AsyncTask<String, Void, String> {
+		private ProgressDialog pDialog;
+		String responseMessage = null;
+
+		@Override
+		protected String doInBackground(String... params) {
+			try {
+				// Update the online cafs status
+				HttpClient client = new DefaultHttpClient();
+				HttpConnectionParams.setConnectionTimeout(client.getParams(),100000);
+				HttpResponse response;
+				HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL+ "caf/uploaded/update/status");
+				jsonObj = new JSONObject();
+				jsonObj.put(Constants.AUTHCODE, authCode);
+				jsonObj.put(Constants.UPLOADED_CAF_LIST, uploadedCafJSONArray);
+				StringEntity se = new StringEntity(jsonObj.toString());
+				se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE,"application/json"));
+				post.setEntity(se);
+				response = client.execute(post);
+
+				if (response != null) {
+					InputStream in = response.getEntity().getContent();
+					BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+					String line;
+					while ((line = rd.readLine()) != null) {
+						JSONObject jsonObject = new JSONObject(line);
+						responseMessage = jsonObject.getString("responseMessage");
+					}
+					rd.close();
+					TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()"+ responseMessage);
+				}
+			} catch (Exception e) {
+				Log.e(TAG,"PROBLEM in the method updateOnlineCAFsStaus Async Task");
+				Log.e(TAG, ">>>> :" + e.getMessage());
+			}
+			return authCode;
+		}
+
+		@Override
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			pDialog.dismiss();
+			OnlineCafActivity.this.runOnUiThread(new Runnable() {
+				@Override
+				public void run() {
+					if (responseMessage != null) {
+						if (responseMessage.equalsIgnoreCase("ok")) {
+							Toast.makeText(OnlineCafActivity.this,"CAF's status updated successfully.",Toast.LENGTH_LONG).show();
+						} else {
+							Toast.makeText(OnlineCafActivity.this,"Unable to update the CAF's status at this time.",Toast.LENGTH_LONG).show();
+						}
+						finish();
+					}
+				}
+			});
+		}
+
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			pDialog = new ProgressDialog(OnlineCafActivity.this);
+			pDialog.setMessage("Sending Data Please Wait ...");
+			pDialog.setIndeterminate(false);
+			pDialog.setCancelable(false);
+			pDialog.setCanceledOnTouchOutside(false);
+			pDialog.show();
+		}
+	}
 
 }
