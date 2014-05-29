@@ -81,8 +81,8 @@
     <string name="take_photo">Take Photo</string>
     <string name="select_remark">Select Remark</string>
     
-    <string name="view_online_caf_details">Click Image to view online CAF\'s verification</string>
-    <string name="online_caf_details">Online CAF\'s verification</string>
+    <string name="view_online_caf_details">Click Image to verify online CAFs</string>
+    <string name="online_caf_details">Online CAFs verification</string>
     
     <string name="online_caf_mobile_no">Mobile Number</string>
     <string name="online_caf_status">Status</string>

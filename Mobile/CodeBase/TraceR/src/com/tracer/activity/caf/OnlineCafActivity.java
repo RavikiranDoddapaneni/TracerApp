@@ -246,7 +246,7 @@ public class OnlineCafActivity extends ActionBarActivity {
                 case 2: cafStatusString = Constants.REJECTED; break;
                 case 3: cafStatusString = Constants.CUSTOMER_NOT_INTERESTED; break;
                 case 4: cafStatusString = Constants.INCOMPLETE_DOCUMENTATION; break;
-                default: cafStatusString = " "; break;
+                default: cafStatusString = "Click to update "; break;
               }
               map.put(Constants.CAF_STATUS_STRING,cafStatusString);
               onlineCafsList.add(map);
