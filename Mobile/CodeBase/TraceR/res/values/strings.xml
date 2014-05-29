@@ -92,6 +92,7 @@
     <string name="online_caf_status_incomplete_documentation">Incomplete documentation</string>
 
     <string-array name="remarks_array">
+        <item>Select</item>
         <item>Door lock</item>
         <item>CAF Not available</item>
     </string-array>
