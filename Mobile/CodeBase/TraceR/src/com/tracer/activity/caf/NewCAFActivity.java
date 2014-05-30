@@ -300,7 +300,7 @@ public class NewCAFActivity extends ActionBarActivity {
                 overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
               }
             } else {
-              createAlert("Please provide Image of the R");
+              createAlert("Please provide Image of the Runner");
             }
           } else {
             createAlert("Please provide Digital Signature of the Distributor");
