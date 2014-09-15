@@ -73,7 +73,6 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
           runnerImage.setImageBitmap(pic);
           runnerImage.invalidate();
         }
-
       }
     }
   }

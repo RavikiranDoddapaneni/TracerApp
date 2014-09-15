@@ -16,7 +16,7 @@
         android:layout_weight="3"
         android:ellipsize="end"
         android:singleLine="true"
-        android:text="sampleasdddddddddasffasfafssadadadadadadadadadadadadadadadadadaa"
+        android:text="sample"
         android:textColor="@color/list_view_item_text_color"
         android:textSize="12sp" />
 

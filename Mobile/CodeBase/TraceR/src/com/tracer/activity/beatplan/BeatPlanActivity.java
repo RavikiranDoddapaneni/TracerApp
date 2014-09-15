@@ -136,7 +136,6 @@ public class BeatPlanActivity extends ActionBarActivity {
       
       try {
         TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse()");
-        //System.out.println(urls[0]);
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000);
         HttpResponse response;
@@ -192,6 +191,9 @@ public class BeatPlanActivity extends ActionBarActivity {
       pDialog.setCanceledOnTouchOutside(false);
       pDialog.show();
     }
+    
+    //==========================================================================
+    
   }
 
   //==========================================================================

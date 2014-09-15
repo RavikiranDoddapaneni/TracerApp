@@ -293,8 +293,8 @@ public class LoginActivity extends ActionBarActivity {
           String line;
           while ((line = rd.readLine()) != null) {
             // Process line...
-            //System.out.println ("line ::::: " + line);
             jsonResponseObject = new JSONObject(line);
+            
             if (jsonResponseObject.has(Constants.AUTHCODE)) {
               roleType = jsonResponseObject.getString(Constants.USERTYPE);
               editor = preferences.edit();
@@ -319,7 +319,6 @@ public class LoginActivity extends ActionBarActivity {
                 startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
                 overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
               }
-
             }
           }
           rd.close();
@@ -372,7 +371,6 @@ public class LoginActivity extends ActionBarActivity {
           editor = preferences.edit();
           editor.clear();
           editor.commit();
-          //System.out.println ("Cleared");
 
           /* Checking response */
           if (response != null) {
@@ -395,7 +393,6 @@ public class LoginActivity extends ActionBarActivity {
           TestFlight.log("LoginActivity.stopAlarmManagerService() catch Exception " + e.getMessage());
           Log.e(TAG, "LoginActivity.stopAlarmManagerService(): Failed to stop Alarm Manager. catch IOException" + e.getMessage());
         }
-
       }
     }).start();
     TestFlight.passCheckpoint("LoginActivity.stopAlarmManagerService()");

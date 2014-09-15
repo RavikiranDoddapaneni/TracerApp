@@ -91,7 +91,6 @@ public class BeatPlanAdapter extends BaseAdapter {
 
     Button collect_caf = (Button) view.findViewById(R.id.collect_CAF);
     
-
     distributor_name.setText(distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
     distributor_visits.setText(distributorsList.get(position).get(Constants.VISITNUMBER).toString());
     distributor_codes.setText(distributorsList.get(position).get(Constants.SCHEDULETIME).toString());
@@ -104,7 +103,7 @@ public class BeatPlanAdapter extends BaseAdapter {
 
       @Override
       public void onClick(View v) {
-    	  
+
         try {
           GpsTracker gpsTracker = new GpsTracker(mContext);
           
@@ -169,9 +168,7 @@ public class BeatPlanAdapter extends BaseAdapter {
                   String line;
                   
                   while ((line = rd.readLine()) != null) {
-                    //System.out.println("line ::::: " + line);
                     JSONObject jsonObject = new JSONObject(line);
-                    //System.out.println(jsonObject.toString());
                     visitId = jsonObject.getString(Constants.RUNNER_VISIT_ID);
                     visitFrequency = jsonObject.getString(Constants.VISITFREQUENCY);
                   }

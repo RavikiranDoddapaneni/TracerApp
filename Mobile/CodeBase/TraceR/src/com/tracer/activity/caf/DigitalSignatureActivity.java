@@ -80,7 +80,6 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
   /**
    * Called when the user clicked on Save button. Saves the digital signature in
    * the application cache after saving.
-   * 
    * @param view
    */
   public void digitalSignatureDone(View view) {
@@ -102,7 +101,6 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
   /**
    * Called when the user clicked on Reset button in order to clear the digital
    * signature screen for giving new digital signature input.
-   * 
    * @param view
    */
   public void onResetButton(View view) {

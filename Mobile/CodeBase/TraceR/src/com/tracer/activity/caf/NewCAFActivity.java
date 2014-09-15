@@ -150,7 +150,7 @@ public class NewCAFActivity extends ActionBarActivity {
     rejectedCafs = (EditText) findViewById(R.id.et_rejected_caf_value);
     returnedCafs = (EditText) findViewById(R.id.et_returned_caf_value);
     mobileNumber = (EditText) findViewById(R.id.et_mobile_number_value);
-    //System.out.println("Activity Called");
+    
     dist_name.setText(bundle.getString(Constants.DISTRIBUTORNAME));
     visit_count.setText(bundle.getString(Constants.VISITCOUNT));
     remarksSpinner = (Spinner) findViewById(R.id.remarks_spinner);
@@ -170,11 +170,9 @@ public class NewCAFActivity extends ActionBarActivity {
     remarksSpinner.setAdapter(adapter);
 
     /**
-     * Called when user clicks on barcode scan image, in order to scan the
-     * barcode.
+     * Called when user clicks on barcode scan image, in order to scan the barcode.
      */
    /* scanImage.setOnClickListener(new OnClickListener() {
-
       @Override
       public void onClick(View v) {
         Intent intent = new Intent("com.google.zxing.client.android.SCAN");
@@ -184,11 +182,9 @@ public class NewCAFActivity extends ActionBarActivity {
     });*/
 
     onlineCAFImage.setOnClickListener(new OnClickListener() {
-
       @Override
       public void onClick(View v) {
         startActivityForResult(new Intent(getApplicationContext(), OnlineCafActivity.class).putExtras(bundle), 0);
-        
       }
     });
     remarksSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
@@ -210,7 +206,6 @@ public class NewCAFActivity extends ActionBarActivity {
   /**
    * Method is called when the user click on Take Picture button in order to
    * capture the image of Distributor through the camera.
-   * 
    * @param view
    */
   public void onCameraButtonClick(View view) {
@@ -229,7 +224,6 @@ public class NewCAFActivity extends ActionBarActivity {
   /**
    * Method is called when the user click on Runner Image button in order to
    * capture the image of Runner through the camera.
-   * 
    * @param view
    */
   public void runnerPhotoButtonClick(View view) {
@@ -248,7 +242,6 @@ public class NewCAFActivity extends ActionBarActivity {
   /**
    * Method is called when the user click on Digital Signature button in order
    * to take the digital signature.
-   * 
    * @param view
    */
   public void onDigitalSignatureButtonClick(View view) {
@@ -274,7 +267,7 @@ public class NewCAFActivity extends ActionBarActivity {
             if (prefs.getString("RunnerImage", null) != null) {
               if (gprsStatus) {
                 String digitalSignatureData = imageBase64Encode(prefs.getString("DistributorSignature", null));
-                //System.out.println ("Network Enabled");
+                
                 new sendCAFDetails().execute(authCode, totalCafs.getText().toString(), acceptedCafs.getText().toString(), rejectedCafs
                     .getText().toString(), returnedCafs.getText().toString(), prefs.getString("DistributorImage", null), digitalSignatureData,
                     visitId, prefs.getString("RunnerImage", null), mobileNumber.getText().toString().trim(), String.valueOf(currentLatitude),
@@ -292,7 +285,7 @@ public class NewCAFActivity extends ActionBarActivity {
 
                 @SuppressWarnings("unused")
                 long recordId = dataBaseHelper.insertRecordsInDB("caf_collection_details", null, cafDetails);
-                //System.out.println (recordId);
+                
                 editor = prefs.edit();
                 editor.putBoolean("hasDBRecords", true);
                 editor.commit();
@@ -364,7 +357,7 @@ public class NewCAFActivity extends ActionBarActivity {
       if (resultCode == Activity.RESULT_OK) {
         Log.i(TAG, "Inside DIGITAL SIGNATURE Result");
         digital_signature_path = data.getStringExtra("digital_signature_path");
-        //System.out.println (digital_signature_path);
+        
         digitalSignature.setVisibility(View.INVISIBLE);
 
         editor = prefs.edit();
@@ -426,9 +419,7 @@ public class NewCAFActivity extends ActionBarActivity {
 
     Log.i(TAG, "OnActivity Result Outside");
 
-    //System.out.println ("DistImage" + prefs.getString("DistributorImage", null));
     if (prefs.getString("DistributorImage", null) != null && imagePreview.getDrawable() == null) {
-      //System.out.println ("Distributor Image to be set");
       if (!prefs.getString("DistributorImage", "").equalsIgnoreCase("")) {
         byte[] b = Base64.decode(prefs.getString("DistributorImage", ""), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);
@@ -438,9 +429,7 @@ public class NewCAFActivity extends ActionBarActivity {
       }
     }
 
-    //System.out.println ("DistSig" + prefs.getString("DistributorSignature", null));
     if (prefs.getString("DistributorSignature", null) != null && signaturePreview.getDrawable() == null) {
-      //System.out.println ("Distributor Signature to be set");
       if (!prefs.getString("DistributorSignature", "").equalsIgnoreCase("")) {
         digitalSignature.setVisibility(View.INVISIBLE);
         signaturePreview.setVisibility(View.VISIBLE);
@@ -448,9 +437,7 @@ public class NewCAFActivity extends ActionBarActivity {
       }
     }
 
-    //System.out.println ("RunnerImage" + prefs.getString("RunnerImage", null));
     if (prefs.getString("RunnerImage", null) != null && runnerImagePreview.getDrawable() == null) {
-      //System.out.println ("Runner Image to be set");
       if (!prefs.getString("", "").equalsIgnoreCase("")) {
         byte[] b = Base64.decode(prefs.getString("RunnerImage", ""), Base64.DEFAULT);
         Bitmap bitmap = BitmapFactory.decodeByteArray(b, 0, b.length);

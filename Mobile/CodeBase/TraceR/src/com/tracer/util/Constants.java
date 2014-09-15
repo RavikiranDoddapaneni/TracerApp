@@ -9,7 +9,7 @@ public class Constants {
   /**
    * Webservice Base URL
    */
-  public static final String WEBSERVICE_BASE_URL = "http://118.102.131.158:8080/TraceR_RWS/api/";
+  public static final String WEBSERVICE_BASE_URL = "http://118.102.131.156:8080/TraceR_RWS/api/";
   public static final String LOGIN_STATUS = "login_status";
   
   public static final String INVALID_ACCESS_TIME = "login_status";
