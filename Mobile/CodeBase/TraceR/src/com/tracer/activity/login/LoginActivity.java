@@ -315,13 +315,20 @@ public class LoginActivity extends ActionBarActivity {
               PendingIntent pintent = PendingIntent.getService(LoginActivity.this, RQS, intent, PendingIntent.FLAG_CANCEL_CURRENT);
               AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
               alarm.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), 10 * 60 * 1000, pintent);
-
-              if (roleType.equals("TSE")) {
-                startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
-                overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
-              } else if (roleType.equals("TSM")) {
-                startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
-                overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+              if(isTodayAttendanceSaved.equalsIgnoreCase("yes"))
+              {
+	              if (roleType.equals("TSE")) {
+	                startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
+	                overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+	              } else if (roleType.equals("TSM")) {
+	                startActivity(new Intent(getApplicationContext(), RunnersActivity.class));
+	                overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
+	              }
+              }
+              else
+              {
+            	  startActivity(new Intent(getApplicationContext(), RunnerAttendanceActivity.class));
+                  overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
               }
             }
           }
