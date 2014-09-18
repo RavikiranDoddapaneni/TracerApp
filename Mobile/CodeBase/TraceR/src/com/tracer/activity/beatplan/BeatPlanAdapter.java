@@ -23,6 +23,7 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.location.Location;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -90,6 +91,7 @@ public class BeatPlanAdapter extends BaseAdapter {
     TextView distributor_codes = (TextView) view.findViewById(R.id.item_beat_plan_distributor_codes);
 
     Button collect_caf = (Button) view.findViewById(R.id.collect_CAF);
+    Button update_latlong = (Button) view.findViewById(R.id.getLatLong);
     
     distributor_name.setText(distributorsList.get(position).get(Constants.DISTRIBUTORNAME).toString());
     distributor_visits.setText(distributorsList.get(position).get(Constants.VISITNUMBER).toString());
@@ -99,6 +101,77 @@ public class BeatPlanAdapter extends BaseAdapter {
       collect_caf.setEnabled(false);
       collect_caf.setBackgroundResource(R.drawable.collect_btn_disabled);
     }
+    if(!(Boolean) distributorsList.get(position).get(Constants.DISPLAYSAVEDLLBUTTON))
+    {
+    	update_latlong.setVisibility(View.GONE);
+    }
+    
+    update_latlong.setOnClickListener(new OnClickListener() {
+		
+		@Override
+		public void onClick(View arg0) {
+			
+		 try {
+	          GpsTracker gpsTracker = new GpsTracker(mContext);
+	          
+	          if (gpsTracker.canGetLocation()) {
+	            currentLatitude = gpsTracker.latitude;
+	            currentLongitude = gpsTracker.longitude;
+	          } else {
+	            gpsTracker.showSettingsAlert();
+	          }
+	          preferences = Prefs.get(mContext);
+              preferences.getString(Constants.AUTHCODE, "");
+              jsonObject = new JSONObject();
+              jsonObject.put(Constants.AUTHCODE, preferences.getString(Constants.AUTHCODE, ""));
+              jsonObject.put(Constants.DISTRIBUTOR_ID, distributorsList.get(position).get(Constants.DISTRIBUTOR_ID).toString());
+	          jsonObject.put(Constants.CURRENTLATITIUDE, currentLatitude);
+	          jsonObject.put(Constants.CURRENTLONGITUDE, currentLongitude);
+	          
+	          new Thread(new Runnable() {
+	              public void run() {
+	            	  
+	            	  try {
+	            		  HttpClient client = new DefaultHttpClient();
+						  HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
+						  HttpResponse response;
+						  HttpPost post = new HttpPost(Constants.WEBSERVICE_BASE_URL + "beatplans/distributor/latlong/update");
+						  Log.i("BeatPlanAdapter", Constants.WEBSERVICE_BASE_URL + "beatplans/distributor/latlong/update");
+
+						  StringEntity se = new StringEntity(jsonObject.toString());
+						  se.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+						  post.setEntity(se);
+						  response = client.execute(post);
+
+						  /* Checking response */
+						  if (response != null) {
+						    InputStream in = response.getEntity().getContent();
+						    BufferedReader rd = new BufferedReader(new InputStreamReader(in));
+						    String line;
+						    
+						    while ((line = rd.readLine()) != null) {
+						      System.out.println("line ::::: " + line);
+						      JSONObject jsonObject = new JSONObject(line);
+						      System.out.println(jsonObject.toString());
+						    }
+						  }
+						  	Intent intent = ((Activity) mContext).getIntent();
+						  	((Activity) mContext).finish();
+						  	((Activity) mContext).startActivity(intent);
+						  
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+	            	  
+	              }
+	          }).start();
+	          
+	        } catch (Exception e) {
+	          e.printStackTrace();
+	        }
+		}
+	});
+    
     collect_caf.setOnClickListener(new OnClickListener() {
 
       @Override
@@ -140,7 +213,7 @@ public class BeatPlanAdapter extends BaseAdapter {
         Toast.makeText(mContext, "Distance :" + d, Toast.LENGTH_SHORT).show();
         TestFlight.log("Distance :" + d);
 
-        if (d < 50) {
+        if (d < 200) {
           new Thread(new Runnable() {
             public void run() {
 

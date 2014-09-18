@@ -53,6 +53,7 @@ import android.widget.Toast;
 
 import com.testflightapp.lib.TestFlight;
 import com.tracer.R;
+import com.tracer.activity.runner.RunnerAttendanceActivity;
 import com.tracer.activity.runner.RunnerHomeActivity;
 import com.tracer.activity.runner.RunnersActivity;
 import com.tracer.service.gpsservice.GpsService;
@@ -79,6 +80,7 @@ public class LoginActivity extends ActionBarActivity {
   JSONObject jsonResponseObject;
   static int RQS = 1;
   String roleType;
+  String isTodayAttendanceSaved;
   Context context = this;
   private static final String TAG = "LoginActivity";
   CustomizeDialog customizeDialog;
@@ -297,6 +299,8 @@ public class LoginActivity extends ActionBarActivity {
             
             if (jsonResponseObject.has(Constants.AUTHCODE)) {
               roleType = jsonResponseObject.getString(Constants.USERTYPE);
+              isTodayAttendanceSaved=jsonResponseObject.getString(Constants.TODAYATTENDANCESAVED);
+              Log.i("isTodayAttendanceSaved",isTodayAttendanceSaved);
               editor = preferences.edit();
               editor.putString(Constants.AUTHCODE, jsonResponseObject.getString(Constants.AUTHCODE));
               editor.putString(Constants.USERTYPE, jsonResponseObject.getString(Constants.USERTYPE));

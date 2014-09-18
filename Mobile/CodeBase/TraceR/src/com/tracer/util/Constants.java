@@ -23,6 +23,7 @@ public class Constants {
   public static final String USERNAME = "name";
   public static final String TEAMLEADERCONTACTNUMBER = "tlContactNumber";
   public static final String AUTHCODE = "authCode";
+  public static final String TODAYATTENDANCESAVED = "todayAttendanceSaved";
 
   /**
    * LOGIN INPUT DATA
@@ -43,6 +44,9 @@ public class Constants {
   public static final String DISTRIBUTORCONTACTNUMBER = "distributorContactNumber";
   public static final String DISTRIBUTORLATITIUDE = "distributorLattitude";
   public static final String DISTRIBUTORLONGITUDE = "distributorLongitude";
+  public static final String CURRENTLATITIUDE = "lattitude";
+  public static final String CURRENTLONGITUDE = "longitude";
+  public static final String DISPLAYSAVEDLLBUTTON = "displaySaveDLLButton";
 
   /**
    * VISIT INFO
@@ -74,6 +78,13 @@ public class Constants {
   public static final String IS_PRESENT = "isPresent";
   public static final String RUNNERCODE = "runnerCode";
   public static final String RUNNERNAME = "runnerName";
+
+  /**
+   * RUNNERS ATTENDANCE DATA
+   */
+  public static final String USERID = "userId";
+  public static final String RUNNERPHOTO = "contactNumber";
+  
   
   /**
    * ONLINE CAF

@@ -64,6 +64,7 @@
     <string name="logout">Logout</string>
     <string name="menu">Menu</string>
     <string name="collect_cafs">Collect CAF</string>
+    <string name="send_latlong">Save LatLong</string>    
     <string name="visits_status">2 of 3</string>
     <string name="dist_code">Distributor Code</string>
     <string name="GPSAlertDialogTitle">GPS is setting</string>

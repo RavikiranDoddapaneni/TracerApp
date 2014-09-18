@@ -166,6 +166,7 @@ public class BeatPlanActivity extends ActionBarActivity {
               map.put(Constants.DISTRIBUTORCONTACTNUMBER, distObject.getInt(Constants.DISTRIBUTORCONTACTNUMBER));
               map.put(Constants.DISTRIBUTORLATITIUDE, distObject.getDouble(Constants.DISTRIBUTORLATITIUDE));
               map.put(Constants.DISTRIBUTORLONGITUDE, distObject.getDouble(Constants.DISTRIBUTORLONGITUDE));
+              map.put(Constants.DISPLAYSAVEDLLBUTTON, distObject.getBoolean(Constants.DISPLAYSAVEDLLBUTTON));
               beatPlansList.add(map);
             }
           }
