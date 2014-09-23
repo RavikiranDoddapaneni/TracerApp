@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.tracer"
+    android:installLocation="internalOnly"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk android:minSdkVersion="10" android:targetSdkVersion="17" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.FLASHLIGHT" />
+    <uses-permission android:name="android.permission.CALL_PHONE" />
+    <uses-permission android:name="android.permission.SEND_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+
+    <uses-feature android:name="android.hardware.camera" android:required="true" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+    <uses-feature android:name="android.hardware.camera.front" android:required="false" />
+
+    <application
+        android:name="com.tracer.util.TracerApplication"
+        android:icon="@drawable/favicon"
+        android:label="@string/app_name"
+        android:theme="@style/Theme.Styled.App" >
+        
+        <activity
+            android:name="com.tracer.activity.login.LoginActivity"
+            android:label="@string/app_name"
+            android:screenOrientation="landscape" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="com.tracer.activity.runner.RunnerHomeActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/runners"
+            android:screenOrientation="landscape" >
+        </activity>
+        
+        <activity
+            android:name="com.tracer.activity.runner.RunnerAttendanceActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/runner_attendance"
+            android:screenOrientation="landscape" >
+        </activity>
+        
+        <activity
+            android:name="com.tracer.activity.runner.RunnersActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/runners"
+            android:screenOrientation="landscape" >
+        </activity>
+        
+        <activity
+            android:name="com.tracer.activity.beatplan.BeatPlanActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/beat_plan"
+            android:parentActivityName="com.tracer.activity.runner.RunnerHomeActivity"
+            android:screenOrientation="landscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity.runner.RunnerHomeActivity" />
+        </activity>
+        
+        <activity
+            android:name="com.tracer.activity.caf.NewCAFActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/new_caf_collection"
+            android:parentActivityName="com.tracer.activity.beatplan.BeatPlanActivity"
+            android:screenOrientation="landscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity.beatplan.BeatPlanActivity" />
+        </activity>
+        
+        <activity
+            android:name="com.tracer.activity.caf.DigitalSignatureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/digital_signature"
+            android:parentActivityName="com.tracer.activity.caf.NewCAFActivity"
+            android:screenOrientation="landscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity.caf.NewCAFActivity" />
+        </activity>
+        
+        <activity
+            android:name="com.tracer.activity.teamleader.TeamLeaderHomeActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/team_leader"
+            android:parentActivityName="com.tracer.activity.teamleader.TeamLeaderHomeActivity"
+            android:screenOrientation="landscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity..teamleader.TeamLeaderHomeActivity" />
+        </activity>
+
+        <service
+            android:name="com.tracer.service.gpsservice.GpsService"
+            android:enabled="true"
+            android:exported="true" >
+        </service>
+
+        <activity
+            android:name="com.google.zxing.client.android.CaptureActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:screenOrientation="landscape"
+            android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
+            android:windowSoftInputMode="stateAlwaysHidden" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
+            </intent-filter>
+            <intent-filter>
+                <action android:name="com.google.zxing.client.android.SCAN" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+        
+        <activity
+            android:name="com.tracer.activity.caf.OnlineCafActivity"
+            android:configChanges="orientation|keyboardHidden"
+            android:finishOnTaskLaunch="true"
+            android:label="@string/online_caf_details"
+            android:parentActivityName="com.tracer.activity.caf.NewCAFActivity"
+            android:screenOrientation="landscape" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.tracer.activity.caf.NewCAFActivity" />
+        </activity>
+        
+    </application>
+
+</manifest>

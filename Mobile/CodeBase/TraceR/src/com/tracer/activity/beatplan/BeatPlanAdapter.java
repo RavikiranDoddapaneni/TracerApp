@@ -17,6 +17,7 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -52,6 +53,8 @@ public class BeatPlanAdapter extends BaseAdapter {
   String visitFrequency;
   double currentLatitude;
   double currentLongitude;
+  
+  
 
   //==========================================================================
   
@@ -178,6 +181,8 @@ public class BeatPlanAdapter extends BaseAdapter {
       public void onClick(View v) {
 
         try {
+        	
+        	
           GpsTracker gpsTracker = new GpsTracker(mContext);
           
           if (gpsTracker.canGetLocation()) {
@@ -203,7 +208,9 @@ public class BeatPlanAdapter extends BaseAdapter {
         String data = "DistLat : " + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLATITIUDE).toString())
             + "   Dist Long : " + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLONGITUDE).toString())
             + "   Current Lat : " + currentLatitude + "  Current Long : " + currentLongitude;
-        createAlert(data);
+        
+//        createAlert(data);
+        
         /*Toast.makeText(
             mContext,
             "DistLat :" + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLATITIUDE).toString()) + "Dist Long"
@@ -213,7 +220,7 @@ public class BeatPlanAdapter extends BaseAdapter {
         Toast.makeText(mContext, "Distance :" + d, Toast.LENGTH_SHORT).show();
         TestFlight.log("Distance :" + d);
 
-        if (d < 200) {
+        if (d < 500) {
           new Thread(new Runnable() {
             public void run() {
 
@@ -267,6 +274,7 @@ public class BeatPlanAdapter extends BaseAdapter {
             }
           }).start();
         } else {
+        	
           Toast.makeText(mContext, "Please collect at Distributor location", Toast.LENGTH_SHORT).show();
         }
       }

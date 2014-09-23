@@ -194,9 +194,11 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
   
   @Override
   public void onBackPressed() {
-    Intent intent = new Intent(getApplicationContext(), NewCAFActivity.class);
+   /* Intent intent = new Intent(getApplicationContext(), NewCAFActivity.class);
     intent.putExtras(bundle);
-    startActivity(intent);
+    startActivity(intent);*/
+	  
+	  finish();
   }
 
   //==========================================================================
