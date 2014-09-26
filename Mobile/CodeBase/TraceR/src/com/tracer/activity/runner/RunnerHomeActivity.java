@@ -4,12 +4,16 @@
  */
 package com.tracer.activity.runner;
 
+import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -47,7 +51,7 @@ public class RunnerHomeActivity extends ActionBarActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    TestFlight.log("RunnerHomeActivity.onCreate()");
+//    TestFlight.log("RunnerHomeActivity.onCreate()");
     setContentView(R.layout.activity_runner_home);
 
     welcomeText = (TextView) findViewById(R.id.welcomeText);
@@ -63,6 +67,21 @@ public class RunnerHomeActivity extends ActionBarActivity {
     gprsStatus = Utils.getConnectivityStatusString(getApplicationContext());
     Log.i("LoginActivity", "GPRS :" + gprsStatus + "GPS :" + gpsStatus);
 
+    try {
+		String fromAttendance = getIntent().getStringExtra("FromRunnerAttendance");
+		if(fromAttendance.equals("RunnerAttendance"))
+		{
+		 DeleteImage di = new DeleteImage();
+		 di.execute();
+		}
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}finally{
+		
+	}
+    
+    
     if (!gprsStatus) {
       LoginActivity.setMobileDataEnableOrDisable(getApplicationContext(), true);
     }
@@ -78,7 +97,7 @@ public class RunnerHomeActivity extends ActionBarActivity {
       welcomeText.setText("Welcome " + userName);
       userTypeDisplay.setText("You are logged in as TeamLeader");
     }
-    TestFlight.passCheckpoint("RunnerHomeActivity.onCreate()");
+//    TestFlight.passCheckpoint("RunnerHomeActivity.onCreate()");
   }
 
   //==========================================================================
@@ -108,13 +127,57 @@ public class RunnerHomeActivity extends ActionBarActivity {
       overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
       overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
     } else if (item.getItemId() == R.id.logout) {
-      LoginActivity.stopAlarmManagerService(getApplicationContext());
+    	
+    	synchronized (this) {
+    		 LoginActivity.stopAlarmManagerService(getApplicationContext());
+		}
+     
+     
       startActivity(new Intent(getApplicationContext(), LoginActivity.class));
       overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+    	
     }
     return true;
   }
 
+  
+  
+  public class DeleteImage extends AsyncTask<Void, Void, Void>{
+
+	@Override
+	protected Void doInBackground(Void... params) {
+		// TODO Auto-generated method stub
+		Cursor cur = null;
+		try {
+		 String[] del = {MediaStore.Images.Media._ID,MediaStore.Images.Media.DATA,MediaStore.Images.Media.DISPLAY_NAME};
+		 cur = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, del, MediaStore.MediaColumns._ID , null, null);
+		  
+//		  Cursor cur = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, del, MediaStore.MediaColumns.DATA + "='" , null, null);
+		  		  
+		  cur.moveToFirst();
+		  int id = cur.getInt(cur.getColumnIndex(MediaStore.MediaColumns._ID));
+		  String name = cur.getString(cur.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME));
+		  String date = cur.getString(cur.getColumnIndex(MediaStore.MediaColumns.DATA));
+		  		  
+		  Uri itemUri = ContentUris.withAppendedId(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, id);
+		  
+	  
+		  context.getContentResolver().delete(itemUri, null,null);
+		  
+//			cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media.DISPLAY_NAME, str);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		  cur.close();
+		  return null;
+		
+	}
+	  
+  }
+  
+  
+  
   //==========================================================================
   
   /**
@@ -123,14 +186,14 @@ public class RunnerHomeActivity extends ActionBarActivity {
    * @param view
    */
   public void getBeatPlan(View view) {
-    TestFlight.log("RunnerHomeActivity.getBeatPlan()");
+//    TestFlight.log("RunnerHomeActivity.getBeatPlan()");
     if (Utils.getConnectivityStatusString(getApplicationContext())) {
       startActivity(new Intent(getApplicationContext(), BeatPlanActivity.class));
       overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
     } else {
       Toast.makeText(getApplicationContext(), R.string.check_network_connection, Toast.LENGTH_LONG).show();
     }
-    TestFlight.passCheckpoint("RunnerHomeActivity.getBeatPlan()");
+//    TestFlight.passCheckpoint("RunnerHomeActivity.getBeatPlan()");
   }
 
   //==========================================================================

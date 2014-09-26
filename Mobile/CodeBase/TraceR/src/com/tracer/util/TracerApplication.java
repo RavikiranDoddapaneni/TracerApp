@@ -29,7 +29,7 @@ public class TracerApplication extends Application {
   public void onCreate() {
     super.onCreate();
     // Initialize TestFlight with your app token.
-    TestFlight.takeOff(this, "46b8d339-836e-45ec-8131-85445db73bd1");
+//    TestFlight.takeOff(this, "46b8d339-836e-45ec-8131-85445db73bd1");
   }
   
   //==========================================================================

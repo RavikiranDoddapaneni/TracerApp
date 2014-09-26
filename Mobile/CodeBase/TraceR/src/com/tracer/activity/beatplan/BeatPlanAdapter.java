@@ -17,7 +17,6 @@ import org.apache.http.protocol.HTTP;
 import org.json.JSONObject;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -153,14 +152,23 @@ public class BeatPlanAdapter extends BaseAdapter {
 						    String line;
 						    
 						    while ((line = rd.readLine()) != null) {
-						      System.out.println("line ::::: " + line);
+//						      System.out.println("line ::::: " + line);
 						      JSONObject jsonObject = new JSONObject(line);
-						      System.out.println(jsonObject.toString());
+//						      System.out.println(jsonObject.toString());
 						    }
+						    in.close();
+						    rd.close();
+						    line = null;
 						  }
 						  	Intent intent = ((Activity) mContext).getIntent();
 						  	((Activity) mContext).finish();
 						  	((Activity) mContext).startActivity(intent);
+						  	
+						  	client = null;
+						  	response = null;
+						  	post = null;
+						  	se = null;
+						  	
 						  
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -205,9 +213,11 @@ public class BeatPlanAdapter extends BaseAdapter {
               currentLongitude, result);
           d = (int) result[0];
         }
-        String data = "DistLat : " + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLATITIUDE).toString())
+        
+        
+       /* String data = "DistLat : " + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLATITIUDE).toString())
             + "   Dist Long : " + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLONGITUDE).toString())
-            + "   Current Lat : " + currentLatitude + "  Current Long : " + currentLongitude;
+            + "   Current Lat : " + currentLatitude + "  Current Long : " + currentLongitude;*/
         
 //        createAlert(data);
         
@@ -217,6 +227,8 @@ public class BeatPlanAdapter extends BaseAdapter {
                 + Double.parseDouble(distributorsList.get(position).get(Constants.DISTRIBUTORLONGITUDE).toString()) + "Current Lat"
                 + currentLatitude + "Current Long" + currentLongitude, Toast.LENGTH_SHORT).show();
        */
+        
+        
         Toast.makeText(mContext, "Distance :" + d, Toast.LENGTH_SHORT).show();
         TestFlight.log("Distance :" + d);
 

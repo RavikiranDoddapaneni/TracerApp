@@ -371,9 +371,9 @@ public class NewCAFActivity extends ActionBarActivity {
 				if (resultCode == Activity.RESULT_OK) {
 
 					Log.i(TAG, "Inside Distributor Image Result");
-					 b = data.getExtras();
-					 pic = (Bitmap) b.get("data");
-					 baos = new ByteArrayOutputStream();
+					b = data.getExtras();
+					pic = (Bitmap) b.get("data");
+					baos = new ByteArrayOutputStream();
 					pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
 					byte[] byteArray = baos.toByteArray();
 					strBitMap = Base64
@@ -391,13 +391,12 @@ public class NewCAFActivity extends ActionBarActivity {
 					}
 
 				}
-			}catch(NullPointerException ne){
+			} catch (NullPointerException ne) {
 				ne.printStackTrace();
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
-			}finally{
-				
+			} finally {
+
 			}
 		}
 		/**
@@ -430,7 +429,7 @@ public class NewCAFActivity extends ActionBarActivity {
 			if (resultCode == Activity.RESULT_OK) {
 				try {
 					Log.i(TAG, "Inside Runner Image Result");
-				    b = data.getExtras();
+					b = data.getExtras();
 					pic = (Bitmap) b.get("data");
 					baos = new ByteArrayOutputStream();
 					pic.compress(Bitmap.CompressFormat.PNG, 100, baos);
@@ -501,7 +500,8 @@ public class NewCAFActivity extends ActionBarActivity {
 			if (!prefs.getString("", "").equalsIgnoreCase("")) {
 				byte[] byt = Base64.decode(prefs.getString("RunnerImage", ""),
 						Base64.DEFAULT);
-				Bitmap bitmap = BitmapFactory.decodeByteArray(byt, 0, byt.length);
+				Bitmap bitmap = BitmapFactory.decodeByteArray(byt, 0,
+						byt.length);
 				runnerPhotoButton.setVisibility(View.INVISIBLE);
 				runnerImagePreview.setVisibility(View.VISIBLE);
 				runnerImagePreview.setImageBitmap(bitmap);
@@ -548,11 +548,17 @@ public class NewCAFActivity extends ActionBarActivity {
 			overridePendingTransition(R.anim.from_left_anim,
 					R.anim.to_right_anim);
 		} else if (item.getItemId() == R.id.logout) {
-			LoginActivity.stopAlarmManagerService(getApplicationContext());
+
+			synchronized (this) {
+				LoginActivity.stopAlarmManagerService(getApplicationContext());	
+			}
+			
+			
 			startActivity(new Intent(getApplicationContext(),
 					LoginActivity.class));
 			overridePendingTransition(R.anim.from_left_anim,
 					R.anim.to_right_anim);
+
 		}
 		return true;
 	}
@@ -612,7 +618,7 @@ public class NewCAFActivity extends ActionBarActivity {
 
 		protected String doInBackground(String... urls) {
 			try {
-				TestFlight.log("NewCAFActivity.sendCAFDetails()");
+//				TestFlight.log("NewCAFActivity.sendCAFDetails()");
 				// System.out.println (urls[0]);
 				jsonObject = new JSONObject();
 
@@ -678,14 +684,11 @@ public class NewCAFActivity extends ActionBarActivity {
 						}
 					}
 					rd.close();
-					TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()"
-							+ cafResponse);
+//					TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()"+ cafResponse);
 				}
 
 			} catch (Exception e) {
-				TestFlight
-						.log("NewCAFActivity.sendCAFDetails() catch Exception "
-								+ e.getMessage());
+//				TestFlight.log("NewCAFActivity.sendCAFDetails() catch Exception "	+ e.getMessage());
 				Log.e(TAG, "NewCAFActivity.sendCAFDetails():" + e.getMessage());
 			} finally {
 			}

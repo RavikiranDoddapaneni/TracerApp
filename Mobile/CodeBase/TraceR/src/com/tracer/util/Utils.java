@@ -5,14 +5,19 @@
 package com.tracer.util;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.preference.PreferenceManager;
 
 
 public class Utils {
   public static int TYPE_WIFI = 1;
   public static int TYPE_MOBILE = 2;
   public static int TYPE_NOT_CONNECTED = 0;
+  
+  static SharedPreferences sp;
 
   //==========================================================================
   
@@ -46,4 +51,27 @@ public class Utils {
   }
   
   //==========================================================================
+  
+  //=============================================================================
+  
+  public static void setCheckAttendance(Context context,String version,String yn)
+  {
+      SharedPreferences sp = PreferenceManager.getDefaultSharedPreferences(context);
+      SharedPreferences.Editor editor = sp.edit();
+      editor.putString(version,yn);
+      editor.commit();
+  }
+
+  public static String getCheckAttendance(Context context,String version)
+  {
+      SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+      String _yn = preferences.getString(version,null);
+
+     return _yn;
+
+  }
+  
+  //=========================================================================================
 }
+
+

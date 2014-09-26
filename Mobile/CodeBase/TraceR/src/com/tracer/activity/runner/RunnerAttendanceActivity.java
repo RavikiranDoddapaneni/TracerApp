@@ -6,6 +6,7 @@ package com.tracer.activity.runner;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
@@ -21,12 +22,18 @@ import org.json.JSONObject;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
+import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Base64;
@@ -49,6 +56,11 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
   JSONObject jsonObject;
   String cafResponse;
   String authCode;
+  File root;
+  File UserImage;
+  
+  private static final int RESULT_IMAGE_LOAD = 1;
+  
   private static final String TAG = "RunnerAttendanceActivity";
 
   //==========================================================================
@@ -60,11 +72,15 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
     prefs = Prefs.get(this);
     authCode = prefs.getString(Constants.AUTHCODE, null);
     runnerImage = (ImageView) findViewById(R.id.runnerImage);
+    
+   
   }
 
   //==========================================================================
   
   public void takePhoto(View view) {
+	  
+	    
     Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
     this.startActivityForResult(camera, Constants.PICTURE_RESULT);
   }
@@ -75,9 +91,11 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
 	  boolean gprsStatus = Utils.getConnectivityStatusString(getApplicationContext());
 	  if(strBitMap !=null)
 	  {
+		  
 		  if (gprsStatus) {
-			  System.out.println(prefs.getString("RunnerAttendanceImage", null));
+//			  System.out.println(prefs.getString("RunnerAttendanceImage", null));
 			  new sendRunnerAttendanceDetails().execute(authCode,prefs.getString("RunnerAttendanceImage", null));
+			 
 		  } 
 	  }else
 	  {
@@ -86,6 +104,31 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
   }
 
   //==========================================================================
+  
+  
+  //===========================================================================
+  
+  public void deleteFile()
+  {
+	  String[] del = {MediaStore.Images.Media.DISPLAY_NAME};
+	  Cursor cur = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, del, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
+	  if(cur.getCount()==0){
+		  return;
+	  }
+	  ContentResolver cr = getContentResolver();
+	  cur.moveToFirst();
+	  String ll = cur.getString(cur.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME));
+	  	  
+	  String[] str = new String[]{ll};
+	  	  
+	  try {
+		cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media.DISPLAY_NAME, str);
+	} catch (Exception e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	}
+	  cur.close();
+  }
   
   /**
    * Method is called in order to capture the data after the user takes digital
@@ -98,6 +141,7 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
      * Get the captured image and set the image to the image view for the
      * preview
      */
+       
     if (requestCode == Constants.PICTURE_RESULT) {
       if (resultCode == Activity.RESULT_OK) {
         Bundle b = data.getExtras();
@@ -131,7 +175,10 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
 	      super.onPostExecute(result);
 	      // if (cafResponse != null && cafResponse.equalsIgnoreCase("ok")) {
 	      pDialog.dismiss();
-	      startActivity(new Intent(getApplicationContext(), RunnerHomeActivity.class));
+	      
+	      Intent intent = new Intent(getApplicationContext(), RunnerHomeActivity.class);
+	      intent.putExtra("FromRunnerAttendance", "RunnerAttendance");
+	      startActivity(intent);
 		    overridePendingTransition(R.anim.from_right_anim, R.anim.to_left_anim);
 	    }
 
@@ -146,7 +193,7 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
 	    
 	    protected String doInBackground(String... urls) {
 	      try {
-	    	  TestFlight.log("RunnerAttendanceActivity.sendRunnerAttendanceDetails()");
+//	    	  TestFlight.log("RunnerAttendanceActivity.sendRunnerAttendanceDetails()");
 	          jsonObject = new JSONObject();
 	          jsonObject.put("runnerPhoto", urls[1]);
 	          jsonObject.put("authCode", urls[0]);
@@ -169,12 +216,13 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
 	                JSONObject jsonObject = new JSONObject(line);
 	                cafResponse = jsonObject.getString("responseMessage");
 	              }
-	              System.out.println(cafResponse);
+//	              System.out.println(cafResponse);
+	              Log.i(TAG, cafResponse);
 	              rd.close();
-	              TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()" + cafResponse);
+//	              TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()" + cafResponse);
 	            }
 	      }catch(Exception e){
-	    	  TestFlight.log("RunnerAttendanceActivity.sendRunnerAttendanceDetails() catch Exception " + e.getMessage());
+//	    	  TestFlight.log("RunnerAttendanceActivity.sendRunnerAttendanceDetails() catch Exception " + e.getMessage());
 	          Log.e(TAG, "RunnerAttendanceActivity.sendRunnerAttendanceDetails():" + e.getMessage());
 	      }
 		return strBitMap;

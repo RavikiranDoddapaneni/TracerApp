@@ -58,7 +58,7 @@ public class RunnersActivity extends ActionBarActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    TestFlight.log("RunnersActivity.onCreate()");
+//    TestFlight.log("RunnersActivity.onCreate()");
     setContentView(R.layout.activity_runners_list);
     prefs = Prefs.get(this);
     authCode = prefs.getString(Constants.AUTHCODE, null);
@@ -71,7 +71,7 @@ public class RunnersActivity extends ActionBarActivity {
 
       @Override
       public void onItemClick(AdapterView<?> parent, final View view, int position, long id) {
-        TestFlight.log("RunnersActivity.runnerlist.setOnItemClickListener()");
+//        TestFlight.log("RunnersActivity.runnerlist.setOnItemClickListener()");
         String runnerStatus = (String) runnersDataList.get(position).get(Constants.IS_PRESENT);
         
         if (runnerStatus != null && runnerStatus.equalsIgnoreCase("false13")) {
@@ -83,7 +83,7 @@ public class RunnersActivity extends ActionBarActivity {
         }
       }
     });
-    TestFlight.passCheckpoint("RunnersActivity.runnerlist.setOnItemClickListener()");
+//    TestFlight.passCheckpoint("RunnersActivity.runnerlist.setOnItemClickListener()");
   }
 
   //==========================================================================
@@ -138,7 +138,7 @@ public class RunnersActivity extends ActionBarActivity {
     protected String doInBackground(String... urls) {
       
       try {
-        TestFlight.log("RunnersActivity.RetreiveBeatPlanResponse()");
+//        TestFlight.log("RunnersActivity.RetreiveBeatPlanResponse()");
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 10000);
         HttpResponse response;
@@ -169,9 +169,9 @@ public class RunnersActivity extends ActionBarActivity {
           }
           rd.close();
         }
-        TestFlight.passCheckpoint("RunnersActivity.RetreiveBeatPlanResponse()");
+//        TestFlight.passCheckpoint("RunnersActivity.RetreiveBeatPlanResponse()");
       } catch (Exception e) {
-        TestFlight.log("RunnersActivity.RetreiveBeatPlanResponse() catch Exception " + e.getMessage());
+//        TestFlight.log("RunnersActivity.RetreiveBeatPlanResponse() catch Exception " + e.getMessage());
         Log.e(TAG, "RunnersActivity.RetreiveBeatPlanResponse():" + e.getMessage());
       } finally {
         /*

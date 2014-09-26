@@ -205,7 +205,7 @@ public class OnlineCafActivity extends ActionBarActivity {
       Log.e(TAG, "OnlineCafActivity.RetreiveOnlineCAFs()");
 
       try {
-        TestFlight.log("OnlineCafActivity.RetreiveOnlineCAFs()");
+//        TestFlight.log("OnlineCafActivity.RetreiveOnlineCAFs()");
         
         HttpClient client = new DefaultHttpClient();
         HttpConnectionParams.setConnectionTimeout(client.getParams(), 100000); HttpResponse response;
@@ -255,7 +255,7 @@ public class OnlineCafActivity extends ActionBarActivity {
           rd.close();
         }
       } catch (Exception e) {
-        TestFlight.log("OnlineCafActivity.RetreiveOnlineCAFs() catch Exception "+ e.getMessage());
+//        TestFlight.log("OnlineCafActivity.RetreiveOnlineCAFs() catch Exception "+ e.getMessage());
         Log.e(TAG,"OnlineCafActivity.RetreiveOnlineCAFs():"+ e.getMessage());
       } finally {
       }
@@ -368,7 +368,7 @@ public class OnlineCafActivity extends ActionBarActivity {
             responseMessage = jsonObject.getString("responseMessage");
           }
           rd.close();
-          TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()"+ responseMessage);
+//          TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()"+ responseMessage);
         }
       } catch (Exception e) {
         Log.e(TAG,"PROBLEM in the method updateOnlineCAFsStaus Async Task");
