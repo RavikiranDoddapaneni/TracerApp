@@ -14,8 +14,10 @@ import org.apache.http.params.HttpConnectionParams;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
@@ -23,9 +25,11 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListView;
+
 import com.tracer.R;
 import com.tracer.activity.login.LoginActivity;
 import com.tracer.activity.runner.RunnerHomeActivity;
@@ -44,10 +48,10 @@ public class BeatPlanActivity extends ActionBarActivity {
 	String authCode;
 	String userType;
 
-	Context context = this;
+	Context context;
 	JSONObject jsonObject;
 	Editor editor;
-
+    LoginActivity loginActivity;
 	private static final String TAG = "BeatPlanActivity";
 
 	// ==========================================================================
@@ -57,12 +61,15 @@ public class BeatPlanActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_beat_plan);
-
+		context = this;
+		 loginActivity = new LoginActivity();
 		beatPlansListView = (ListView) findViewById(R.id.beatPlanList);
 		prefs = Prefs.get(this);
 		authCode = prefs.getString(Constants.AUTHCODE, null);
 		userType = prefs.getString(Constants.USERTYPE, null);
-		new RetreiveBeatPlanResponse().execute(authCode);
+		
+		new RetreiveBeatPlanResponse(context,authCode).execute();
+		
 	}
 
 	// ==========================================================================
@@ -106,7 +113,7 @@ public class BeatPlanActivity extends ActionBarActivity {
 		} else if (item.getItemId() == R.id.logout) {
 			
                synchronized (this) {
-            	   LoginActivity.stopAlarmManagerService(getApplicationContext());
+            	   loginActivity.stopAlarmManagerService(getApplicationContext());
 			}
 				
 				startActivity(new Intent(getApplicationContext(),LoginActivity.class));
@@ -116,24 +123,33 @@ public class BeatPlanActivity extends ActionBarActivity {
 		return true;
 	}
 
+	
+	
+	
 	// ==========================================================================
 
 	class RetreiveBeatPlanResponse extends AsyncTask<String, Void, String> {
-		private ProgressDialog pDialog;
+		
+		
+		ProgressDialog pDialog;
+		Context beatplanContet;
+		String auth;
 
-		@Override
-		protected void onPostExecute(String result) {
-			super.onPostExecute(result);
-			pDialog.dismiss();
-
-			if (beatPlansList != null && beatPlansList.size() > 0) {
-				beatPlanAdapter = new BeatPlanAdapter(BeatPlanActivity.this,
-						beatPlansList);
-				beatPlansListView.setAdapter(beatPlanAdapter);
-			} else {
-				createAlert("No Data Available", "Beat Plans");
-			}
+		public RetreiveBeatPlanResponse(Context context,String authcod){
+			this.beatplanContet = context;
+			this.auth = authcod;
 		}
+		@Override
+		protected void onPreExecute() {
+			super.onPreExecute();
+			/*pDialog = new ProgressDialog(beatplanContet);
+			pDialog.setMessage("Getting Data ...");
+			pDialog.setCanceledOnTouchOutside(false);
+			pDialog.show();*/
+			
+		}
+		
+		
 
 		// ==========================================================================
 
@@ -142,8 +158,7 @@ public class BeatPlanActivity extends ActionBarActivity {
 			try {
 //				TestFlight.log("BeatPlanActivity.RetreiveBeatPlanResponse()");
 				HttpClient client = new DefaultHttpClient();
-				HttpConnectionParams.setConnectionTimeout(client.getParams(),
-						100000);
+				HttpConnectionParams.setConnectionTimeout(client.getParams(),100000);
 				HttpResponse response;
 
 				Log.i(TAG, "Request URL :" + Constants.WEBSERVICE_BASE_URL+ "beatplans/get/" + urls[0]);
@@ -207,21 +222,24 @@ public class BeatPlanActivity extends ActionBarActivity {
 			return authCode;
 		}
 
-		// ==========================================================================
-
+		
+		
 		@Override
-		protected void onPreExecute() {
-			super.onPreExecute();
-			pDialog = new ProgressDialog(BeatPlanActivity.this);
-			pDialog.setMessage("Getting Data ...");
-			pDialog.setIndeterminate(false);
-			pDialog.setCancelable(false);
-			pDialog.setCanceledOnTouchOutside(false);
-			pDialog.show();
+		protected void onPostExecute(String result) {
+			super.onPostExecute(result);
+			/*if(pDialog.isShowing())
+			{
+			pDialog.dismiss();
+			}*/
+			
+			if (beatPlansList != null && beatPlansList.size() > 0) {
+				beatPlanAdapter = new BeatPlanAdapter(BeatPlanActivity.this, beatPlansList);
+				beatPlansListView.setAdapter(beatPlanAdapter);
+			} else {
+				createAlert("No Data Available", "Beat Plans");
+			}
 		}
-
-		// ==========================================================================
-
+		
 	}
 
 	// ==========================================================================
@@ -230,19 +248,75 @@ public class BeatPlanActivity extends ActionBarActivity {
 	public void onBackPressed() {
 		Intent intent = new Intent(getApplicationContext(),RunnerHomeActivity.class);
 		startActivity(intent);
+		
+//		finish();
 	}
 
 	// ==========================================================================
 
 	public void createAlert(String message, String title) {
-		CustomizeDialog customizeDialog = new CustomizeDialog(context);
-		customizeDialog.setTitle(title);
-		customizeDialog.setMessage(message);
-		customizeDialog.show();
-
-		if (!customizeDialog.isShowing())
+		
+		/*try {
+			CustomizeDialog customizeDialog = new CustomizeDialog(context);
+			customizeDialog.setTitle(title);
+			customizeDialog.setMessage(message);
 			customizeDialog.show();
+
+			if (!customizeDialog.isShowing())
+			{
+				customizeDialog.show();
+			}
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}*/
+		
+		AlertDialog.Builder builder = new AlertDialog.Builder(context);
+
+        LayoutInflater inflater = getLayoutInflater();
+        builder.setView(inflater.inflate(R.layout.dialog, null))
+                .setTitle(title)
+                .setCancelable(false)
+                .setMessage(message)
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+        AlertDialog dialog = builder.create();
+        dialog.show();
+		
+		
+		
+		// custom dialog
+		
+					/*Dialog dialog = new Dialog(context);
+					requestWindowFeature(Window.FEATURE_NO_TITLE);
+					getWindow().getDecorView();
+					dialog.setContentView(R.layout.dialog);
+					
+					
+					// set the custom dialog components - text, image and button
+					TextView text = (TextView) dialog.findViewById(R.id.dialogTitle);
+					text.setText(title);
+					TextView messages = (TextView) dialog.findViewById(R.id.dialogMessage);
+					messages.setText(message);
+		 
+					Button close = (Button) dialog.findViewById(R.id.OkButton);
+					// if button is clicked, close the custom dialog
+					close.setOnClickListener(new View.OnClickListener() {
+						
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							dialog.dismiss();
+						}
+					});
+					
+										
+					dialog.show();*/
+				  }
 	}
 
 	// ==========================================================================
-}
+

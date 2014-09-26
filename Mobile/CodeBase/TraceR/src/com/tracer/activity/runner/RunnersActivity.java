@@ -50,6 +50,8 @@ public class RunnersActivity extends ActionBarActivity {
   String authCode;
   JSONObject jsonObject;
   Editor editor;
+  
+  LoginActivity loginActivity;
   private static final String TAG = "RunnersActivity";
 
   //==========================================================================
@@ -60,6 +62,9 @@ public class RunnersActivity extends ActionBarActivity {
     super.onCreate(savedInstanceState);
 //    TestFlight.log("RunnersActivity.onCreate()");
     setContentView(R.layout.activity_runners_list);
+    
+    loginActivity = new LoginActivity();
+    
     prefs = Prefs.get(this);
     authCode = prefs.getString(Constants.AUTHCODE, null);
     runnersList = (ListView) findViewById(R.id.runners_list);
@@ -107,7 +112,10 @@ public class RunnersActivity extends ActionBarActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == R.id.logout) {
-      LoginActivity.stopAlarmManagerService(getApplicationContext());
+    	synchronized (this) {
+    		loginActivity.stopAlarmManagerService(getApplicationContext());	
+		}
+      
       startActivity(new Intent(getApplicationContext(), LoginActivity.class));
       overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
     }

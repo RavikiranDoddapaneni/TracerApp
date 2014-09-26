@@ -44,6 +44,8 @@ public class RunnerHomeActivity extends ActionBarActivity {
   boolean gpsStatus;
   boolean gprsStatus;
   Context context = this;
+  
+  LoginActivity loginActivity;
 
   //==========================================================================
   
@@ -68,6 +70,9 @@ public class RunnerHomeActivity extends ActionBarActivity {
     Log.i("LoginActivity", "GPRS :" + gprsStatus + "GPS :" + gpsStatus);
 
     try {
+    	
+    	loginActivity = new LoginActivity();
+    	
 		String fromAttendance = getIntent().getStringExtra("FromRunnerAttendance");
 		if(fromAttendance.equals("RunnerAttendance"))
 		{
@@ -129,7 +134,7 @@ public class RunnerHomeActivity extends ActionBarActivity {
     } else if (item.getItemId() == R.id.logout) {
     	
     	synchronized (this) {
-    		 LoginActivity.stopAlarmManagerService(getApplicationContext());
+    		loginActivity.stopAlarmManagerService(getApplicationContext());
 		}
      
      

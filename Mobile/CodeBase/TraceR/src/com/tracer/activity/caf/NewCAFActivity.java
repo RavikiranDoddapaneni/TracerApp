@@ -98,6 +98,7 @@ public class NewCAFActivity extends ActionBarActivity {
 	Uri cameraImagePath;
 	JSONObject jsonObject;
 	CustomizeDialog customizeDialog;
+	LoginActivity loginActivity;
 
 	public static final int MEDIA_TYPE_IMAGE = 2;
 	File photoFile;
@@ -116,6 +117,8 @@ public class NewCAFActivity extends ActionBarActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_new_caf);
+		
+		 loginActivity = new LoginActivity();
 
 		prefs = Prefs.get(this);
 		authCode = prefs.getString(Constants.AUTHCODE, null);
@@ -550,14 +553,12 @@ public class NewCAFActivity extends ActionBarActivity {
 		} else if (item.getItemId() == R.id.logout) {
 
 			synchronized (this) {
-				LoginActivity.stopAlarmManagerService(getApplicationContext());	
+				loginActivity.stopAlarmManagerService(getApplicationContext());	
 			}
 			
 			
-			startActivity(new Intent(getApplicationContext(),
-					LoginActivity.class));
-			overridePendingTransition(R.anim.from_left_anim,
-					R.anim.to_right_anim);
+			startActivity(new Intent(getApplicationContext(),LoginActivity.class));
+			overridePendingTransition(R.anim.from_left_anim,R.anim.to_right_anim);
 
 		}
 		return true;

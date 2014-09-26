@@ -64,7 +64,7 @@ public class OnlineCafActivity extends ActionBarActivity {
   OnlineCAFAdapter onlineCAFAdapter;
   ArrayList<HashMap<String, Object>> onlineCafsList;
   ListView onlineCafsListView;
-
+  LoginActivity loginActivity;
   private static final String TAG = "OnlineCafActivity";
 
   // ==========================================================================
@@ -75,7 +75,9 @@ public class OnlineCafActivity extends ActionBarActivity {
     super.onCreate(savedInstanceState);
     Log.i(TAG, "START of the method onCreate");
     setContentView(R.layout.activity_online_caf);
-
+    
+    loginActivity = new LoginActivity();
+    
     prefs = Prefs.get(this);
     authCode = prefs.getString(Constants.AUTHCODE, null);
     userType = prefs.getString(Constants.USERTYPE, null);
@@ -119,7 +121,12 @@ public class OnlineCafActivity extends ActionBarActivity {
       }
       overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
     } else if (item.getItemId() == R.id.logout) {
-      LoginActivity.stopAlarmManagerService(getApplicationContext());
+      
+    	synchronized (this) {
+    		loginActivity.stopAlarmManagerService(getApplicationContext());
+		}
+    	
+           
       startActivity(new Intent(getApplicationContext(), LoginActivity.class));
       overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
     }

@@ -55,6 +55,8 @@ public class GpsService extends Service {
   ConnectionChangeReceiver changeReceiver;
   DataBaseHelper dataBaseHelper = DataBaseHelper.getDBAdapterInstance(this);
 
+  LoginActivity loginActivity;
+  
   //==========================================================================
   
   @Override
@@ -68,7 +70,7 @@ public class GpsService extends Service {
   public void onCreate() {
     preferences = Prefs.get(this);
     super.onCreate();
-
+    loginActivity = new LoginActivity();
   }
 
   //==========================================================================
@@ -167,9 +169,15 @@ public class GpsService extends Service {
             if (jsonResponseObject.has("responseMessage")) {
               if (jsonResponseObject.has("Logout")) {
                 if (jsonResponseObject.getString("Logout").equalsIgnoreCase("true")) {
-                  LoginActivity.stopAlarmManagerService(getApplicationContext());
-                  startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-                  ((Activity) context).overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+                	
+                	synchronized (this) {
+                		loginActivity.stopAlarmManagerService(getApplicationContext());	
+					}
+                  
+                  /*startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+                  ((Activity) context).overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);*/
+                	
+                	
                 }
               }
             }

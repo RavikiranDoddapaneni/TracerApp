@@ -108,28 +108,7 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
   
   //===========================================================================
   
-  public void deleteFile()
-  {
-	  String[] del = {MediaStore.Images.Media.DISPLAY_NAME};
-	  Cursor cur = getContentResolver().query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, del, MediaStore.MediaColumns.DISPLAY_NAME, null, null);
-	  if(cur.getCount()==0){
-		  return;
-	  }
-	  ContentResolver cr = getContentResolver();
-	  cur.moveToFirst();
-	  String ll = cur.getString(cur.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME));
-	  	  
-	  String[] str = new String[]{ll};
-	  	  
-	  try {
-		cr.delete(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, MediaStore.Images.Media.DISPLAY_NAME, str);
-	} catch (Exception e) {
-		// TODO Auto-generated catch block
-		e.printStackTrace();
-	}
-	  cur.close();
-  }
-  
+   
   /**
    * Method is called in order to capture the data after the user takes digital
    * signature or after scanning the barcode or after taking the picture.
@@ -217,7 +196,11 @@ public class RunnerAttendanceActivity extends ActionBarActivity {
 	                cafResponse = jsonObject.getString("responseMessage");
 	              }
 //	              System.out.println(cafResponse);
-	              Log.i(TAG, cafResponse);
+	              Log.i(TAG, "AttendanceResponse"+cafResponse);
+	              if(cafResponse.equalsIgnoreCase("ok"))
+	              {
+	            	  Utils.setCheckAttendance(getApplicationContext(), "checkatt", "Yes");
+	              }
 	              rd.close();
 //	              TestFlight.passCheckpoint("NewCAFActivity.sendCAFDetails()" + cafResponse);
 	            }

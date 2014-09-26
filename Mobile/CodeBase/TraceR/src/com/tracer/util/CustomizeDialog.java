@@ -47,7 +47,7 @@ public class CustomizeDialog extends Dialog implements OnClickListener {
   public void onClick(View v) {
     /** When OK Button is clicked, dismiss the dialog */
     if (v == okButton)
-      dismiss();
+       dismiss();
   }
 
   //==========================================================================

@@ -327,13 +327,11 @@ public class LoginActivity extends ActionBarActivity {
 						if (jsonResponseObject.has(Constants.AUTHCODE)) {
 							roleType = jsonResponseObject
 									.getString(Constants.USERTYPE);
-							isTodayAttendanceSaved = jsonResponseObject
-									.getString(Constants.TODAYATTENDANCESAVED);
+							isTodayAttendanceSaved = jsonResponseObject.getString(Constants.TODAYATTENDANCESAVED);
 
 							Utils.setCheckAttendance(context, "checkatt",isTodayAttendanceSaved);
 							
-							Log.i("isTodayAttendanceSaved",
-									isTodayAttendanceSaved);
+							Log.i("TAG","isTodayAttendanceSaved " +isTodayAttendanceSaved);
 							editor = preferences.edit();
 							editor.putString(Constants.AUTHCODE,
 									jsonResponseObject
@@ -425,9 +423,13 @@ public class LoginActivity extends ActionBarActivity {
 
 	// ==========================================================================
 
-	public static void stopAlarmManagerService(final Context context) {
+	public void stopAlarmManagerService(final Context context) {
 //		TestFlight.log("LoginActivity.stopAlarmManagerService()");
-		new Thread(new Runnable() {
+		
+	   /*Logout out = new Logout();
+	   out.execute();*/
+		
+			new Thread(new Runnable() {
 			public void run() {
 				try {
 					HttpClient client = new DefaultHttpClient();
@@ -442,7 +444,7 @@ public class LoginActivity extends ActionBarActivity {
 					editor.clear();
 					editor.commit();
 
-					/* Checking response */
+//					 Checking response 
 					if (response != null) {
 						InputStream in = response.getEntity().getContent();
 						BufferedReader rd = new BufferedReader(	new InputStreamReader(in));
@@ -480,6 +482,8 @@ public class LoginActivity extends ActionBarActivity {
 				}
 			}
 		}).start();
+		
+		
 		
 		
 //		TestFlight.passCheckpoint("LoginActivity.stopAlarmManagerService()");
@@ -529,8 +533,7 @@ public class LoginActivity extends ActionBarActivity {
 							Intent intent = new Intent(context,GpsService.class);
 							AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 							// cancelling the request
-							alarmManager.cancel(PendingIntent.getService(
-									context, RQS, intent, PendingIntent.FLAG_UPDATE_CURRENT));
+							alarmManager.cancel(PendingIntent.getService(context, RQS, intent, PendingIntent.FLAG_UPDATE_CURRENT));
 						}
 					}
 					
@@ -560,8 +563,9 @@ public class LoginActivity extends ActionBarActivity {
 			
 			if(result.equals("ok"))
 			{
-				startActivity(new Intent(getApplicationContext(), LoginActivity.class));
-			      overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
+				Toast.makeText(getApplicationContext(), "Logout Successfull", Toast.LENGTH_LONG).show();
+				/*startActivity(new Intent(getApplicationContext(), LoginActivity.class));
+			      overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);*/
 			}
 		}
 		
@@ -669,7 +673,7 @@ public class LoginActivity extends ActionBarActivity {
 							String sss = Utils.getCheckAttendance(context,"checkatt");
 							
 														
-							if (sss.equalsIgnoreCase("yes")) {
+							if (sss.equalsIgnoreCase("Yes")) {
 								Log.i("Login Activity",
 										"Login Activity to Runner Home Activity");
 								startActivity(new Intent(

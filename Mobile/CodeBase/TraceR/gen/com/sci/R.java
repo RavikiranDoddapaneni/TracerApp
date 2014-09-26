@@ -88,17 +88,17 @@ public final class R {
 		public static final int viewfinder_view = 0x7f0a00d2;
 	}
 	public static final class layout {
-		public static final int activity_main = 0x7f030020;
-		public static final int app_picker_list_item = 0x7f03002f;
-		public static final int bookmark_picker_list_item = 0x7f030030;
-		public static final int capture = 0x7f030031;
-		public static final int encode = 0x7f030033;
-		public static final int help = 0x7f030034;
-		public static final int history_list_item = 0x7f030035;
-		public static final int search_book_contents = 0x7f030036;
-		public static final int search_book_contents_header = 0x7f030037;
-		public static final int search_book_contents_list_item = 0x7f030038;
-		public static final int share = 0x7f030039;
+		public static final int activity_main = 0x7f03001f;
+		public static final int app_picker_list_item = 0x7f03002e;
+		public static final int bookmark_picker_list_item = 0x7f03002f;
+		public static final int capture = 0x7f030030;
+		public static final int encode = 0x7f030032;
+		public static final int help = 0x7f030033;
+		public static final int history_list_item = 0x7f030034;
+		public static final int search_book_contents = 0x7f030035;
+		public static final int search_book_contents_header = 0x7f030036;
+		public static final int search_book_contents_list_item = 0x7f030037;
+		public static final int share = 0x7f030038;
 	}
 	public static final class menu {
 		public static final int capture = 0x7f0f0000;

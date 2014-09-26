@@ -89,6 +89,7 @@
     <string name="online_caf_status_rejected">Rejected</string>
     <string name="online_caf_status_customer_not_interested">Customer not interested</string>
     <string name="online_caf_status_incomplete_documentation">Incomplete documentation</string>
+    <string name="close">Close</string>
 
     <string-array name="remarks_array">
         <item>Select</item>

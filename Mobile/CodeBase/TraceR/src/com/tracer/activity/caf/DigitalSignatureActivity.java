@@ -49,6 +49,8 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
   Bundle bundle;
   private GestureLibrary gestureLib;
   boolean isSignatureEnabled = false;
+  
+  LoginActivity loginActivity;
 
   //==========================================================================
   
@@ -57,6 +59,10 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_digital_signature);
+    
+    loginActivity = new LoginActivity();
+    
+    
     bundle = new Bundle();
     bundle = getIntent().getExtras();
     prefs = Prefs.get(this);
@@ -140,7 +146,11 @@ public class DigitalSignatureActivity extends ActionBarActivity implements OnGes
       }
       overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
     } else if (item.getItemId() == R.id.logout) {
-      LoginActivity.stopAlarmManagerService(getApplicationContext());
+    	
+    	synchronized (this) {
+    		loginActivity.stopAlarmManagerService(getApplicationContext());	
+		}
+    	
       startActivity(new Intent(getApplicationContext(), LoginActivity.class));
       overridePendingTransition(R.anim.from_left_anim, R.anim.to_right_anim);
     }

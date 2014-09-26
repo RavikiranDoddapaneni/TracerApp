@@ -19,7 +19,6 @@
         android:layout_marginTop="20dip"
         android:background="#00000000"
         android:gravity="center"
-        android:text=""
         android:textColor="#fff"
         android:textSize="15sp"
         android:textStyle="bold" >
@@ -36,7 +35,6 @@
         android:maxLines="10"
         android:padding="10dip"
         android:scrollbars="vertical"
-        android:text=""
         android:textColor="#fff"
         android:textSize="13sp" >
     </TextView>
@@ -50,7 +48,7 @@
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
         android:background="@drawable/button"
-        android:text="OK"
+        android:text="@string/close"
         android:textColor="#FFFFFF" >
     </Button>
 
