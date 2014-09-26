@@ -993,6 +993,11 @@ containing a value of this type.
          screen margins) for sw720dp devices (e.g. 10" tablets) in landscape here.
     
  Default screen margins, per the Android Design guidelines. 
+
+         Example customization of dimensions originally defined in res/values/dimens.xml
+         (such as screen margins) for screens with more than 820dp of available width. This
+         would include 7" and 10" devices in landscape (~960dp and ~1280dp respectively).
+    
          */
         public static final int activity_horizontal_margin=0x7f090002;
         public static final int activity_vertical_margin=0x7f090013;
@@ -1186,6 +1191,7 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f0a0036;
         public static final int action_mode_bar_stub=0x7f0a0035;
         public static final int action_mode_close_button=0x7f0a0029;
+        public static final int action_settings=0x7f0a00ee;
         public static final int activity_chooser_view_content=0x7f0a002a;
         public static final int address=0x7f0a00ac;
         public static final int always=0x7f0a0012;
@@ -1252,14 +1258,14 @@ containing a value of this type.
         public static final int format_text_view=0x7f0a00c6;
         public static final int format_text_view_label=0x7f0a00c5;
         public static final int gestures=0x7f0a0057;
-        public static final int getBeatPlan=0x7f0a00b1;
+        public static final int getBeatPlan=0x7f0a00b3;
         public static final int getLatLong=0x7f0a0053;
         public static final int help_contents=0x7f0a00d8;
         public static final int history_detail=0x7f0a00dc;
         public static final int history_title=0x7f0a00db;
         public static final int home=0x7f0a001b;
         public static final int homeAsUp=0x7f0a000c;
-        public static final int home_button=0x7f0a00ee;
+        public static final int home_button=0x7f0a00ef;
         public static final int icon=0x7f0a002f;
         public static final int ifRoom=0x7f0a0011;
         public static final int image=0x7f0a002c;
@@ -1300,8 +1306,8 @@ containing a value of this type.
         public static final int login_layout=0x7f0a0060;
         public static final int login_password=0x7f0a0064;
         public static final int login_username=0x7f0a0063;
-        public static final int logout=0x7f0a00f0;
-        public static final int logout_view=0x7f0a00ef;
+        public static final int logout=0x7f0a00f1;
+        public static final int logout_view=0x7f0a00f0;
         public static final int menu_encode=0x7f0a00eb;
         public static final int menu_help=0x7f0a00ea;
         public static final int menu_history=0x7f0a00e8;
@@ -1401,7 +1407,7 @@ containing a value of this type.
         public static final int type_text_view_label=0x7f0a00c7;
         public static final int up=0x7f0a0026;
         public static final int useLogo=0x7f0a000a;
-        public static final int userTypeDisplay=0x7f0a00b2;
+        public static final int userTypeDisplay=0x7f0a00b1;
         public static final int view1=0x7f0a0083;
         public static final int view_beat_plan=0x7f0a0055;
         public static final int view_beat_plan_manager=0x7f0a006b;
@@ -1410,7 +1416,7 @@ containing a value of this type.
         public static final int visitCount=0x7f0a007f;
         public static final int visit_count_value=0x7f0a0089;
         public static final int visits=0x7f0a0076;
-        public static final int welcomeText=0x7f0a00b3;
+        public static final int welcomeText=0x7f0a00b2;
         public static final int withText=0x7f0a0013;
     }
     public static final class integer {
@@ -1470,39 +1476,41 @@ containing a value of this type.
         public static final int activity_distributors_list=0x7f03001c;
         public static final int activity_distributors_list_item=0x7f03001d;
         public static final int activity_login=0x7f03001e;
-        public static final int activity_main=0x7f03001f;
-        public static final int activity_manager_home=0x7f030020;
-        public static final int activity_manager_list_item=0x7f030021;
-        public static final int activity_managers=0x7f030022;
-        public static final int activity_new_caf=0x7f030023;
-        public static final int activity_online_caf=0x7f030024;
-        public static final int activity_online_caf_list_item=0x7f030025;
-        public static final int activity_online_caf_status=0x7f030026;
-        public static final int activity_retailer_registration=0x7f030027;
-        public static final int activity_runner_attendance=0x7f030028;
-        public static final int activity_runner_home=0x7f030029;
-        public static final int activity_runner_list_item=0x7f03002a;
-        public static final int activity_runners_list=0x7f03002b;
-        public static final int activity_splash_screen=0x7f03002c;
-        public static final int activity_team_leader_home=0x7f03002d;
-        public static final int app_picker_list_item=0x7f03002e;
-        public static final int bookmark_picker_list_item=0x7f03002f;
-        public static final int capture=0x7f030030;
-        public static final int dialog=0x7f030031;
-        public static final int encode=0x7f030032;
-        public static final int help=0x7f030033;
-        public static final int history_list_item=0x7f030034;
-        public static final int search_book_contents=0x7f030035;
-        public static final int search_book_contents_header=0x7f030036;
-        public static final int search_book_contents_list_item=0x7f030037;
-        public static final int share=0x7f030038;
-        public static final int support_simple_spinner_dropdown_item=0x7f030039;
+        public static final int activity_logout=0x7f03001f;
+        public static final int activity_main=0x7f030020;
+        public static final int activity_manager_home=0x7f030021;
+        public static final int activity_manager_list_item=0x7f030022;
+        public static final int activity_managers=0x7f030023;
+        public static final int activity_new_caf=0x7f030024;
+        public static final int activity_online_caf=0x7f030025;
+        public static final int activity_online_caf_list_item=0x7f030026;
+        public static final int activity_online_caf_status=0x7f030027;
+        public static final int activity_retailer_registration=0x7f030028;
+        public static final int activity_runner_attendance=0x7f030029;
+        public static final int activity_runner_home=0x7f03002a;
+        public static final int activity_runner_list_item=0x7f03002b;
+        public static final int activity_runners_list=0x7f03002c;
+        public static final int activity_splash_screen=0x7f03002d;
+        public static final int activity_team_leader_home=0x7f03002e;
+        public static final int app_picker_list_item=0x7f03002f;
+        public static final int bookmark_picker_list_item=0x7f030030;
+        public static final int capture=0x7f030031;
+        public static final int dialog=0x7f030032;
+        public static final int encode=0x7f030033;
+        public static final int help=0x7f030034;
+        public static final int history_list_item=0x7f030035;
+        public static final int search_book_contents=0x7f030036;
+        public static final int search_book_contents_header=0x7f030037;
+        public static final int search_book_contents_list_item=0x7f030038;
+        public static final int share=0x7f030039;
+        public static final int support_simple_spinner_dropdown_item=0x7f03003a;
     }
     public static final class menu {
         public static final int capture=0x7f0f0000;
         public static final int encode=0x7f0f0001;
         public static final int history=0x7f0f0002;
-        public static final int main=0x7f0f0003;
+        public static final int logout=0x7f0f0003;
+        public static final int main=0x7f0f0004;
     }
     public static final class raw {
         public static final int beep=0x7f060000;
@@ -1746,6 +1754,7 @@ containing a value of this type.
         public static final int take_photo=0x7f0b00d7;
         public static final int team_leader=0x7f0b00bb;
         public static final int team_leaders=0x7f0b00ba;
+        public static final int title_activity_logout=0x7f0b00e2;
         public static final int total_caf=0x7f0b00a3;
         public static final int total_cafs=0x7f0b00a2;
         public static final int total_visits=0x7f0b00b1;
