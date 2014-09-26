@@ -52,7 +52,7 @@
                 android:background="@drawable/button_border_bottom"
                 android:drawableLeft="@drawable/passicon"
                 android:drawablePadding="20dp"
-                android:ems="10"
+                android:maxLength="15"
                 android:hint="@string/password"
                 android:inputType="textPassword"
                 android:singleLine="true"
